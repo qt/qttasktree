@@ -2013,6 +2013,21 @@ static DoneWith toDoneWith(DoneResult result)
     return result == DoneResult::Success ? DoneWith::Success : DoneWith::Error;
 }
 
+template <typename T>
+class LocalThreadStorage
+{
+public:
+    T &data() {
+        QMutexLocker lock(&m_threadDataMutex);
+        return m_threadDataMap.try_emplace(QThread::currentThread()).first->second;
+    }
+private:
+    QMutex m_threadDataMutex = {};
+    // Use std::map on purpose, so that it doesn't invalidate references on modifications.
+    // Don't optimize it by using std::unordered_map.
+    std::map<QThread *, T> m_threadDataMap = {};
+};
+
 class IteratorThreadData
 {
     Q_DISABLE_COPY_MOVE(IteratorThreadData)
@@ -2045,18 +2060,12 @@ private:
 class IteratorData
 {
 public:
-    IteratorThreadData &threadData() {
-        QMutexLocker lock(&m_threadDataMutex);
-        return m_threadDataMap.try_emplace(QThread::currentThread()).first->second;
-    }
+    IteratorThreadData &threadData() { return m_threadData.data(); }
 
     const std::optional<int> m_loopCount = {};
     const Iterator::ValueGetter m_valueGetter = {};
     const Iterator::Condition m_condition = {};
-    QMutex m_threadDataMutex = {};
-    // Use std::map on purpose, so that it doesn't invalidate references on modifications.
-    // Don't optimize it by using std::unordered_map.
-    std::map<QThread *, IteratorThreadData> m_threadDataMap = {};
+    LocalThreadStorage<IteratorThreadData> m_threadData = {};
 };
 
 /*!
@@ -2423,17 +2432,11 @@ private:
 class StorageData
 {
 public:
-    StorageThreadData &threadData() {
-        QMutexLocker lock(&m_threadDataMutex);
-        return m_threadDataMap.try_emplace(QThread::currentThread()).first->second;
-    }
+    StorageThreadData &threadData() { return m_threadData.data(); }
 
     const StorageBase::StorageConstructor m_constructor = {};
     const StorageBase::StorageDestructor m_destructor = {};
-    QMutex m_threadDataMutex = {};
-    // Use std::map on purpose, so that it doesn't invalidate references on modifications.
-    // Don't optimize it by using std::unordered_map.
-    std::map<QThread *, StorageThreadData> m_threadDataMap = {};
+    LocalThreadStorage<StorageThreadData> m_threadData = {};
 };
 
 StorageBase::StorageBase(const StorageConstructor &ctor, const StorageDestructor &dtor)
