@@ -69,33 +69,4 @@
     The \l{GNU Lesser General Public License, version 3}, or
     the \l{GNU General Public License, version 2}.
     See \l{Qt Licensing} for further details.
-
-*/
-
-/*!
-    \page qttasktree-classes.html
-    \title Qt TaskTree C++ classes
-    \brief List of C++ classes provided by the Qt TaskTree module.
-
-    \annotatedlist tasktree-classes
-*/
-
-/*!
-    \group tasktree-classes
-    \title Qt TaskTree classes
-    \brief Classes for creating and managing task trees.
-
-    These classes provide the core functionality for creating, configuring,
-    and executing asynchronous task workflows.
-*/
-
-/*!
-    \page qttasktree-module-topics.html
-    \title Qt TaskTree module topics
-    \brief Overview of Qt TaskTree module topics and concepts.
-
-    \list
-    \li \l{Qt TaskTree} - Main module overview.
-    \li \l{Qt TaskTree C++ Classes} - Complete class reference.
-    \endlist
 */

@@ -13,21 +13,18 @@ qhp.QtTaskTree.virtualFolder       = qttasktree
 qhp.QtTaskTree.indexTitle          = Qt TaskTree
 qhp.QtTaskTree.indexRoot           =
 
-qhp.QtTaskTree.subprojects = manual classes
+qhp.QtTaskTree.subprojects = classes
 
 qhp.QtTaskTree.subprojects.classes.title = C++ Classes
 qhp.QtTaskTree.subprojects.classes.indexTitle = Qt TaskTree C++ Classes
 qhp.QtTaskTree.subprojects.classes.selectors = class fake:headerfile
 qhp.QtTaskTree.subprojects.classes.sortPages = true
 
-qhp.QtTaskTree.subprojects.manual.title = Qt TaskTree
-qhp.QtTaskTree.subprojects.manual.indexTitle = Qt TaskTree module topics
-qhp.QtTaskTree.subprojects.manual.type = manual
-
 depends += qtcore \
            qtdoc \
            qmake \
-           qtcmake
+           qtcmake \
+           qtconcurrent
 
 headerdirs  += ..
 
@@ -44,9 +41,6 @@ imagedirs   += images
 
 navigation.landingpage = "Qt TaskTree"
 navigation.cppclassespage = "Qt TaskTree C++ Classes"
-# Auto-generate navigation linking based on "Qt TaskTree module topics":
-navigation.toctitles = "Qt TaskTree module topics"
-navigation.toctitles.inclusive = false
 
 # Fail the documentation build if there are more warnings than the limit
 warninglimit = 0

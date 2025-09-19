@@ -39,7 +39,7 @@ using namespace Qt::StringLiterals;
 
 /*!
     \module TaskTree
-    \title TaskTree Library
+    \title Qt TaskTree C++ Classes
     \brief Contains a general purpose TaskTree library.
 
     Use the TaskTree library to construct recipes, describing what
