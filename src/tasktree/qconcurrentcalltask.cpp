@@ -52,7 +52,7 @@ private:
     QList<QFuture<void>> m_futures;
 };
 
-Q_GLOBAL_STATIC(FutureSynchronizer, s_futureSynchronizer);
+Q_APPLICATION_STATIC(FutureSynchronizer, s_futureSynchronizer);
 
 class QConcurrentCallBasePrivate : public QObjectPrivate
 {
