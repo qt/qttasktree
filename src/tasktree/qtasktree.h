@@ -169,7 +169,7 @@ private:
     friend bool operator!=(const StorageBase &first, const StorageBase &second)
     { return first.m_storageData != second.m_storageData; }
 
-    friend size_t qHash(const StorageBase &storage, uint seed = 0)
+    friend size_t qHash(const StorageBase &storage, size_t seed = 0)
     { return size_t(storage.m_storageData.get()) ^ seed; }
 
     std::shared_ptr<StorageData> m_storageData;
