@@ -2159,7 +2159,7 @@ const void *Iterator::valuePtr() const
     \class QtTaskTree::ForeverIterator
     \inheaderfile qtasktree.h
     \inmodule TaskTree
-    \brief Infinitive iterator to be used inside For element.
+    \brief Infinite iterator to be used inside For element.
     \reentrant
 
     \sa Iterator, RepeatIterator, UntilIterator, ListIterator
