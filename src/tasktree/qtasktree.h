@@ -393,8 +393,9 @@ private:
         static constexpr bool isVD = isInvocable<void, Handler, DoneWith>();
         static constexpr bool isV = isInvocable<void, Handler>();
         static_assert(isDoneResultType || isRD || isR || isBD || isB || isVD || isV,
-            "Group done handler needs to take (DoneWith) or (void) as an argument and has to "
-            "return void, bool or DoneResult. Alternatively, it may be of DoneResult type. "
+            "Group done handler should be a function taking (DoneWith) or (void) as an argument "
+            "and returning void, bool or DoneResult. "
+            "Alternatively, 'handler' may be an instance of DoneResult. "
             "The passed handler doesn't fulfill these requirements.");
         return [handler = std::forward<Handler>(handler)](DoneWith result) {
             if constexpr (isDoneResultType)
@@ -703,9 +704,9 @@ private:
         static_assert(isDoneResultType || isRTD || isRT || isRD || isR
                                        || isBTD || isBT || isBD || isB
                                        || isVTD || isVT || isVD || isV,
-            "Task done handler needs to take (const Task &, DoneWith), (const Task &), "
-            "(DoneWith) or (void) as arguments and has to return void, bool or DoneResult. "
-            "Alternatively, it may be of DoneResult type. "
+            "Task done handler should be a function taking (const Task &, DoneWith), "
+            "(const Task &), (DoneWith) or (void) as arguments and returning void, bool or "
+            "DoneResult. Alternatively, 'handler' may be an instance of DoneResult. "
             "The passed handler doesn't fulfill these requirements.");
         return [handler = std::forward<Handler>(handler)](TaskAdapterPtr voidAdapter,
                                                           QtTaskTree::DoneWith result) {
