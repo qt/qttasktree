@@ -4551,15 +4551,15 @@ struct TimerThreadData
     Q_DISABLE_COPY_MOVE(TimerThreadData)
 
     TimerThreadData() = default; // defult constructor is required for initializing with {} since C++20 by Mingw 11.20
-    QHash<int, TimerData> m_timerIdToTimerData = {};
-    QMap<system_clock::time_point, QList<int>> m_deadlineToTimerId = {};
-    int m_timerIdCounter = 0;
+    QHash<size_t, TimerData> m_timerIdToTimerData = {};
+    QMap<system_clock::time_point, QList<size_t>> m_deadlineToTimerId = {};
+    size_t m_timerIdCounter = 0;
 };
 
 // Please note the thread_local keyword below guarantees a separate instance per thread.
 static thread_local TimerThreadData s_threadTimerData = {};
 
-static void removeTimerId(int timerId)
+static void removeTimerId(size_t timerId)
 {
     const auto it = s_threadTimerData.m_timerIdToTimerData.constFind(timerId);
     QT_TASKTREE_ASSERT(it != s_threadTimerData.m_timerIdToTimerData.cend(),
@@ -4568,8 +4568,8 @@ static void removeTimerId(int timerId)
     const system_clock::time_point deadline = it->m_deadline;
     s_threadTimerData.m_timerIdToTimerData.erase(it);
 
-    QList<int> &ids = s_threadTimerData.m_deadlineToTimerId[deadline];
-    const int removedCount = ids.removeAll(timerId);
+    auto &ids = s_threadTimerData.m_deadlineToTimerId[deadline];
+    const auto removedCount = ids.removeAll(timerId);
     QT_TASKTREE_ASSERT(removedCount == 1, qWarning("Removing active timerId failed."); return);
     if (ids.isEmpty())
         s_threadTimerData.m_deadlineToTimerId.remove(deadline);
@@ -4591,9 +4591,9 @@ static void handleTimeout(int timerId)
             return;
 
         std::optional<TimerData> timerData;
-        QList<int> &idList = *itMap;
+        auto &idList = *itMap;
         if (!idList.isEmpty()) {
-            const int first = idList.first();
+            const auto first = idList.first();
             idList.removeFirst();
 
             const auto it = s_threadTimerData.m_timerIdToTimerData.constFind(first);
@@ -4614,9 +4614,9 @@ static void handleTimeout(int timerId)
     }
 }
 
-static int scheduleTimeout(milliseconds timeout, QObject *context, const TimeoutCallback &callback)
+static size_t scheduleTimeout(milliseconds timeout, QObject *context, const TimeoutCallback &callback)
 {
-    const int timerId = ++s_threadTimerData.m_timerIdCounter;
+    const auto timerId = ++s_threadTimerData.m_timerIdCounter;
     const system_clock::time_point deadline = system_clock::now() + timeout;
     QTimer::singleShot(timeout, context, [timerId] { handleTimeout(timerId); });
     s_threadTimerData.m_timerIdToTimerData.emplace(timerId, TimerData{deadline, context, callback});

@@ -821,7 +821,7 @@ public:
     Q_TASKTREE_EXPORT void operator()(std::chrono::milliseconds *task, QTaskInterface *iface);
 
 private:
-    std::optional<int> m_timerId;
+    std::optional<size_t> m_timerId;
 };
 
 using QTaskTreeTask = QCustomTask<QTaskTree, QTaskTreeTaskAdapter>;
