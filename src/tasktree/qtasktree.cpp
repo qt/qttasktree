@@ -4544,76 +4544,63 @@ using TimeoutCallback = std::function<void()>;
 
 struct TimerData
 {
+    size_t m_timerId;
     system_clock::time_point m_deadline;
     QPointer<QObject> m_context;
     TimeoutCallback m_callback;
 };
+
+static bool deadlineComp(const TimerData &a, const TimerData &b)
+{
+    return a.m_deadline < b.m_deadline;
+}
 
 struct TimerThreadData
 {
     Q_DISABLE_COPY_MOVE(TimerThreadData)
 
     TimerThreadData() = default; // defult constructor is required for initializing with {} since C++20 by Mingw 11.20
-    QHash<size_t, TimerData> m_timerIdToTimerData = {};
-    QMap<system_clock::time_point, QList<size_t>> m_deadlineToTimerId = {};
+    QList<TimerData> m_timerDataList = {};
     size_t m_timerIdCounter = 0;
 };
 
 // Please note the thread_local keyword below guarantees a separate instance per thread.
 static thread_local TimerThreadData s_threadTimerData = {};
 
-static void removeTimerId(size_t timerId)
+static auto findTimerId(size_t timerId)
 {
-    const auto it = s_threadTimerData.m_timerIdToTimerData.constFind(timerId);
-    QT_TASKTREE_ASSERT(it != s_threadTimerData.m_timerIdToTimerData.cend(),
-              qWarning("Removing active timerId failed."); return);
-
-    const system_clock::time_point deadline = it->m_deadline;
-    s_threadTimerData.m_timerIdToTimerData.erase(it);
-
-    auto &ids = s_threadTimerData.m_deadlineToTimerId[deadline];
-    const auto removedCount = ids.removeAll(timerId);
-    QT_TASKTREE_ASSERT(removedCount == 1, qWarning("Removing active timerId failed."); return);
-    if (ids.isEmpty())
-        s_threadTimerData.m_deadlineToTimerId.remove(deadline);
+    return std::find_if(s_threadTimerData.m_timerDataList.cbegin(),
+                        s_threadTimerData.m_timerDataList.cend(),
+                        [timerId](const TimerData &timerData) {
+        return timerId == timerData.m_timerId;
+    });
 }
 
-static void handleTimeout(int timerId)
+static void removeTimerId(size_t timerId)
 {
-    const auto itData = s_threadTimerData.m_timerIdToTimerData.constFind(timerId);
-    if (itData == s_threadTimerData.m_timerIdToTimerData.cend())
-        return; // The timer was already activated.
+    const auto it = findTimerId(timerId);
+    QT_TASKTREE_ASSERT(it != s_threadTimerData.m_timerDataList.cend(),
+                       qWarning("Removing active timerId failed."); return);
 
-    const auto deadline = itData->m_deadline;
+    s_threadTimerData.m_timerDataList.erase(it);
+}
+
+static void handleTimeout(size_t timerId)
+{
+    const auto it = findTimerId(timerId);
+    if (it == s_threadTimerData.m_timerDataList.cend())
+        return; // The timer was already activated or canceled.
+    const auto deadline = it->m_deadline;
     while (true) {
-        auto itMap = s_threadTimerData.m_deadlineToTimerId.begin();
-        if (itMap == s_threadTimerData.m_deadlineToTimerId.end())
-            return;
-
-        if (itMap.key() > deadline)
-            return;
-
-        std::optional<TimerData> timerData;
-        auto &idList = *itMap;
-        if (!idList.isEmpty()) {
-            const auto first = idList.first();
-            idList.removeFirst();
-
-            const auto it = s_threadTimerData.m_timerIdToTimerData.constFind(first);
-            if (it != s_threadTimerData.m_timerIdToTimerData.cend()) {
-                timerData = it.value();
-                s_threadTimerData.m_timerIdToTimerData.erase(it);
-            } else {
-                QT_TASKTREE_CHECK(false);
-            }
-        } else {
-            QT_TASKTREE_CHECK(false);
-        }
-
-        if (idList.isEmpty())
-            s_threadTimerData.m_deadlineToTimerId.erase(itMap);
-        if (timerData && timerData->m_context)
-            timerData->m_callback();
+        const auto it = s_threadTimerData.m_timerDataList.cbegin();
+        if (it == s_threadTimerData.m_timerDataList.cend() || it->m_deadline > deadline)
+            break;
+        TimeoutCallback callback;
+        if (it->m_context)
+            std::exchange(callback, it->m_callback);
+        s_threadTimerData.m_timerDataList.erase(it);
+        if (callback)
+            callback(); // Note: calling callback may invalidate m_timerDataList iterators.
     }
 }
 
@@ -4622,8 +4609,11 @@ static size_t scheduleTimeout(milliseconds timeout, QObject *context, const Time
     const auto timerId = ++s_threadTimerData.m_timerIdCounter;
     const system_clock::time_point deadline = system_clock::now() + timeout;
     QTimer::singleShot(timeout, context, [timerId] { handleTimeout(timerId); });
-    s_threadTimerData.m_timerIdToTimerData.emplace(timerId, TimerData{deadline, context, callback});
-    s_threadTimerData.m_deadlineToTimerId[deadline].append(timerId);
+    TimerData timerData{timerId, deadline, context, callback};
+    const auto it = std::upper_bound(s_threadTimerData.m_timerDataList.cbegin(),
+                                     s_threadTimerData.m_timerDataList.cend(),
+                                     timerData, &deadlineComp);
+    s_threadTimerData.m_timerDataList.insert(it, std::move(timerData));
     return timerId;
 }
 
