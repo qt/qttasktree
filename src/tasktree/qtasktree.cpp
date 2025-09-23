@@ -4567,30 +4567,22 @@ struct TimerThreadData
 // Please note the thread_local keyword below guarantees a separate instance per thread.
 static thread_local TimerThreadData s_threadTimerData = {};
 
-static auto findTimerId(size_t timerId)
-{
-    return std::find_if(s_threadTimerData.m_timerDataList.cbegin(),
-                        s_threadTimerData.m_timerDataList.cend(),
-                        [timerId](const TimerData &timerData) {
-        return timerId == timerData.m_timerId;
-    });
-}
-
 static void removeTimerId(size_t timerId)
 {
-    const auto it = findTimerId(timerId);
+    const auto it = std::find_if(s_threadTimerData.m_timerDataList.cbegin(),
+                                 s_threadTimerData.m_timerDataList.cend(),
+                                 [timerId](const TimerData &timerData) {
+        return timerId == timerData.m_timerId;
+    });
     QT_TASKTREE_ASSERT(it != s_threadTimerData.m_timerDataList.cend(),
                        qWarning("Removing active timerId failed."); return);
 
     s_threadTimerData.m_timerDataList.erase(it);
 }
 
-static void handleTimeout(size_t timerId)
+static void handleTimeout()
 {
-    const auto it = findTimerId(timerId);
-    if (it == s_threadTimerData.m_timerDataList.cend())
-        return; // The timer was already activated or canceled.
-    const auto deadline = it->m_deadline;
+    const auto deadline = system_clock::now();
     while (true) {
         const auto it = s_threadTimerData.m_timerDataList.cbegin();
         if (it == s_threadTimerData.m_timerDataList.cend() || it->m_deadline > deadline)
@@ -4608,7 +4600,7 @@ static size_t scheduleTimeout(milliseconds timeout, QObject *context, const Time
 {
     const auto timerId = ++s_threadTimerData.m_timerIdCounter;
     const system_clock::time_point deadline = system_clock::now() + timeout;
-    QTimer::singleShot(timeout, context, [timerId] { handleTimeout(timerId); });
+    QTimer::singleShot(timeout, context, &handleTimeout);
     TimerData timerData{timerId, deadline, context, callback};
     const auto it = std::upper_bound(s_threadTimerData.m_timerDataList.cbegin(),
                                      s_threadTimerData.m_timerDataList.cend(),
