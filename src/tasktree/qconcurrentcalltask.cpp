@@ -8,6 +8,8 @@
 
 QT_BEGIN_NAMESPACE
 
+namespace QtTaskTree {
+
 class FutureSynchronizer final
 {
 public:
@@ -52,7 +54,9 @@ private:
     QList<QFuture<void>> m_futures;
 };
 
-Q_APPLICATION_STATIC(FutureSynchronizer, s_futureSynchronizer);
+} // namespace QtTaskTree
+
+Q_APPLICATION_STATIC(QtTaskTree::FutureSynchronizer, s_futureSynchronizer);
 
 class QConcurrentCallBasePrivate : public QObjectPrivate
 {

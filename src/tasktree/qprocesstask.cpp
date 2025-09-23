@@ -18,6 +18,8 @@ QT_BEGIN_NAMESPACE
 
 using namespace QtTaskTree;
 
+namespace QtTaskTree {
+
 class ProcessReaperPrivate;
 
 class ProcessReaper final
@@ -253,6 +255,8 @@ void ProcessReaper::reap(QProcess *process, int timeoutMs)
     const ReaperSetup reaperSetup {process, timeoutMs};
     priv->scheduleReap(reaperSetup);
 }
+
+} // namespace QtTaskTree
 
 /*!
     \class QProcessDeleter

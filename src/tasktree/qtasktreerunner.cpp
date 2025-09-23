@@ -257,6 +257,8 @@ void QSingleTaskTreeRunner::startImpl(const Group &recipe,
     d->m_taskTree->start();
 }
 
+namespace QtTaskTree {
+
 struct TreeData
 {
     Group recipe;
@@ -264,6 +266,8 @@ struct TreeData
     QAbstractTaskTreeRunner::TreeDoneHandler doneHandler;
     CallDoneFlags callDone;
 };
+
+} // namespace QtTaskTree
 
 class QSequentialTaskTreeRunnerPrivate : public QAbstractTaskTreeRunnerPrivate
 {
