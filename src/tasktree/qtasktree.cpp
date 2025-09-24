@@ -4580,9 +4580,8 @@ static void removeTimerId(size_t timerId)
     s_threadTimerData.m_timerDataList.erase(it);
 }
 
-static void handleTimeout()
+static void handleTimeout(const system_clock::time_point &deadline)
 {
-    const auto deadline = system_clock::now();
     while (true) {
         const auto it = s_threadTimerData.m_timerDataList.cbegin();
         if (it == s_threadTimerData.m_timerDataList.cend() || it->m_deadline > deadline)
@@ -4600,7 +4599,7 @@ static size_t scheduleTimeout(milliseconds timeout, QObject *context, const Time
 {
     const auto timerId = ++s_threadTimerData.m_timerIdCounter;
     const system_clock::time_point deadline = system_clock::now() + timeout;
-    QTimer::singleShot(timeout, context, &handleTimeout);
+    QTimer::singleShot(timeout, context, [deadline] { handleTimeout(deadline); });
     TimerData timerData{timerId, deadline, context, callback};
     const auto it = std::upper_bound(s_threadTimerData.m_timerDataList.cbegin(),
                                      s_threadTimerData.m_timerDataList.cend(),
@@ -4615,7 +4614,7 @@ QTimeoutTaskAdapter::~QTimeoutTaskAdapter()
         removeTimerId(*m_timerId);
 }
 
-void QTimeoutTaskAdapter::operator()(std::chrono::milliseconds *task, QTaskInterface *iface)
+void QTimeoutTaskAdapter::operator()(milliseconds *task, QTaskInterface *iface)
 {
     m_timerId = scheduleTimeout(*task, iface, [this, iface] {
         m_timerId.reset();
