@@ -13,12 +13,18 @@ qhp.QtTaskTree.virtualFolder       = qttasktree
 qhp.QtTaskTree.indexTitle          = Qt TaskTree
 qhp.QtTaskTree.indexRoot           =
 
-qhp.QtTaskTree.subprojects = classes
+qhp.QtTaskTree.subprojects = examples classes
 
 qhp.QtTaskTree.subprojects.classes.title = C++ Classes
 qhp.QtTaskTree.subprojects.classes.indexTitle = Qt TaskTree C++ Classes
 qhp.QtTaskTree.subprojects.classes.selectors = class fake:headerfile
 qhp.QtTaskTree.subprojects.classes.sortPages = true
+
+qhp.QtTaskTree.subprojects.examples.title              = Examples
+qhp.QtTaskTree.subprojects.examples.indexTitle         = Qt TaskTree Examples
+qhp.QtTaskTree.subprojects.examples.selectors          = example
+qhp.QtTaskTree.subprojects.examples.sortPages          = true
+
 
 depends += qtcore \
            qtdoc \

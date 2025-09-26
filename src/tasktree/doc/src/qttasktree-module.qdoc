@@ -70,3 +70,12 @@
     the \l{GNU General Public License, version 2}.
     See \l{Qt Licensing} for further details.
 */
+
+/*!
+    \group tasktree_examples
+    \title Qt TaskTree Examples
+
+    \brief Examples for the Qt TaskTree.
+
+    For some code examples, see one of the Qt TaskTree examples:
+*/
