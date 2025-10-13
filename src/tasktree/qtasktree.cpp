@@ -762,6 +762,7 @@ using namespace Qt::StringLiterals;
                 QObject::connect(task, &QTimer::timeout, iface, [iface] {
                     iface->reportDone(DoneResult::Success);
                 });
+                task->start();
             }
         };
 
