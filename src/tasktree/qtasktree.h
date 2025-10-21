@@ -443,15 +443,25 @@ static GroupItem onGroupDone(Handler &&handler, CallDoneFlags callDone = CallDon
     return Group::onGroupDone(std::forward<Handler>(handler), callDone);
 }
 
-// Default: 1 (sequential). 0 means unlimited (parallel).
-Q_TASKTREE_EXPORT GroupItem parallelLimit(int limit);
+class ExecutionMode : public GroupItem
+{
+private:
+    friend class ParallelLimit;
+    Q_TASKTREE_EXPORT ExecutionMode(int limit);
+};
+
+class ParallelLimit : public ExecutionMode
+{
+public:
+    Q_TASKTREE_EXPORT ParallelLimit(int limit);
+};
 
 // Default: WorkflowPolicy::StopOnError.
 Q_TASKTREE_EXPORT GroupItem workflowPolicy(WorkflowPolicy policy);
 
-Q_TASKTREE_EXPORT extern const GroupItem sequential;
-Q_TASKTREE_EXPORT extern const GroupItem parallel;
-Q_TASKTREE_EXPORT extern const GroupItem parallelIdealThreadCountLimit;
+Q_TASKTREE_EXPORT extern const ExecutionMode sequential;
+Q_TASKTREE_EXPORT extern const ExecutionMode parallel;
+Q_TASKTREE_EXPORT extern const ExecutionMode parallelIdealThreadCountLimit;
 
 Q_TASKTREE_EXPORT extern const GroupItem stopOnError;
 Q_TASKTREE_EXPORT extern const GroupItem continueOnError;

@@ -525,10 +525,10 @@ using namespace Qt::StringLiterals;
 
     The execution mode element in a Group specifies how the direct
     child tasks of the Group are started. The most common execution modes are
-    \l {QtTaskTree::sequential} {sequential} and
-    \l {QtTaskTree::parallel} {parallel}. It's also possible to specify
+    \l {QtTaskTree::} {sequential} and
+    \l {QtTaskTree::} {parallel}. It's also possible to specify
     the limit of tasks running in parallel by using the
-    \l {QtTaskTree::parallelLimit()} {parallelLimit()} function.
+    \l {QtTaskTree::} {ParallelLimit} element.
 
     In all execution modes, a group starts tasks in the oder
     in which they appear.
@@ -842,12 +842,11 @@ namespace QtTaskTree {
             and destroys it just after the group is left.
     \row
         \li Other group control items
-        \li The items returned by
-            \l {QtTaskTree::parallelLimit()} {parallelLimit()} or
-            \l {QtTaskTree::workflowPolicy()} {workflowPolicy()}
+        \li The \l {QtTaskTree::} {ExecutionMode} or items returned by
+            \l {QtTaskTree::} {workflowPolicy()}
             influence the group's behavior. The items returned by
-            \l {QtTaskTree::onGroupSetup()} {onGroupSetup()} or
-            \l {QtTaskTree::onGroupDone()} {onGroupDone()} define custom
+            \l {QtTaskTree::} {onGroupSetup()} or
+            \l {QtTaskTree::} {onGroupDone()} define custom
             handlers called when the group starts or ends execution.
     \endtable
 */
@@ -876,9 +875,9 @@ namespace QtTaskTree {
         };
     \endcode
 
-    The group's behavior may be customized by inserting the items returned by
-    \l {QtTaskTree::parallelLimit()} {parallelLimit()} or
-    \l {QtTaskTree::workflowPolicy()} {workflowPolicy()} functions:
+    You can customize the group's behavior by inserting the
+    \l {QtTaskTree::}{ExecutionMode} or
+    \l {QtTaskTree::}{WorkflowPolicy} items:
 
     \code
         const Group group {
@@ -999,7 +998,7 @@ namespace QtTaskTree {
     (if any - for example in parallel mode), and skips executing tasks
     it has not started yet (for example, in the sequential mode -
     those, that are placed after the failed task). Both canceling and
-    skipping child tasks may happen when parallelLimit() is used.
+    skipping child tasks may happen when ParallelLimit is used.
 
     The table below summarizes the differences between various
     workflow policies:
@@ -1152,7 +1151,7 @@ namespace QtTaskTree {
     as input to the next task before it starts. This mode guarantees that
     the next task is started only after the previous task finishes.
 
-    \sa parallel, parallelLimit()
+    \sa parallel, ParallelLimit
 */
 
 /*!
@@ -1163,7 +1162,7 @@ namespace QtTaskTree {
     is started, without waiting for the previous child tasks to finish.
     In this mode, all child tasks run simultaneously.
 
-    \sa sequential, parallelLimit()
+    \sa sequential, ParallelLimit
 */
 
 /*!
@@ -1175,10 +1174,10 @@ namespace QtTaskTree {
 
     This is a shortcut to:
     \code
-        parallelLimit(qMax(QThread::idealThreadCount() - 1, 1))
+        ParallelLimit(qMax(QThread::idealThreadCount() - 1, 1))
     \endcode
 
-    \sa parallel, parallelLimit()
+    \sa parallel, ParallelLimit
 */
 
 /*!
@@ -1656,16 +1655,41 @@ private:
 };
 
 /*!
-    Constructs a group's element describing the \l{Execution Mode}{execution mode}.
+    \class QtTaskTree::ExecutionMode
+    \inheaderfile qtasktree.h
+    \inmodule TaskTree
+    \brief The group element describing execution mode.
+    \reentrant
 
-    The execution mode element in a Group specifies how the direct
-    child tasks of the Group are started.
+    The \l{Execution Mode}{execution mode} element in a Group specifies
+    how the direct child tasks of the Group are started.
 
-    For convenience, when appropriate, the \l sequential or \l parallel
-    global elements may be used instead.
+    For convenience, you can use the \l sequential, \l parallel,
+    \l parallelIdealThreadCountLimit, or \l ParallelLimit
+    elements instead.
+
+    In all execution modes, a group starts tasks in the order in
+    which they appear.
+
+    If a child of a group is also a group, the child group runs its tasks
+    according to its own execution mode.
+
+    \sa sequential, parallel, parallelIdealThreadCountLimit, ParallelLimit
+*/
+
+ExecutionMode::ExecutionMode(int limit)
+    : GroupItem({{}, limit})
+{}
+
+/*!
+    \class QtTaskTree::ParallelLimit
+    \inheaderfile qtasktree.h
+    \inmodule TaskTree
+    \brief The parallel execution mode with a custom limit.
+    \reentrant
 
     The \a limit defines the maximum number of direct child tasks
-     running in parallel:
+    running in parallel:
 
     \list
         \li When \a limit equals to 0, there is no limit, and all direct
@@ -1694,21 +1718,17 @@ private:
         processes might block the machine for a long time.
     \endlist
 
-    In all execution modes, a group starts tasks in the oder in
-    which they appear.
-
-    If a child of a group is also a group, the child group runs its tasks
-    according to its own execution mode.
-
-    \sa sequential, parallel
+    \sa ExecutionMode
 */
-GroupItem parallelLimit(int limit)
-{
-    struct ParallelLimit : GroupItem {
-         ParallelLimit(int limit) : GroupItem({{}, limit}) {}
-    };
-    return ParallelLimit(limit);
-}
+
+/*!
+    Constructs a parallel execution mode with a given \a limit.
+
+    \sa ExecutionMode
+*/
+ParallelLimit::ParallelLimit(int limit)
+    : ExecutionMode(limit)
+{}
 
 /*!
     Constructs a group's \l {Workflow Policy} {workflow policy} element
@@ -1728,9 +1748,9 @@ GroupItem workflowPolicy(WorkflowPolicy policy)
     return WorkflowPolicyItem(policy);
 }
 
-const GroupItem sequential = parallelLimit(1);
-const GroupItem parallel = parallelLimit(0);
-const GroupItem parallelIdealThreadCountLimit = parallelLimit(qMax(QThread::idealThreadCount() - 1, 1));
+const ExecutionMode sequential = ParallelLimit(1);
+const ExecutionMode parallel = ParallelLimit(0);
+const ExecutionMode parallelIdealThreadCountLimit = ParallelLimit(qMax(QThread::idealThreadCount() - 1, 1));
 
 const GroupItem stopOnError = workflowPolicy(WorkflowPolicy::StopOnError);
 const GroupItem continueOnError = workflowPolicy(WorkflowPolicy::ContinueOnError);

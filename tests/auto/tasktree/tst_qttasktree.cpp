@@ -2058,7 +2058,7 @@ void tst_TaskTree::testTree_data()
 
     {
         const Group root {
-            parallelLimit(2),
+            ParallelLimit(2),
             storage,
             Group {
                 groupSetup(1),
@@ -2096,7 +2096,7 @@ void tst_TaskTree::testTree_data()
 
     {
         const Group root {
-            parallelLimit(2),
+            ParallelLimit(2),
             storage,
             Group {
                 groupSetup(1),
@@ -2141,7 +2141,7 @@ void tst_TaskTree::testTree_data()
 
     {
         const Group root1 {
-            parallelLimit(2),
+            ParallelLimit(2),
             storage,
             Group {
                 groupSetup(1),
@@ -2181,7 +2181,7 @@ void tst_TaskTree::testTree_data()
         // - task 1 should be stopped as a consequence of the error inside the group
         // - tasks 4 and 5 should be skipped
         const Group root2 {
-            parallelLimit(2),
+            ParallelLimit(2),
             storage,
             Group {
                 groupSetup(1),
@@ -2228,7 +2228,7 @@ void tst_TaskTree::testTree_data()
             continueOnError,
             storage,
             Group {
-                parallelLimit(2),
+                ParallelLimit(2),
                 Group {
                     groupSetup(1),
                     createSuccessTask(1, 1s)
@@ -2275,7 +2275,7 @@ void tst_TaskTree::testTree_data()
 
     {
         const Group root {
-            parallelLimit(2),
+            ParallelLimit(2),
             storage,
             Group {
                 groupSetup(1),
@@ -2325,7 +2325,7 @@ void tst_TaskTree::testTree_data()
 
     {
         const Group root {
-            parallelLimit(2),
+            ParallelLimit(2),
             storage,
             Group {
                 groupSetup(1),
@@ -2371,7 +2371,7 @@ void tst_TaskTree::testTree_data()
 
     {
         const Group root {
-            parallelLimit(2),
+            ParallelLimit(2),
             storage,
             Group {
                 groupSetup(1),
@@ -2597,7 +2597,7 @@ void tst_TaskTree::testTree_data()
         // as in SEQUENTIAL mode the next task may only be started after the previous one finished.
         // In this case, the previous task (Group element) awaits for the barrier's advance to
         // come from the not yet started next task, causing a deadlock.
-        // The minimal requirement for this scenario to succeed is to set parallelLimit(2) or more.
+        // The minimal requirement for this scenario to succeed is to set ParallelLimit(2) or more.
         const Group root3 {
             storage,
             barrier,
@@ -2823,7 +2823,7 @@ void tst_TaskTree::testTree_data()
         // as in SEQUENTIAL mode the next task may only be started after the previous one finished.
         // In this case, the previous task (Group element) awaits for the barrier's advance to
         // come from the not yet started next task, causing a deadlock.
-        // The minimal requirement for this scenario to succeed is to set parallelLimit(2) or more.
+        // The minimal requirement for this scenario to succeed is to set ParallelLimit(2) or more.
         const Group root3 {
             storage,
             barrier,
@@ -3097,7 +3097,7 @@ void tst_TaskTree::testTree_data()
         };
 
         const Group rootParallelLimitSuccess = For (RepeatIterator(2)) >> Do  {
-            parallelLimit(2),
+            ParallelLimit(2),
             successItems
         };
         const Log logParallelLimitSuccess {
@@ -3144,7 +3144,7 @@ void tst_TaskTree::testTree_data()
         };
 
         const Group rootParallelLimitError = For (RepeatIterator(2)) >> Do {
-            parallelLimit(2),
+            ParallelLimit(2),
             errorItems
         };
         const Log logParallelLimitError {
@@ -3239,7 +3239,7 @@ void tst_TaskTree::testTree_data()
         };
 
         const Group rootParallelLimit = For(loop) >> Do {
-            parallelLimit(2),
+            ParallelLimit(2),
             items
         };
         const Log logParallelLimit {
