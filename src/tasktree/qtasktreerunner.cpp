@@ -130,7 +130,7 @@ QAbstractTaskTreeRunner::~QAbstractTaskTreeRunner() = default;
 
     Cancels all running task trees. Calls task trees' done
     handlers and emits done() signals with
-    \l {QtTaskTree::DoneWith::Cancel} {DoneWith::Cancel}.
+    \l {QtTaskTree::} {DoneWith::Cancel}.
     Any scheduled and not started task tree executions are removed.
 */
 
@@ -207,7 +207,7 @@ bool QSingleTaskTreeRunner::isRunning() const { return bool(d_func()->m_taskTree
 
     Cancels the running task tree. Calls task tree' done
     handler and emits done() signal with
-    \l {QtTaskTree::DoneWith::Cancel} {DoneWith::Cancel}.
+    \l {QtTaskTree::} {DoneWith::Cancel}.
 */
 void QSingleTaskTreeRunner::cancel()
 {
@@ -340,7 +340,7 @@ bool QSequentialTaskTreeRunner::isRunning() const
 
     Cancels the running task tree. Calls task tree' done
     handler and emits done() signal with
-    \l {QtTaskTree::DoneWith::Cancel} {DoneWith::Cancel}.
+    \l {QtTaskTree::} {DoneWith::Cancel}.
     All queued tasks are removed.
 */
 void QSequentialTaskTreeRunner::cancel()
@@ -367,7 +367,7 @@ void QSequentialTaskTreeRunner::reset()
 /*!
     Cancels the running task tree. Calls task tree' done
     handler and emits done() signal with
-    \l {QtTaskTree::DoneWith::Cancel} {DoneWith::Cancel}.
+    \l {QtTaskTree::} {DoneWith::Cancel}.
     If there are any enqueued recipes, the dequeued recipe is started.
 */
 void QSequentialTaskTreeRunner::cancelCurrent()
@@ -457,7 +457,7 @@ bool QParallelTaskTreeRunner::isRunning() const { return !d_func()->m_taskTrees.
 
     Cancels all running task trees. Calls task trees' done
     handlers and emits done() signals with
-    \l {QtTaskTree::DoneWith::Cancel} {DoneWith::Cancel}.
+    \l {QtTaskTree::} {DoneWith::Cancel}.
     The order of task trees' cancellation is random.
 */
 void QParallelTaskTreeRunner::cancel()
@@ -555,7 +555,7 @@ void QParallelTaskTreeRunner::startImpl(const Group &recipe,
 
     Cancels all running task trees. Calls task trees' done
     handlers and emits done() signals with
-    \l {QtTaskTree::DoneWith::Cancel} {DoneWith::Cancel}.
+    \l {QtTaskTree::} {DoneWith::Cancel}.
     The order of task trees' cancellation is random.
 */
 
@@ -579,7 +579,7 @@ void QParallelTaskTreeRunner::startImpl(const Group &recipe,
 
     Cancels a potentially running task tree that was started with the \a key.
     Calls task tree's done handler and emits done() signal with
-    \l {QtTaskTree::DoneWith::Cancel} {DoneWith::Cancel}.
+    \l {QtTaskTree::} {DoneWith::Cancel}.
 */
 
 /*!

@@ -53,8 +53,8 @@ using namespace Qt::StringLiterals;
     or in parallel. Inside recipes you may define different continuation
     paths depending on whether the previous task finished with success
     or an error. It's also possible to nest tasks in
-    \l {QtTaskTree::Group} {Group} elements, and each
-    \l {QtTaskTree::Group} {Group} may run its tasks according to
+    \l {QtTaskTree::} {Group} elements, and each
+    \l {QtTaskTree::} {Group} may run its tasks according to
     it's own execution mode or workflow policy.
     The recipes form the task tree structures.
 
@@ -96,7 +96,7 @@ using namespace Qt::StringLiterals;
             task tree (via QCustomTask)
         \li in which order
         \li what data structures are to be created dynamically by the running
-            task tree (via \l {QtTaskTree::Storage} {Storage})
+            task tree (via \l {QtTaskTree::} {Storage})
         \li how to setup each task before start
         \li how to collect data when tasks are finished
         \li execution mode (tasks should run in sequence or in parallel)
@@ -186,17 +186,17 @@ using namespace Qt::StringLiterals;
 
     When the last running task finishes with success, the task tree is
     considered to have run successfully and the QTaskTree::done() signal
-    is emitted with \l {QtTaskTree::DoneWith::Success} {DoneWith::Success}.
+    is emitted with \l {QtTaskTree::} {DoneWith::Success}.
     When a task finishes with an error, the execution of the task tree
     is stopped and the remaining tasks are skipped. The task tree finishes
     with an error and sends the QTaskTree::done() signal with
-    \l {QtTaskTree::DoneWith::Error} {DoneWith::Error}.
+    \l {QtTaskTree::} {DoneWith::Error}.
 
     \section1 Groups
 
-    The parent of the \l {QtTaskTree::Group} {Group} sees it as a single task.
+    The parent of the \l {QtTaskTree::} {Group} sees it as a single task.
     Like other tasks, the group can be started and it can finish with
-    success or an error. The \l {QtTaskTree::Group} {Group} elements
+    success or an error. The \l {QtTaskTree::} {Group} elements
     can be nested to create a tree structure:
 
     \code
@@ -314,25 +314,25 @@ using namespace Qt::StringLiterals;
     When used, it must be the first argument of the task's constructor.
 
     Optionally, the setup handler may return a
-    \l {QtTaskTree::SetupResult} {SetupResult}. The returned
-    \l {QtTaskTree::SetupResult} {SetupResult} influences the further
+    \l {QtTaskTree::} {SetupResult}. The returned
+    \l {QtTaskTree::} {SetupResult} influences the further
     start behavior of a given task. The possible values are:
 
     \table
     \header
-        \li SetupResult Value
+        \li \l {QtTaskTree::} {SetupResult} Value
         \li Brief Description
     \row
-        \li \l {QtTaskTree::SetupResult::Continue} {Continue}
+        \li \l {QtTaskTree::SetupResult::} {Continue}
         \li The task will be started normally. This is the default behavior
             when the setup handler doesn't return
-            \l {QtTaskTree::SetupResult} {SetupResult}
+            \l {QtTaskTree::} {SetupResult}
             (that is, its return type is void).
     \row
-        \li \l {QtTaskTree::SetupResult::StopWithSuccess} {StopWithSuccess}
+        \li \l {QtTaskTree::SetupResult::} {StopWithSuccess}
         \li The task won't be started and it will report success to its parent.
     \row
-        \li \l {QtTaskTree::SetupResult::StopWithError} {StopWithError}
+        \li \l {QtTaskTree::SetupResult::} {StopWithError}
         \li The task won't be started and it will report an error to its parent.
     \endtable
 
@@ -341,7 +341,7 @@ using namespace Qt::StringLiterals;
     started tasks finish. In this way, the setup handler dynamically
     decides whether to start the corresponding task normally or skip it
     and report success or an error. For more information about inter-task
-    data exchange, see \l {QtTaskTree::Storage} {Storage}.
+    data exchange, see \l {QtTaskTree::} {Storage}.
 
     \section2 Task's Done Handler
 
@@ -369,8 +369,8 @@ using namespace Qt::StringLiterals;
     for further processing or perform additional actions.
 
     \note If the task setup handler returns
-          \l {QtTaskTree::SetupResult::StopWithSuccess} {StopWithSuccess} or
-          \l {QtTaskTree::SetupResult::StopWithError} {StopWithError},
+          \l {QtTaskTree::SetupResult::} {StopWithSuccess} or
+          \l {QtTaskTree::SetupResult::} {StopWithError},
           the done handler is not invoked.
 
     \section1 Group Handlers
@@ -395,22 +395,22 @@ using namespace Qt::StringLiterals;
     \endcode
 
     The group setup handler is optional. To define a group setup handler,
-    add an \l {QtTaskTree::onGroupSetup()} {onGroupSetup()} element to a group.
-    The argument of \l {QtTaskTree::onGroupSetup()} {onGroupSetup()} is a user
+    add an \l {QtTaskTree::} {onGroupSetup()} element to a group.
+    The argument of \l {QtTaskTree::} {onGroupSetup()} is a user
     handler. If you add more than one
-    \l {QtTaskTree::onGroupSetup()} {onGroupSetup()} element to a group,
+    \l {QtTaskTree::} {onGroupSetup()} element to a group,
     an assert is triggered at runtime that includes an error message.
 
     Like the task's start handler, the group start handler may return
-    \l {QtTaskTree::SetupResult} {SetupResult}.
-    The returned \l {QtTaskTree::SetupResult} {SetupResult} value affects
+    \l {QtTaskTree::} {SetupResult}.
+    The returned \l {QtTaskTree::} {SetupResult} value affects
     the start behavior of the whole group. If you do not specify
     a group start handler, or its return type is void,
-    the default group's action is \l {QtTaskTree::SetupResult::Continue}
-    {Continue}, so that all tasks are started normally.
+    the default group's action is \l {QtTaskTree::SetupResult::} {Continue},
+    so that all tasks are started normally.
     Otherwise, when the start handler returns
-    \l {QtTaskTree::SetupResult::StopWithSuccess} {StopWithSuccess} or
-    \l {QtTaskTree::SetupResult::StopWithError} {StopWithError},
+    \l {QtTaskTree::SetupResult::} {StopWithSuccess} or
+    \l {QtTaskTree::SetupResult::} {StopWithError},
     the tasks are not started (they are skipped) and the group itself
     reports success or an error, depending on the returned value, respectively.
 
@@ -482,13 +482,13 @@ using namespace Qt::StringLiterals;
 
     \section2 Groups's Done Handler
 
-    A \l {QtTaskTree::Group} {Group}'s done handler is executed after
+    A \l {QtTaskTree::} {Group}'s done handler is executed after
     the successful or failed execution of its tasks.
     The final value reported by the group depends on its \l {Workflow Policy}.
     The handler can apply other necessary actions.
-    The done handler is defined inside the \l {QtTaskTree::onGroupDone()}
-    {onGroupDone()} element of a group. It may take the optional
-    \l {QtTaskTree::DoneWith} {DoneWith} argument, indicating
+    The done handler is defined inside the \l {QtTaskTree::} {onGroupDone()}
+    element of a group. It may take the optional
+    \l {QtTaskTree::} {DoneWith} argument, indicating
     the successful or failed execution:
 
     \code
@@ -505,12 +505,12 @@ using namespace Qt::StringLiterals;
     \endcode
 
     The group done handler is optional. If you add more than one
-    \l {QtTaskTree::onGroupDone()} {onGroupDone()} to a group,
+    \l {QtTaskTree::} {onGroupDone()} to a group,
     an assert is triggered at runtime that includes an error message.
 
     \note Even if the group setup handler returns
-    \l {QtTaskTree::SetupResult::StopWithSuccess} {StopWithSuccess} or
-    \l {QtTaskTree::SetupResult::StopWithError} {StopWithError},
+    \l {QtTaskTree::SetupResult::} {StopWithSuccess} or
+    \l {QtTaskTree::SetupResult::} {StopWithError},
     the group's done handler is invoked. This behavior differs from that
     of task done handler and might change in the future.
 
@@ -538,17 +538,17 @@ using namespace Qt::StringLiterals;
 
     \section2 Workflow Policy
 
-    The workflow policy element in a \l {QtTaskTree::Group} {Group}
+    The workflow policy element in a \l {QtTaskTree::} {Group}
     specifies how the group should behave when any of its \e direct
     child's tasks finish. For a detailed description of possible policies,
-    refer to \l {QtTaskTree::WorkflowPolicy} {WorkflowPolicy}.
+    refer to \l {QtTaskTree::} {WorkflowPolicy}.
 
     If a child of a group is also a group, the child group runs its tasks
     according to its own workflow policy.
 
     \section2 Storage
 
-    Use the \l {QtTaskTree::Storage} {Storage} element to exchange
+    Use the \l {QtTaskTree::} {Storage} element to exchange
     information between tasks. Especially, in the sequential execution mode,
     when a task needs data from another, already finished task,
     before it can start. For example, a task tree that copies data
@@ -613,7 +613,7 @@ using namespace Qt::StringLiterals;
     saving task [6].
 
     To enable a task tree to manage the \c CopyStorage struct, an instance of
-    \l {QtTaskTree::Storage} {Storage}<\c {CopyStorage}> is created [3].
+    \l {QtTaskTree::} {Storage}<\c {CopyStorage}> is created [3].
     If a copy of this object is inserted as the group's child item [7],
     an instance of the \c CopyStorage struct is created dynamically
     when the task tree enters this group. When the task tree leaves this group,
@@ -621,7 +621,7 @@ using namespace Qt::StringLiterals;
     as it's no longer needed.
 
     If several task trees holding a copy of the common
-    \l {QtTaskTree::Storage} {Storage}<\c {CopyStorage}> instance run
+    \l {QtTaskTree::} {Storage}<\c {CopyStorage}> instance run
     simultaneously (including the case when the task trees are run
     in different threads), each task tree contains its own copy of
     the \c CopyStorage struct.
@@ -629,45 +629,45 @@ using namespace Qt::StringLiterals;
     You can access \c CopyStorage from any handler in the group with
     a storage object. This includes all handlers of all descendant tasks
     of the group with a storage object. To access the custom struct
-    in a handler, pass the copy of the \l {QtTaskTree::Storage}
-    {Storage}<\c {CopyStorage}> object to the handler (for example,
-    in a lambda capture) [4].
+    in a handler, pass the copy of the
+    \l {QtTaskTree::} {Storage}<\c {CopyStorage}> object to the handler
+    (for example, in a lambda capture) [4].
 
     When the task tree invokes a handler in a subtree containing
     the storage [7], the task tree activates its own \c CopyStorage
-    instance inside the \l {QtTaskTree::Storage} {Storage}<\c {CopyStorage}>
+    instance inside the \l {QtTaskTree::} {Storage}<\c {CopyStorage}>
     object. Therefore, the \c CopyStorage struct may be accessed
     only from within the handler body. To access the currently active
     \c CopyStorage from within
-    \l {QtTaskTree::Storage} {Storage}<\c {CopyStorage}>, use the
-    \l {QtTaskTree::Storage::operator->()} {Storage::operator->()},
-    \l {QtTaskTree::Storage::operator*()} {Storage::operator*()}, or
-    \l {QtTaskTree::Storage::activeStorage()} {Storage::activeStorage()}
+    \l {QtTaskTree::} {Storage}<\c {CopyStorage}>, use the
+    \l {QtTaskTree::} {Storage::operator->()},
+    \l {QtTaskTree::} {Storage::operator*()}, or
+    \l {QtTaskTree::} {Storage::activeStorage()}
        method.
 
     The following list summarizes how to employ a Storage object into the task
     tree:
     \list 1
         \li Define the custom structure \c MyStorage with custom data [1], [2]
-        \li Create an instance of the \l {QtTaskTree::Storage}
+        \li Create an instance of the \l {QtTaskTree::}
             {Storage}<\c {MyStorage}> storage [3]
-        \li Pass the \l {QtTaskTree::Storage} {Storage}<\c {MyStorage}>
+        \li Pass the \l {QtTaskTree::} {Storage}<\c {MyStorage}>
             instance to handlers [4]
         \li Access the \c MyStorage instance in handlers [5], [6]
-        \li Insert the \l {QtTaskTree::Storage} {Storage}<\c {MyStorage}>
+        \li Insert the \l {QtTaskTree::} {Storage}<\c {MyStorage}>
             instance into a group [7]
     \endlist
 
     \section1 QTaskTree class
 
     QTaskTree executes the tree structure of asynchronous tasks according
-    to the recipe described by the \l {QtTaskTree::Group} {Group}
+    to the recipe described by the \l {QtTaskTree::} {Group}
     root element.
 
     As QTaskTree is also an asynchronous task, it can be a part of another
     QTaskTree. To place a nested QTaskTree inside another QTaskTree,
     insert the QTaskTreeTask element into another
-    \l {QtTaskTree::Group} {Group} element.
+    \l {QtTaskTree::} {Group} element.
 
     QTaskTree reports progress of completed tasks when running.
     The progress value is increased when a task finishes or is skipped
@@ -743,7 +743,7 @@ using namespace Qt::StringLiterals;
         \li Your task is derived from QObject.
         \li Your task has public start() method that starts the task.
         \li Your task emits done(bool) or
-            done(\l {QtTaskTree::DoneResult} {DoneResult}) signal
+            done(\l {QtTaskTree::} {DoneResult}) signal
             when it's finished.
     \endlist
 
@@ -808,11 +808,11 @@ namespace QtTaskTree {
     \inheaderfile qtasktree.h
     \inmodule TaskTree
     \brief GroupItem represents the basic element that may be a part of any
-           \l {QtTaskTree::Group} {Group}.
+           \l {QtTaskTree::} {Group}.
     \reentrant
 
     GroupItem is a basic element that may be a part of any
-    \l {QtTaskTree::Group} {Group}. It encapsulates the functionality
+    \l {QtTaskTree::} {Group}. It encapsulates the functionality
     provided by any GroupItem's subclass.
     It is a value type and it is safe to copy the GroupItem instance,
     even when it is originally created via the subclass' constructor.
@@ -820,7 +820,7 @@ namespace QtTaskTree {
     There are four main kinds of GroupItem:
     \table
     \header
-        \li GroupItem Kind
+        \li \l {QtTaskTree::} {GroupItem} Kind
         \li Brief Description
     \row
         \li \l QCustomTask
@@ -829,14 +829,14 @@ namespace QtTaskTree {
             QConcurrentCallTask<ResultType> or QNetworkReplyWrapperTask.
             Asynchronous tasks are the main reason for using a task tree.
     \row
-        \li \l {QtTaskTree::Group} {Group}
+        \li \l {QtTaskTree::} {Group}
         \li A container for other group items. Since the group is of the
             GroupItem type, it's possible to nest it inside another group.
             The group is seen by its parent as a single asynchronous task.
     \row
-        \li GroupItem containing \l {QtTaskTree::Storage} {Storage}
+        \li GroupItem containing \l {QtTaskTree::} {Storage}
         \li Enables the child tasks of a group to exchange data.
-            When GroupItem containing \l {QtTaskTree::Storage} {Storage}
+            When GroupItem containing \l {QtTaskTree::} {Storage}
             is placed inside a group, the task tree instantiates
             the storage's data object just before the group is entered,
             and destroys it just after the group is left.
@@ -1392,7 +1392,7 @@ namespace QtTaskTree {
     The Storage class template is responsible for dynamically creating
     and destructing objects of the custom \c StorageStruct type.
     The creation and destruction are managed by the running task tree.
-    If a Storage object is placed inside a \l {QtTaskTree::Group} {Group}
+    If a Storage object is placed inside a \l {QtTaskTree::} {Group}
     element, the running task tree creates the \c StorageStruct object
     when the group is started and before the group's setup handler is called.
     Later, whenever any handler inside this group is called,
@@ -1400,11 +1400,11 @@ namespace QtTaskTree {
     \c StorageStruct object. This includes all tasks' and groups'
     setup and done handlers inside the group where the Storage object
     was placed, also within the nested groups. When a copy of the Storage
-    object is passed to the handler via the  lambda capture, the handler
+    object is passed to the handler via the lambda capture, the handler
     may access the instance activated by the running task tree via the
-    \l {QtTaskTree::Storage::operator->()} {operator->()},
-    \l {QtTaskTree::Storage::operator*()} {operator*()},
-    or activeStorage() method. If two handlers capture the same Storage object,
+    \l {QtTaskTree::} {Storage::operator->()},
+    \l {QtTaskTree::} {Storage::operator*()}, or activeStorage() method.
+    If two handlers capture the same Storage object,
     one of them may store a custom data there, and the other may
     read it afterwards. When the group is finished, the previously created
     instance of the \c StorageStruct object is destroyed after the
@@ -1442,18 +1442,18 @@ namespace QtTaskTree {
     \c onSecondSetup handler. This means that the QString data,
     read from the \c storage inside the \c onSecondSetup handler's body,
     has already been set by the \c onFirstDone handler.
-    You can always rely on it in \l {QtTaskTree::sequential}
-    {sequential} execution mode.
+    You can always rely on it in \l {QtTaskTree::} {sequential}
+    execution mode.
 
     The Storage internals are shared between all of its copies.
     That is why the copies of the Storage object inside the handlers'
     lambda captures still refer to the same Storage instance.
     You may place multiple Storage objects inside one
-    \l {QtTaskTree::Group} {Group} element, provided that they do not
+    \l {QtTaskTree::} {Group} element, provided that they do not
     include copies of the same Storage object. Otherwise, an assert
     is triggered at runtime that includes an error message.
     However, you can place copies of the same Storage object in different
-    \l {QtTaskTree::Group} {Group} elements of the same recipe.
+    \l {QtTaskTree::} {Group} elements of the same recipe.
     In this case, the running task tree will create multiple instances
     of the \c StorageStruct objects (one for each copy)
     and storage shadowing will take place. Storage shadowing works in a
@@ -1479,8 +1479,8 @@ namespace QtTaskTree {
     The Storage objects may also be used for passing the initial data
     to the executed task tree, and for reading the final data out of
     the task tree before it finishes. To do this, use
-    \l {QTaskTree::onStorageSetup()} {onStorageSetup()} or
-    \l {QTaskTree::onStorageDone()} {onStorageDone()}, respectively.
+    \l {QTaskTree::} {onStorageSetup()} or
+    \l {QTaskTree::} {onStorageDone()}, respectively.
 
     \note If you use an unreachable Storage object inside the handler,
           because you forgot to place the storage in the recipe,
@@ -1565,7 +1565,7 @@ namespace QtTaskTree {
 
     Constructs a GroupItem element holding the \a storage object.
 
-    When the \l {QtTaskTree::Group} {Group} element containing
+    When the \l {QtTaskTree::} {Group} element containing
     \e this GroupItem is entered by the running task tree, an instance
     of the \c StorageStruct is created dynamically.
 
@@ -1573,13 +1573,13 @@ namespace QtTaskTree {
     the previously instantiated \c StorageStruct is deleted.
 
     The dynamically created instance of \c StorageStruct is accessible
-    from inside any handler body of the parent \l {QtTaskTree::Group}
-    {Group} element, including nested groups and its tasks, via the
-    \l {QtTaskTree::Storage::operator->()} {Storage::operator->()},
-    \l {QtTaskTree::Storage::operator*()} {Storage::operator*()},
+    from inside any handler body of the parent \l {QtTaskTree::} {Group}
+    element, including nested groups and its tasks, via the
+    \l {QtTaskTree::} {Storage::operator->()},
+    \l {QtTaskTree::} {Storage::operator*()},
     or Storage::activeStorage() method.
 
-    \sa {QtTaskTree::Storage} {Storage}
+    \sa {QtTaskTree::} {Storage}
 */
 
 /*!
@@ -1930,7 +1930,7 @@ Group operator>>(const For &forItem, const Do &doItem)
     will be repeated until some task finishes with an error.
 
     Refer to \l Do documentation for more information about placing
-    group handlers and \l {QtTaskTree::Storage} {Storage} as a direct
+    group handlers and \l {QtTaskTree::} {Storage} as a direct
     children of the Forever body.
 
     \sa For, ForeverIterator
@@ -2467,7 +2467,7 @@ public:
     it is simply replaced with its \a children.
 
     This constructor is useful when constructing a
-    \l {QtTaskTree::Group} {Group} element with lists of
+    \l {QtTaskTree::} {Group} element with lists of
     GroupItem elements:
 
     \code
@@ -2484,14 +2484,14 @@ public:
         };
     \endcode
 
-    If you want to create a subtree, use \l {QtTaskTree::Group} {Group} instead.
+    If you want to create a subtree, use \l {QtTaskTree::} {Group} instead.
 
     \note Don't confuse this GroupItem with the
-          \l {QtTaskTree::Group} {Group} element, as
-          \l {QtTaskTree::Group} {Group} keeps its children nested
+          \l {QtTaskTree::} {Group} element, as
+          \l {QtTaskTree::} {Group} keeps its children nested
           after being parsed by the task tree, while this GroupItem does not.
 
-    \sa {QtTaskTree::Group} {Group}
+    \sa {QtTaskTree::} {Group}
 */
 GroupItem::GroupItem(const GroupItems &children)
     : GroupItem(Type::List)
@@ -2903,16 +2903,16 @@ Group ExecutableItem::withCancelImpl(
     that describes the emitter and its awaiting signal.
 
     When \c this ExecutableItem finishes with an error, the returned
-    \l {QtTaskTree::Group} {Group} finishes immediately with an error,
+    \l {QtTaskTree::} {Group} finishes immediately with an error,
     without awaiting for the awaiter's signal.
 
     When \c this ExecutableItem finishes with success, the returned
-    \l {QtTaskTree::Group} {Group} doesn't finish immediately but waits
+    \l {QtTaskTree::} {Group} doesn't finish immediately but waits
     for the awaiting signal to be sent. After the awaiting signal
-    is sent, the returned \l {QtTaskTree::Group} {Group} finishes with success.
+    is sent, the returned \l {QtTaskTree::} {Group} finishes with success.
     If the awaiting signal is sent before \c this ExecutableItem finishes,
     the awaiting phase is skipped and the returned
-    \l {QtTaskTree::Group} {Group} finishes synchronously.
+    \l {QtTaskTree::} {Group} finishes synchronously.
 
     The connection to the awaiter's signal is established
     when \c this ExecutableItem is about to be started. If the
@@ -3698,7 +3698,7 @@ using namespace QtTaskTree;
 
     QSyncTask is useful when you want to execute an additional
     handler between other tasks. QSyncTask is seen by its parent
-    \l {QtTaskTree::Group} {Group} as any other task.
+    \l {QtTaskTree::} {Group} as any other task.
     Avoid long-running execution of the QSyncTask's handler body,
     since it is executed synchronously from the caller thread.
     If that is unavoidable, consider using QConcurrentCallTask instead.
@@ -3709,12 +3709,12 @@ using namespace QtTaskTree;
 
     Constructs an element that executes a passed \a handler synchronously.
     The \c Handler is of the \c std::function<DoneResult()> type.
-    The \l {QtTaskTree::DoneResult} {DoneResult} value,
+    The \l {QtTaskTree::} {DoneResult} value,
     returned by the \a handler, is considered during parent group's
     \l {QtTaskTree::WorkflowPolicy} {workflow policy} resolution.
     Optionally, the shortened form of \c std::function<void()> is also accepted.
     In this case, it's assumed that the return value is
-    \l {QtTaskTree::DoneResult::Success} {DoneResult::Success}.
+    \l {QtTaskTree::} {DoneResult::Success}.
 
     The passed \a handler executes synchronously from the caller thread,
     so avoid a long-running execution of the handler body.
@@ -3862,23 +3862,23 @@ using namespace QtTaskTree;
 
     The return value of the handler instructs the running task tree
     on how to proceed after the handler's invocation is finished.
-    The return value of \l {QtTaskTree::SetupResult::Continue}
-    {SetupResult::Continue} instructs the task tree to continue running,
+    The return value of \l {QtTaskTree::} {SetupResult::Continue}
+    instructs the task tree to continue running,
     that is, to execute the associated \c Task. The return value of
-    \l {QtTaskTree::SetupResult::StopWithSuccess} {SetupResult::StopWithSuccess}
-    or \l {QtTaskTree::SetupResult::StopWithError} {SetupResult::StopWithError}
+    \l {QtTaskTree::} {SetupResult::StopWithSuccess}
+    or \l {QtTaskTree::} {SetupResult::StopWithError}
     instructs the task tree to skip the task's execution and finish it
     immediately with success or an error, respectively.
 
     When the return type is either
-    \l {QtTaskTree::SetupResult::StopWithSuccess} {SetupResult::StopWithSuccess}
-    or \l {QtTaskTree::SetupResult::StopWithError} {SetupResult::StopWithError},
+    \l {QtTaskTree::} {SetupResult::StopWithSuccess}
+    or \l {QtTaskTree::} {SetupResult::StopWithError},
     the task's done handler (if provided) isn't called afterwards.
 
     The constructor of a custom task accepts also functions in the shortened
     form of \c std::function<void(Task &)>, that is, the return value
     is \c void. In this case, it's assumed that the return value is
-    \l {QtTaskTree::SetupResult::Continue} {SetupResult::Continue}.
+    \l {QtTaskTree::} {SetupResult::Continue}.
 
     \sa QCustomTask(), TaskDoneHandler, GroupSetupHandler
 */
@@ -3888,7 +3888,7 @@ using namespace QtTaskTree;
 
     Type alias for
     \c std::function<QtTaskTree::DoneResult(const Task &, QtTaskTree::DoneWith)>
-    or \l {QtTaskTree::DoneResult} {DoneResult}.
+    or \l {QtTaskTree::} {DoneResult}.
 
     The TaskDoneHandler is an optional argument of a custom task element's
     constructor. Any function with the above signature, when passed as a
@@ -3909,17 +3909,17 @@ using namespace QtTaskTree;
     If you do not plan to read any data from the finished task,
     you may omit the \c {const Task &} argument.
 
-    The returned \l {QtTaskTree::DoneResult} {DoneResult} value is optional
+    The returned \l {QtTaskTree::} {DoneResult} value is optional
     and your handler may return \c void instead. In this case,
     the final result of the task will be equal to the value indicated by
-    the \l {QtTaskTree::DoneResult} {DoneResult} argument.
-    When the handler returns the \l {QtTaskTree::DoneResult} {DoneResult}
+    the \l {QtTaskTree::} {DoneResult} argument.
+    When the handler returns the \l {QtTaskTree::} {DoneResult}
     value, the task's final result may be tweaked inside
     the done handler's body by the returned value.
 
-    For a TaskDoneHandler of the \l {QtTaskTree::DoneResult} {DoneResult} type,
+    For a TaskDoneHandler of the \l {QtTaskTree::} {DoneResult} type,
     no additional handling is executed, and the task finishes unconditionally
-    with the passed value of \l {QtTaskTree::DoneResult} {DoneResult}.
+    with the passed value of \l {QtTaskTree::} {DoneResult}.
 
     \sa QCustomTask(), TaskSetupHandler, GroupDoneHandler
 */
@@ -4139,7 +4139,7 @@ void QTaskTree::setRecipe(const Group &recipe)
 
     The started task tree may finish synchronously, for example when
     the main group's start handler returns
-    \l {QtTaskTree::SetupResult::StopWithError} {SetupResult::StopWithError}.
+    \l {QtTaskTree::} {SetupResult::StopWithError}.
     For this reason, the connection to the done signal should be
     established before calling start(). Use isRunning() in order to detect
     whether the task tree is still running after a call to start().
@@ -4187,7 +4187,7 @@ void QTaskTree::start()
 
     Cancels all running tasks immediately. All running tasks and groups
     finish with an error, invoking their done handlers with
-    \l {QtTaskTree::DoneWith::Cancel} {DoneWith::Cancel}.
+    \l {QtTaskTree::} {DoneWith::Cancel}.
     The storages' onStorageDone() handlers are invoked, too.
     The progressValueChanged() signals are also being sent.
     This behavior may always be relied on.
@@ -4233,9 +4233,9 @@ bool QTaskTree::isRunning() const
     Executes a local event loop with QEventLoop::ExcludeUserInputEvents
     and starts the task tree.
 
-    Returns \l {QtTaskTree::DoneWith::Success} {DoneWith::Success}
+    Returns \l {QtTaskTree::} {DoneWith::Success}
     if the task tree finished successfully; otherwise returns
-    \l {QtTaskTree::DoneWith::Error} {DoneWith::Error}.
+    \l {QtTaskTree::} {DoneWith::Error}.
 
     \note Avoid using this method from the main thread.
           Use asynchronous start() instead.
@@ -4299,9 +4299,9 @@ DoneWith QTaskTree::runBlocking(const QFuture<void> &future)
     Constructs a temporary task tree using the passed \a recipe and
     runs it blocking.
 
-    Returns \l {QtTaskTree::DoneWith::Success} {DoneWith::Success}
+    Returns \l {QtTaskTree::} {DoneWith::Success}
     if the task tree finished successfully; otherwise returns
-    \l {QtTaskTree::DoneWith::Error} {DoneWith::Error}.
+    \l {QtTaskTree::} {DoneWith::Error}.
 
     \note Avoid using this method from the main thread.
           Use asynchronous start() instead.
@@ -4498,7 +4498,7 @@ int QTaskTree::progressValue() const
     \endcode
 
     When the running task tree is about to leave a
-    \l {QtTaskTree::Group} {Group} where the \a storage is placed in,
+    \l {QtTaskTree::} {Group} where the \a storage is placed in,
     it destructs a \c StorageStruct instance.
     Just before the \c StorageStruct instance is destructed, and after
     all possible handlers from this group were called, the task tree

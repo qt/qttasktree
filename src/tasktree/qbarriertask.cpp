@@ -30,7 +30,7 @@ public:
 
     QBarrier waits for subsequent calls to \l advance() to reach
     the barrier's limit (1 by default). It finishes with
-    \l {QtTaskTree::DoneResult::Success} {DoneResult::Success}.
+    \l {QtTaskTree::} {DoneResult::Success}.
 
     It's often used in QTaskTree recipes to hold the execution of subsequent
     sequential tasks until some other running task delivers
@@ -79,7 +79,7 @@ void QBarrier::start()
 /*!
     Advances the barrier. If the number of calls to advance() reaches
     the barrier's limit, the barrier finishes with
-    \l {QtTaskTree::DoneResult::Success} {DoneResult::Success}.
+    \l {QtTaskTree::} {DoneResult::Success}.
 */
 void QBarrier::advance()
 {
@@ -214,9 +214,9 @@ namespace QtTaskTree {
     \relates QStartedBarrier
 
     Type alias for the function taking a QStoredBarrier and returning
-    \l {QtTaskTree::ExecutableItem} {ExecutableItem}, i.e.
+    \l {QtTaskTree::} {ExecutableItem}, i.e.
     \c std::function<ExecutableItem(const QStoredBarrier &)>,
-    to be used inside \l {QtTaskTree::When} {When} constructor.
+    to be used inside \l {QtTaskTree::} {When} constructor.
 */
 
 class WhenPrivate : public QSharedData
