@@ -116,7 +116,7 @@ public:
     void swap(When &other) noexcept { d.swap(other.d); }
 
 private:
-    friend Group operator>>(const When &whenItem, const Do &doItem);
+    Q_TASKTREE_EXPORT friend Group operator>>(const When &whenItem, const Do &doItem);
 
     template <typename Task, typename Adapter, typename Deleter, typename Signal>
     static BarrierKickerGetter kickerForSignal(const QCustomTask<Task, Adapter, Deleter> &task,
