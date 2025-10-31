@@ -34,7 +34,7 @@ public:
     QTcpSocketWrapper is a convenient wrapper around QTcpSocket.
 
     Configure the QTcpSocketWrapper with setAddress(), setPort(),
-    and setWriteData() before calling start().
+    and setData() before calling start().
 
     The wrapped QTcpSocket may be accessed via socket() method.
     The QTcpSocket is created dynamically by the start() method and
@@ -83,7 +83,7 @@ void QTcpSocketWrapper::setPort(quint16 port)
     Set the \a data to be used on start(). If not empty, the \a data
     is written automatically to the socket after the connection is established.
 */
-void QTcpSocketWrapper::setWriteData(const QByteArray &data)
+void QTcpSocketWrapper::setData(const QByteArray &data)
 {
     d_func()->m_writeData = data;
 }

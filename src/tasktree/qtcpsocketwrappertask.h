@@ -25,7 +25,7 @@ public:
     ~QTcpSocketWrapper() override;
     void setAddress(const QHostAddress &address);
     void setPort(quint16 port);
-    void setWriteData(const QByteArray &data);
+    void setData(const QByteArray &data);
     QTcpSocket *socket() const;
     void start();
 
