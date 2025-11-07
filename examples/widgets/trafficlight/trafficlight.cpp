@@ -110,6 +110,7 @@ private:
 
 TrafficLight::TrafficLight(GlueInterface &iface)
 {
+    setWindowTitle(tr("Traffic Light (QtTaskTree)"));
     TrafficLightWidget *widget = new TrafficLightWidget(this);
     setFixedSize(widget->sizeHint());
 
