@@ -7,10 +7,12 @@
     \examplecategory {Task Tree}
     \title TaskTree Traffic Light
     \ingroup tasktree_examples
-    \brief The \e {TaskTree Traffic Light} example demonstrates how to implement
-    state machine behavior using TaskTree through a traffic light simulation.
-    The example is an alternative implementation for the Traffic Light examples
-    in \l {SCXML Traffic Light (Static, Widgets)} {Qt SCXML} and
+    \brief Demonstrates how to implement state machine behavior using TaskTree
+           through a traffic light simulation.
+
+    The \e {TaskTree Traffic Light} is an alternative implementation
+    for the Traffic Light examples in
+    \l {SCXML Traffic Light (Static, Widgets)} {Qt SCXML} and
     \l {Traffic Light} {Qt State Machine}.
 
     \image tasktree-trafficlight-example.png "Traffic light simulation aplication."

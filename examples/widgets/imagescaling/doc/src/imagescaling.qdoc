@@ -7,7 +7,8 @@
     \examplecategory {Task Tree}
     \title TaskTree Image Scaling
     \ingroup tasktree_examples
-    \brief Shows how to download and scale images asynchronously.
+    \brief Demonstrates how to execute For loop's iterations in parallel
+           to asynchronously download and scale images using TaskTree.
 
     This example shows how to use Qt TaskTree classes to download a collection
     of images from the network and scale them without blocking the UI. It

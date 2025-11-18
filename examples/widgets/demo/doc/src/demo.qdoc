@@ -7,7 +7,8 @@
     \examplecategory {Task Tree}
     \title TaskTree Demo
     \ingroup tasktree_examples
-    \brief Display progress of a complex task managed by TaskTree.
+    \brief Demonstrates how different execution modes and workflow policies
+           affect the complex TaskTree execution.
 
     The \e {TaskTree Demo} shows how to construct a nested TaskTree
     recipe using \l {QtTaskTree::} {timeoutTask}, and demonstrates
