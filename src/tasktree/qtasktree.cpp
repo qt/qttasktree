@@ -42,6 +42,8 @@ using namespace Qt::StringLiterals;
     \ingroup modules
     \title Qt TaskTree C++ Classes
     \brief Contains a general purpose TaskTree library.
+    \qtcmakepackage TaskTree
+    \qtvariable tasktree
 
     Use the TaskTree library to construct recipes, describing what
     asynchronous  tasks are to be executed, and use these recipes
