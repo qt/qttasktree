@@ -11,7 +11,7 @@ namespace QtTaskTree {
 /*!
     \class QtTaskTree::If
     \inheaderfile qconditional.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief An "if" element used in conditional expressions.
     \reentrant
 
@@ -109,7 +109,7 @@ ExecutableItem If::condition() const { return d->m_condition; }
 /*!
     \class QtTaskTree::ElseIf
     \inheaderfile qconditional.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief An "else if" element used in conditional expressions.
     \reentrant
 
@@ -161,7 +161,7 @@ ExecutableItem ElseIf::condition() const { return d->m_condition; }
 /*!
     \class QtTaskTree::Else
     \inheaderfile qconditional.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief An "else" element used in conditional expressions.
     \reentrant
 
@@ -206,7 +206,7 @@ Group Else::body() const { return d->m_body; }
 /*!
     \class QtTaskTree::Then
     \inheaderfile qconditional.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief A "then" element used in conditional expressions.
     \reentrant
 

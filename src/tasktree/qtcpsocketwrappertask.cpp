@@ -27,7 +27,7 @@ public:
 /*!
     \class QTcpSocketWrapper
     \inheaderfile qtcpsocketwrappertask.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief A wrapper around QTcpSocket.
     \reentrant
 

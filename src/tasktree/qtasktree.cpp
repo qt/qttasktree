@@ -32,13 +32,13 @@ using namespace Qt::StringLiterals;
 
 /*!
     \namespace QtTaskTree
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief The QtTaskTree namespace encloses helper classes and global
            functions of the TaskTree module.
 */
 
 /*!
-    \module TaskTree
+    \module QtTaskTree
     \ingroup modules
     \title Qt TaskTree C++ Classes
     \brief Contains a general purpose TaskTree library.
@@ -397,10 +397,10 @@ using namespace Qt::StringLiterals;
     \endcode
 
     The group setup handler is optional. To define a group setup handler,
-    add an \l {QtTaskTree::} {onGroupSetup()} element to a group.
-    The argument of \l {QtTaskTree::} {onGroupSetup()} is a user
+    add an \l {QtTaskTree::onGroupSetup} {onGroupSetup()} element to a group.
+    The argument of \l {QtTaskTree::onGroupSetup} {onGroupSetup()} is a user
     handler. If you add more than one
-    \l {QtTaskTree::} {onGroupSetup()} element to a group,
+    \l {QtTaskTree::onGroupSetup} {onGroupSetup()} element to a group,
     an assert is triggered at runtime that includes an error message.
 
     Like the task's start handler, the group start handler may return
@@ -488,7 +488,7 @@ using namespace Qt::StringLiterals;
     the successful or failed execution of its tasks.
     The final value reported by the group depends on its \l {Workflow Policy}.
     The handler can apply other necessary actions.
-    The done handler is defined inside the \l {QtTaskTree::} {onGroupDone()}
+    The done handler is defined inside the \l {QtTaskTree::onGroupDone} {onGroupDone()}
     element of a group. It may take the optional
     \l {QtTaskTree::} {DoneWith} argument, indicating
     the successful or failed execution:
@@ -507,7 +507,7 @@ using namespace Qt::StringLiterals;
     \endcode
 
     The group done handler is optional. If you add more than one
-    \l {QtTaskTree::} {onGroupDone()} to a group,
+    \l {QtTaskTree::onGroupDone} {onGroupDone()} to a group,
     an assert is triggered at runtime that includes an error message.
 
     \note Even if the group setup handler returns
@@ -642,9 +642,9 @@ using namespace Qt::StringLiterals;
     only from within the handler body. To access the currently active
     \c CopyStorage from within
     \l {QtTaskTree::} {Storage}<\c {CopyStorage}>, use the
-    \l {QtTaskTree::} {Storage::operator->()},
-    \l {QtTaskTree::} {Storage::operator*()}, or
-    \l {QtTaskTree::} {Storage::activeStorage()}
+    \l {QtTaskTree::Storage::operator->} {Storage::operator->()},
+    \l {QtTaskTree::Storage::operator*} {Storage::operator*()}, or
+    \l {QtTaskTree::Storage::activeStorage} {Storage::activeStorage()}
        method.
 
     The following list summarizes how to employ a Storage object into the task
@@ -808,7 +808,7 @@ namespace QtTaskTree {
 /*!
     \class QtTaskTree::GroupItem
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief GroupItem represents the basic element that may be a part of any
            \l {QtTaskTree::} {Group}.
     \reentrant
@@ -845,10 +845,10 @@ namespace QtTaskTree {
     \row
         \li Other group control items
         \li The \l {QtTaskTree::} {ExecutionMode} or items returned by
-            \l {QtTaskTree::} {workflowPolicy()}
+            \l {QtTaskTree::workflowPolicy} {workflowPolicy()}
             influence the group's behavior. The items returned by
-            \l {QtTaskTree::} {onGroupSetup()} or
-            \l {QtTaskTree::} {onGroupDone()} define custom
+            \l {QtTaskTree::onGroupSetup} {onGroupSetup()} or
+            \l {QtTaskTree::onGroupDone} {onGroupDone()} define custom
             handlers called when the group starts or ends execution.
     \endtable
 */
@@ -856,7 +856,7 @@ namespace QtTaskTree {
 /*!
     \class QtTaskTree::Group
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief Group represents the basic element for composing declarative
            recipes describing how to execute and handle a nested tree
            of asynchronous tasks.
@@ -1386,7 +1386,7 @@ namespace QtTaskTree {
 /*!
     \class QtTaskTree::Storage
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief A class template for custom data exchange in the running task tree.
     \reentrant
 
@@ -1403,8 +1403,8 @@ namespace QtTaskTree {
     was placed, also within the nested groups. When a copy of the Storage
     object is passed to the handler via the lambda capture, the handler
     may access the instance activated by the running task tree via the
-    \l {QtTaskTree::} {Storage::operator->()},
-    \l {QtTaskTree::} {Storage::operator*()}, or activeStorage() method.
+    \l {QtTaskTree::Storage::operator->} {Storage::operator->()},
+    \l {QtTaskTree::Storage::operator*} {Storage::operator*()}, or activeStorage() method.
     If two handlers capture the same Storage object,
     one of them may store a custom data there, and the other may
     read it afterwards. When the group is finished, the previously created
@@ -1576,8 +1576,8 @@ namespace QtTaskTree {
     The dynamically created instance of \c StorageStruct is accessible
     from inside any handler body of the parent \l {QtTaskTree::} {Group}
     element, including nested groups and its tasks, via the
-    \l {QtTaskTree::} {Storage::operator->()},
-    \l {QtTaskTree::} {Storage::operator*()},
+    \l {QtTaskTree::Storage::operator->} {Storage::operator->()},
+    \l {QtTaskTree::Storage::operator*} {Storage::operator*()},
     or Storage::activeStorage() method.
 
     \sa {QtTaskTree::} {Storage}
@@ -1659,7 +1659,7 @@ private:
 /*!
     \class QtTaskTree::ExecutionMode
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief The group element describing execution mode.
     \reentrant
 
@@ -1686,7 +1686,7 @@ ExecutionMode::ExecutionMode(int limit)
 /*!
     \class QtTaskTree::ParallelLimit
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief The parallel execution mode with a custom limit.
     \reentrant
 
@@ -1782,7 +1782,7 @@ For &For::operator=(const For &other) = default;
 /*!
     \class QtTaskTree::For
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief A for loop element.
     \reentrant
 
@@ -1800,7 +1800,7 @@ For &For::operator=(const For &other) = default;
 
 /*!
     Constructs the For loop element, holding an \a iterator. Use the
-    \l {QtTaskTree::operator>>(const QtTaskTree::For &forItem, const QtTaskTree::Do &doItem)}
+    \l {operator>>(const QtTaskTree::For &forItem, const QtTaskTree::Do &doItem)}
     {stream insertion operator} with \l Do element to place the whole construct
     in a task tree recipe.
 */
@@ -1826,7 +1826,7 @@ Do &Do::operator=(const Do &other) = default;
 /*!
     \class QtTaskTree::Do
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief A body element used with For and When constructs.
     \reentrant
 
@@ -1943,7 +1943,7 @@ Group operator>>(const For &forItem, const Do &doItem)
 /*!
     \class QtTaskTree::Forever
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief Infinite loop of subtasks.
     \reentrant
 
@@ -2095,7 +2095,7 @@ public:
 /*!
     \class QtTaskTree::Iterator
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief Base class to be used as an iterator inside For element.
     \reentrant
 
@@ -2191,7 +2191,7 @@ const void *Iterator::valuePtr() const
 /*!
     \class QtTaskTree::ForeverIterator
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief Infinite iterator to be used inside For element.
     \reentrant
 
@@ -2248,7 +2248,7 @@ ForeverIterator::ForeverIterator() : Iterator() {}
 /*!
     \class QtTaskTree::RepeatIterator
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief The repetitive iterator to be used inside For element.
     \reentrant
 
@@ -2322,7 +2322,7 @@ RepeatIterator::RepeatIterator(int count) : Iterator(count) {}
 /*!
     \class QtTaskTree::UntilIterator
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief The conditional iterator to be used inside For element.
     \reentrant
 
@@ -2379,7 +2379,7 @@ UntilIterator::UntilIterator(const Condition &condition) : Iterator(condition) {
 /*!
     \class QtTaskTree::ListIterator
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief The list iterator to be used inside For element.
     \reentrant
 
@@ -2648,7 +2648,7 @@ GroupItem::TaskHandler GroupItem::taskHandler() const
 /*!
     \class QtTaskTree::ExecutableItem
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief Base class for executable task items.
     \reentrant
 
@@ -3714,7 +3714,7 @@ using namespace QtTaskTree;
 /*!
     \class QSyncTask
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief Synchronously executes a custom handler between other tasks.
     \reentrant
 
@@ -3750,7 +3750,7 @@ using namespace QtTaskTree;
 /*!
     \class QDefaultTaskAdapter
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief A class template providing default task adapter used in QCustomTask.
     \reentrant
 
@@ -3772,7 +3772,7 @@ using namespace QtTaskTree;
 /*!
     \class QCustomTask
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief A class template used for declaring custom task items and
            defining their setup and done handlers.
     \reentrant
@@ -3998,7 +3998,7 @@ using namespace QtTaskTree;
 /*!
     \class QTaskInterface
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief QTaskInterface is a helper class used when adapting custom
            task's interface.
     \reentrant
@@ -4054,7 +4054,7 @@ void QTaskInterface::reportDone(DoneResult result)
 /*!
     \class QTaskTree
     \inheaderfile qtasktree.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief The QTaskTree class runs the tree of asynchronous tasks
            defined in a declarative way.
     \reentrant
@@ -4677,7 +4677,7 @@ void QTimeoutTaskAdapter::operator()(milliseconds *task, QTaskInterface *iface)
         };
     \endcode
 
-    \sa {QtTaskTree::timeoutTask()} {timeoutTask()}
+    \sa {QtTaskTree::timeoutTask} {timeoutTask()}
 */
 
 QT_END_NAMESPACE

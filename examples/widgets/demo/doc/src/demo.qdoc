@@ -75,9 +75,9 @@
         \li Creates a new \l {QtTaskTree::} {Group} with child recipes
         \li Applies \l {Execution Mode} {execution mode}
             and \l {Workflow Policy} {workflow policy} from UI settings
-        \li Uses \l {QtTaskTree::} {onGroupSetup()} to update
+        \li Uses \l {QtTaskTree::onGroupSetup} {onGroupSetup()} to update
             UI when execution begins
-        \li Uses \l {QtTaskTree::} {onGroupDone()} to reflect
+        \li Uses \l {QtTaskTree::onGroupDone} {onGroupDone()} to reflect
             execution results in the UI
     \endlist
 
@@ -94,9 +94,9 @@
             \l {QtTaskTree::} {timeoutTask}
         \li Uses UI settings to configure duration and expected outcome
         \li Updates UI state when task begins via
-            \l {QtTaskTree::} {onGroupSetup()}
+            \l {QtTaskTree::onGroupSetup} {onGroupSetup()}
         \li Reflects task completion state via
-            \l {QtTaskTree::} {onGroupDone()}
+            \l {QtTaskTree::onGroupDone} {onGroupDone()}
     \endlist
 
     \section1 Building the task hierarchy

@@ -29,7 +29,7 @@ public:
 /*!
     \class QNetworkReplyWrapper
     \inheaderfile qnetworkwrappertask.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief A wrapper around QNetworkReply and QNetworkAccessManager.
     \reentrant
 

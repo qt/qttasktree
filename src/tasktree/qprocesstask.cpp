@@ -261,7 +261,7 @@ void ProcessReaper::reap(QProcess *process, int timeoutMs)
 /*!
     \class QProcessDeleter
     \inheaderfile qprocesstask.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief A custom deleter for QProcess, used by QProcessTask.
     \reentrant
 

@@ -72,7 +72,7 @@ public:
 /*!
     \class QConcurrentCallBase
     \inheaderfile qconcurrentcalltask.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief A base class for QConcurrentCall class template.
     \reentrant
 */
@@ -80,7 +80,7 @@ public:
 /*!
     \class QConcurrentCall
     \inheaderfile qconcurrentcalltask.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief A class template controlling the execution of a function in a
            separate thread via QtConcurrent::run().
     \reentrant

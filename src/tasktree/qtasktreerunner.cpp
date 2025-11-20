@@ -21,7 +21,7 @@ public:
 /*!
     \class QAbstractTaskTreeRunner
     \inheaderfile qtasktreerunner.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief An abstract base class for various task tree controllers.
     \reentrant
 
@@ -169,7 +169,7 @@ public:
 /*!
     \class QSingleTaskTreeRunner
     \inheaderfile qtasktreerunner.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief A single task tree execution controller.
 
     Manages single task tree execution.
@@ -281,7 +281,7 @@ public:
 /*!
     \class QSequentialTaskTreeRunner
     \inheaderfile qtasktreerunner.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief A sequential task tree execution controller.
 
     Manages sequential task tree execution.
@@ -420,7 +420,7 @@ public:
 /*!
     \class QParallelTaskTreeRunner
     \inheaderfile qtasktreerunner.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief A parallel task tree execution controller.
 
     Manages parallel task tree execution.
@@ -514,7 +514,7 @@ void QParallelTaskTreeRunner::startImpl(const Group &recipe,
 /*!
     \class QMappedTaskTreeRunner
     \inheaderfile qtasktreerunner.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief A mapped task tree execution controller with a given Key type.
 
     Manages mapped task tree execution using \c Key type.

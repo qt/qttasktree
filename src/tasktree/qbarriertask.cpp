@@ -24,7 +24,7 @@ public:
 /*!
     \class QBarrier
     \inheaderfile qbarriertask.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief An asynchronous task that finishes on demand.
     \reentrant
 
@@ -151,7 +151,7 @@ std::optional<DoneResult> QBarrier::result() const
 /*!
     \class QStartedBarrier
     \inheaderfile qbarriertask.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief A started QBarrier with a given Limit.
     \reentrant
 
@@ -233,7 +233,7 @@ public:
 /*!
     \class QtTaskTree::When
     \inheaderfile qbarriertask.h
-    \inmodule TaskTree
+    \inmodule QtTaskTree
     \brief An element delaying the execution of a body until barrier advance.
     \reentrant
 
