@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 
 cmake_minimum_required(VERSION 3.16)
-project(trafficlight LANGUAGES CXX)
+project(task_tree_trafficlight LANGUAGES CXX)
 
 if(NOT DEFINED INSTALL_EXAMPLESDIR)
     set(INSTALL_EXAMPLESDIR "examples")
@@ -14,7 +14,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui TaskTree Widgets)
 
 qt_standard_project_setup()
 
-qt_add_executable(trafficlight
+qt_add_executable(task_tree_trafficlight
     glueinterface.h
     main.cpp
     recipe.cpp
@@ -23,12 +23,12 @@ qt_add_executable(trafficlight
     trafficlight.h
 )
 
-set_target_properties(trafficlight PROPERTIES
+set_target_properties(task_tree_trafficlight PROPERTIES
     WIN32_EXECUTABLE TRUE
     MACOSX_BUNDLE TRUE
 )
 
-target_link_libraries(trafficlight PUBLIC
+target_link_libraries(task_tree_trafficlight PUBLIC
     Qt::Core
     Qt::Gui
     Qt::TaskTree
@@ -45,14 +45,14 @@ set(trafficlight_resource_files
     "images/yellow.png"
 )
 
-qt_add_resources(trafficlight "trafficlight"
+qt_add_resources(task_tree_trafficlight "trafficlight"
     BASE
         "images"
     FILES
         ${trafficlight_resource_files}
 )
 
-install(TARGETS trafficlight
+install(TARGETS task_tree_trafficlight
     RUNTIME DESTINATION "${INSTALL_EXAMPLEDIR}"
     BUNDLE DESTINATION "${INSTALL_EXAMPLEDIR}"
     LIBRARY DESTINATION "${INSTALL_EXAMPLEDIR}"

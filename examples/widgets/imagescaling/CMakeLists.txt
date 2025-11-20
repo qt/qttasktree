@@ -14,7 +14,7 @@ find_package(Qt6 REQUIRED COMPONENTS Concurrent Core Gui Network TaskTree Widget
 
 qt_standard_project_setup()
 
-qt_add_executable(imagescaling
+qt_add_executable(task_tree_imagescaling
     downloaddialog.cpp
     downloaddialog.h
     downloaddialog.ui
@@ -23,12 +23,12 @@ qt_add_executable(imagescaling
     main.cpp
 )
 
-set_target_properties(imagescaling PROPERTIES
+set_target_properties(task_tree_imagescaling PROPERTIES
     WIN32_EXECUTABLE TRUE
     MACOSX_BUNDLE TRUE
 )
 
-target_link_libraries(imagescaling PUBLIC
+target_link_libraries(task_tree_imagescaling PUBLIC
     Qt::Concurrent
     Qt::Core
     Qt::Gui
@@ -37,7 +37,7 @@ target_link_libraries(imagescaling PUBLIC
     Qt::Widgets
 )
 
-install(TARGETS imagescaling
+install(TARGETS task_tree_imagescaling
     RUNTIME DESTINATION "${INSTALL_EXAMPLEDIR}"
     BUNDLE DESTINATION "${INSTALL_EXAMPLEDIR}"
     LIBRARY DESTINATION "${INSTALL_EXAMPLEDIR}"
