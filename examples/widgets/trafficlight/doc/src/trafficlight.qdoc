@@ -93,7 +93,7 @@
             executing, and the recipe transitions to the \e broken state.
         \li The nested \l {QtTaskTree::}{Forever} task consist of
             four \c switchLightsTask tasks ("red", "redGoingGreen", "green", and
-            "greenGoingRed") executed \l {QtTaskTree::}{sequentially}
+            "greenGoingRed") executed \l {QtTaskTree::sequential}{sequentially}
             in an infinite loop.
     \endlist
 
