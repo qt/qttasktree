@@ -39,6 +39,9 @@ using namespace Qt::StringLiterals;
 
 /*!
     \module QtTaskTree
+    \techpreview
+    \modulestate Technical Preview
+    \since 6.11
     \ingroup modules
     \title Qt TaskTree C++ Classes
     \brief Contains a general purpose TaskTree library.
