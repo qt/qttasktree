@@ -164,6 +164,7 @@ int main(int argc, char *argv[])
     startButton->setText(QApplication::tr("Start"));
     QToolButton *cancelButton = new QToolButton;
     cancelButton->setText(QApplication::tr("Cancel"));
+    cancelButton->setEnabled(false);
     QToolButton *resetButton = new QToolButton;
     resetButton->setText(QApplication::tr("Reset"));
     QProgressBar *progressBar = new QProgressBar;
@@ -237,15 +238,19 @@ int main(int argc, char *argv[])
         QObject::connect(taskTree, &QTaskTree::progressValueChanged,
                          progressBar, &QProgressBar::setValue);
     });
+    QObject::connect(&taskTreeRunner, &QSingleTaskTreeRunner::done,
+                     cancelButton, [cancelButton] { cancelButton->setEnabled(false); });
 
     const auto resetTaskTree = [&] {
         taskTreeRunner.reset();
         tree->reset();
         progressBar->setValue(0);
+        cancelButton->setEnabled(false);
     };
 
     const auto startTaskTree = [&] {
         resetTaskTree();
+        cancelButton->setEnabled(true);
         taskTreeRunner.start({tree->recipe()});
     };
 
