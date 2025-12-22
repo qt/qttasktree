@@ -87,15 +87,15 @@ void StateWidget::setState(State state)
     m_stateIndicator->setState(state);
 }
 
-TaskWidget::TaskWidget()
+TaskWidget::TaskWidget(int busyTime, QtTaskTree::DoneResult result)
     : m_stateWidget(new StateWidget)
     , m_infoLabel(new QLabel(tr("Sleep:")))
     , m_spinBox(new QSpinBox)
     , m_checkBox(new QCheckBox(tr("Report success")))
 {
     m_spinBox->setSuffix(" sec");
-    setBusyTime(1);
-    setDesiredResult(DoneResult::Success);
+    m_spinBox->setValue(busyTime);
+    m_checkBox->setChecked(result == DoneResult::Success);
 
     QBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(m_stateWidget);
@@ -106,19 +106,9 @@ TaskWidget::TaskWidget()
     layout->setContentsMargins(0, 0, 0, 0);
 }
 
-void TaskWidget::setBusyTime(int seconds)
-{
-    m_spinBox->setValue(seconds);
-}
-
 int TaskWidget::busyTime() const
 {
     return m_spinBox->value();
-}
-
-void TaskWidget::setDesiredResult(DoneResult result)
-{
-    m_checkBox->setChecked(result == DoneResult::Success);
 }
 
 DoneResult TaskWidget::desiredResult() const
