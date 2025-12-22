@@ -44,13 +44,11 @@ protected:
 class TaskWidget : public QWidget
 {
 public:
-    TaskWidget();
+    TaskWidget(int busyTime, QtTaskTree::DoneResult result);
 
     void setState(State state) { m_stateWidget->setState(state); }
 
-    void setBusyTime(int seconds);
     int busyTime() const;
-    void setDesiredResult(QtTaskTree::DoneResult result);
     QtTaskTree::DoneResult desiredResult() const;
 
 private:

@@ -116,11 +116,8 @@ class TaskGlueItem final : public GlueItem
 {
 public:
     TaskGlueItem(int busyTime, DoneResult result)
-        : m_taskWidget(new TaskWidget)
-    {
-        m_taskWidget->setBusyTime(busyTime);
-        m_taskWidget->setDesiredResult(result);
-    }
+        : m_taskWidget(new TaskWidget(busyTime, result))
+    { }
 
     ExecutableItem recipe() const final;
     QWidget *widget() const final { return m_taskWidget; }
