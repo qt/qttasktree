@@ -33,8 +33,8 @@ qt_internal_add_module(TaskTree
 
 qt_internal_extend_target(TaskTree CONDITION QT_FEATURE_concurrent
     SOURCES
-        qconcurrentcalltask.cpp
-        qconcurrentcalltask.h
+        qthreadfunctiontask.cpp
+        qthreadfunctiontask.h
     PUBLIC_LIBRARIES
         Qt::Concurrent
 )
