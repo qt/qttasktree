@@ -4,7 +4,7 @@
 
 #include "imagescaling.h"
 #include "downloaddialog.h"
-#include <QConcurrentCall>
+#include <QThreadFunction>
 #include <QNetworkReplyWrapper>
 #include <QTaskTree>
 
@@ -94,10 +94,10 @@ void Images::process()
 //! [4]
 
 //! [5]
-    const auto onScaleSetup = [storage](QConcurrentCall<QImage> &task) {
-        task.setConcurrentCallData(&scale, *storage);
+    const auto onScaleSetup = [storage](QThreadFunction<QImage> &task) {
+        task.setThreadFunctionData(&scale, *storage);
     };
-    const auto onScaleDone = [this, iterator](const QConcurrentCall<QImage> &task,
+    const auto onScaleDone = [this, iterator](const QThreadFunction<QImage> &task,
                                               DoneWith result) {
         const int it = iterator.iteration();
         if (result == DoneWith::Success)
@@ -117,7 +117,7 @@ void Images::process()
         Group {
             storage,
             QNetworkReplyWrapperTask(onDownloadSetup, onDownloadDone),
-            QConcurrentCallTask<QImage>(onScaleSetup, onScaleDone)
+            QThreadFunctionTask<QImage>(onScaleSetup, onScaleDone)
         },
         onGroupDone(onRootDone)
     };
