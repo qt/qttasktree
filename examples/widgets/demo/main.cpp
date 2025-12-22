@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
                     task(4),
                     task(2),
                     task(1),
-                    task(3)
+                    task(3, DoneResult::Error)
                 }),
                 task(2),
                 task(3)
