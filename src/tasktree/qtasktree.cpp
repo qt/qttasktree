@@ -4459,8 +4459,8 @@ int QTaskTree::progressValue() const
 
         Storage<QByteArray> storage;
 
-        const auto onSaverSetup = [storage](QThreadFunction<QByteArray> &concurrent) {
-            concurrent.setThreadFunctionData(&save, "foo.txt", *storage);
+        const auto onSaverSetup = [storage](QThreadFunction<QByteArray> &task) {
+            task.setThreadFunctionData(&save, "foo.txt", *storage);
         };
 
         const Group root {
@@ -4502,11 +4502,11 @@ int QTaskTree::progressValue() const
 
         Storage<QByteArray> storage;
 
-        const auto onLoaderSetup = [](QThreadFunction<QByteArray> &concurrent) {
-            concurrent.setThreadFunctionData(&load, "foo.txt");
+        const auto onLoaderSetup = [](QThreadFunction<QByteArray> &task) {
+            task.setThreadFunctionData(&load, "foo.txt");
         };
-        const auto onLoaderDone = [storage](const QThreadFunction<QByteArray> &concurrent) {
-            *storage = concurrent.result();
+        const auto onLoaderDone = [storage](const QThreadFunction<QByteArray> &task) {
+            *storage = task.result();
         };
 
         const Group root {
