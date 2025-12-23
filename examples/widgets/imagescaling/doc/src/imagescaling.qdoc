@@ -37,7 +37,7 @@
         \li Downloads the image for a given address using
             \l QNetworkReplyWrapper and stores the received \l QByteArray data
             locally.
-        \li Uses \l QConcurrentCall to convert the \l QByteArray data to a
+        \li Uses \l QThreadFunction to convert the \l QByteArray data to a
             \l QImage and scales it to a thumbnail in a separate thread.
         \li Displays the resulting thumbnail in the grid.
     \endlist
@@ -107,7 +107,7 @@
             In case of successful execution, the downloaded QByteArray data
             is stored inside \c storage element.
     \row
-        \li QConcurrentCallTask<QImage>
+        \li QThreadFunctionTask<QImage>
         \li The second asynchronous task executed in sequence for each iteration.
             It's executed only after successful execution of the first task.
 
@@ -152,12 +152,12 @@
     label immediately. The index of the current iteration is returned by
     \c {iterator.iteration()}.
 
-    The second task in each iteration is \l {QConcurrentCallTask}<QImage>. Its
+    The second task in each iteration is \l {QThreadFunctionTask}<QImage>. Its
     setup and done handlers are as follows:
 
     \snippet widgets/imagescaling/imagescaling.cpp 5
 
-    Inside \c onScaleSetup, the handler schedules a concurrent call to the
+    Inside \c onScaleSetup, the handler schedules a call to the
     \c scale function, passing the \l QByteArray data received from the first
     task as an argument. This is done by dereferencing the captured \c storage.
     The \c scale function runs in a separate thread.
