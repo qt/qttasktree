@@ -1394,7 +1394,7 @@ namespace QtTaskTree {
     \reentrant
 
     The Storage class template is responsible for dynamically creating
-    and destructing objects of the custom \c StorageStruct type.
+    and destructing objects of the custom \a StorageStruct type.
     The creation and destruction are managed by the running task tree.
     If a Storage object is placed inside a \l {QtTaskTree::} {Group}
     element, the running task tree creates the \c StorageStruct object
@@ -2403,6 +2403,9 @@ UntilIterator::UntilIterator(const Condition &condition) : Iterator(condition) {
     \inmodule QtTaskTree
     \brief The list iterator to be used inside For element.
     \reentrant
+
+    The template parameter \a T specifies the element type of the list
+    being iterated.
 
     \sa Iterator, ForeverIterator, RepeatIterator, UntilIterator
 */
@@ -3783,6 +3786,9 @@ using namespace QtTaskTree;
     \brief A class template providing default task adapter used in QCustomTask.
     \reentrant
 
+    QDefaultTaskAdapter\<Task\> is a template class where \a Task specifies
+    the task type to adapt.
+
     The QDefaultTaskAdapter adapting Task may be used when the following
     conditions are met:
 
@@ -3809,7 +3815,7 @@ using namespace QtTaskTree;
     Describes custom task items within task tree recipes.
 
     Custom task names are aliased with unique names using the
-    QCustomTask template with a given Task, Adapter and Deleter.
+    QCustomTask template with a given \a Task, \a Adapter and \a Deleter.
     For example, QThreadFunctionTask<T> is an alias to the QCustomTask
     that is defined to work with QThreadFunction<T> as an associated task class.
     The following table contains custom tasks provided by the TaskTree library

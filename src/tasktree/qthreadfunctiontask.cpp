@@ -85,7 +85,8 @@ public:
            separate thread via QtConcurrent::run().
     \reentrant
 
-    A QThreadFunction is a convenient class template that combines a stored
+    A QThreadFunction is a convenient class template, where \a ResultType
+    specifies the return type of the stored function, that combines a stored
     function to be called later via QtConcurrent::run() with an internal
     QFutureWatcher monitoring the function execution. Use QThreadFunctionTask
     to execute the QThreadFunction inside the QTaskTree recipe.
@@ -453,7 +454,8 @@ void QThreadFunctionBase::storeFuture(const QFuture<void> &future)
     \typedef QThreadFunctionTask
     \relates QCustomTask
 
-    Type alias for the QCustomTask<QThreadFunction<ResultType>>,
+    Type alias for QCustomTask<QThreadFunction<ResultType>>,
+    where \a ResultType specifies the return type of the thread function,
     to be used inside recipes.
 */
 

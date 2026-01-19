@@ -517,7 +517,7 @@ void QParallelTaskTreeRunner::startImpl(const Group &recipe,
     \inmodule QtTaskTree
     \brief A mapped task tree execution controller with a given Key type.
 
-    Manages mapped task tree execution using \c Key type.
+    Manages mapped task tree execution using the \a Key type.
     Use the start() method to execute a recipe for a given key unconditionally,
     resetting a possibly running task tree with the same key,
     and keeping other possibly running task trees with different keys
