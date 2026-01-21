@@ -15,7 +15,7 @@ QT_BEGIN_NAMESPACE
 
 #if QT_CONFIG(process)
 
-class QProcessDeleter final
+class QProcessTaskDeleter final
 {
 public:
     // Blocking, should be called after all QProcessAdapter instances are deleted.
@@ -29,7 +29,7 @@ public:
     Q_TASKTREE_EXPORT void operator()(QProcess *task, QTaskInterface *iface) const;
 };
 
-using QProcessTask = QCustomTask<QProcess, QProcessTaskAdapter, QProcessDeleter>;
+using QProcessTask = QCustomTask<QProcess, QProcessTaskAdapter, QProcessTaskDeleter>;
 
 #endif // QT_CONFIG(process)
 
