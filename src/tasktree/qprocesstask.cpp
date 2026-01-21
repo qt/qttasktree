@@ -317,7 +317,7 @@ void QProcessDeleter::operator()(QProcess *process)
     ProcessReaper::reap(process);
 }
 
-void QProcessTaskAdapter::operator()(QProcess *task, QTaskInterface *iface)
+void QProcessTaskAdapter::operator()(QProcess *task, QTaskInterface *iface) const
 {
     QObject::connect(task, &QProcess::finished, iface, [iface, task] {
         const bool success = task->exitStatus() == QProcess::NormalExit

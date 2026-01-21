@@ -575,7 +575,7 @@ template <typename Task>
 class QDefaultTaskAdapter
 {
 public:
-    void operator()(Task *task, QTaskInterface *iface) {
+    void operator()(Task *task, QTaskInterface *iface) const {
         if constexpr (is_done_compatible_v<WithDoneResult>) {
             QObject::connect(task, &Task::done, iface, &QTaskInterface::reportDone,
                              Qt::SingleShotConnection);
@@ -822,7 +822,7 @@ private:
 class QTaskTreeTaskAdapter final
 {
 public:
-    Q_TASKTREE_EXPORT void operator()(QTaskTree *task, QTaskInterface *iface);
+    Q_TASKTREE_EXPORT void operator()(QTaskTree *task, QTaskInterface *iface) const;
 };
 
 class QTimeoutTaskAdapter final

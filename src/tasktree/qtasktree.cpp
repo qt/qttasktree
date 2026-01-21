@@ -4559,7 +4559,7 @@ void QTaskTree::setupStorageHandler(const StorageBase &storage,
     }
 }
 
-void QTaskTreeTaskAdapter::operator()(QTaskTree *task, QTaskInterface *iface)
+void QTaskTreeTaskAdapter::operator()(QTaskTree *task, QTaskInterface *iface) const
 {
     QObject::connect(task, &QTaskTree::done, iface, [iface](DoneWith result) {
         iface->reportDone(toDoneResult(result));
