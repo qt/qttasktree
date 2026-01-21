@@ -53,7 +53,7 @@ enum class Handler {
     BarrierAdvance,
     Timeout,
     Storage,
-    Iteration
+    Iteration,
 };
 Q_ENUM_NS(Handler);
 
@@ -65,14 +65,14 @@ enum class ThreadResult
     FailOnProgressCheck,
     FailOnLogCheck,
     FailOnDoneStatusCheck,
-    Canceled
+    Canceled,
 };
 Q_ENUM_NS(ThreadResult);
 
 enum class Execution
 {
     Sync,
-    Async
+    Async,
 };
 
 } // namespace PrintableEnums

@@ -23,12 +23,12 @@ enum class State {
     Running,
     Success,
     Error,
-    Canceled
+    Canceled,
 };
 
 enum class ExecuteMode {
     Sequential, // default
-    Parallel
+    Parallel,
 };
 
 class StateWidget : public QWidget

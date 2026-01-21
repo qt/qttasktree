@@ -49,7 +49,7 @@ enum class WorkflowPolicy
     ContinueOnSuccess,
     StopOnSuccessOrError,
     FinishAllAndSuccess,
-    FinishAllAndError
+    FinishAllAndError,
 };
 Q_ENUM_NS(WorkflowPolicy)
 
@@ -57,14 +57,14 @@ enum class SetupResult
 {
     Continue,
     StopWithSuccess,
-    StopWithError
+    StopWithError,
 };
 Q_ENUM_NS(SetupResult)
 
 enum class DoneResult
 {
     Success,
-    Error
+    Error,
 };
 Q_ENUM_NS(DoneResult)
 
@@ -82,7 +82,7 @@ enum class CallDone
     OnSuccess = 1 << 0,
     OnError   = 1 << 1,
     OnCancel  = 1 << 2,
-    Always = OnSuccess | OnError | OnCancel
+    Always = OnSuccess | OnError | OnCancel,
 };
 Q_ENUM_NS(CallDone)
 Q_DECLARE_FLAGS(CallDoneFlags, CallDone)
@@ -276,7 +276,7 @@ protected:
         Group,
         GroupData,
         Storage,
-        TaskHandler
+        TaskHandler,
     };
 
     GroupItem();
