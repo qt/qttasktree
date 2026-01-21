@@ -259,28 +259,28 @@ void ProcessReaper::reap(QProcess *process, int timeoutMs)
 } // namespace QtTaskTree
 
 /*!
-    \class QProcessDeleter
+    \class QProcessTaskDeleter
     \inheaderfile qprocesstask.h
     \inmodule QtTaskTree
     \brief A custom deleter for QProcess, used by QProcessTask.
     \reentrant
 
-    QProcessDeleter is used to enable fast destruction of running
+    QProcessTaskDeleter is used to enable fast destruction of running
     QProcess instances via QProcessTask in QTaskTree. Instead of deleting
     the running QProcess, which may block the caller's thread execution
-    for a long time, the QProcessDeleter moves the running QProcess into
+    for a long time, the QProcessTaskDeleter moves the running QProcess into
     a separate thread and tries to finish it in a most gentle way.
     This consist of calling QProcess::terminate() with \c {500 ms} timeout,
     and if the process is still running after this timeout passed,
     the additional call to QProcess::kill() is performed.
 
-    Finally, on application quit, QProcessDeleter::syncAll() should be called
+    Finally, on application quit, QProcessTaskDeleter::syncAll() should be called
     in order to synchronize all processes being still potentially finalized
-    in separate thread. The call to QProcessDeleter::syncAll() is blocking
+    in separate thread. The call to QProcessTaskDeleter::syncAll() is blocking
     in case some processes are still being finalized.
 
     This strategy seems sensible, since when deleting the running QProcess via
-    QProcessDeleter we don't block immediately, but postpone the possible
+    QProcessTaskDeleter we don't block immediately, but postpone the possible
     (but not certain) block until the end of an application.
 
     It is used by QProcessTask.
@@ -289,13 +289,13 @@ void ProcessReaper::reap(QProcess *process, int timeoutMs)
 /*!
     This method should be called on application quit to synchronize the
     finalization of all still possibly running QProcess instances that were
-    deleted before using QProcessDeleter. The call should be executed from
+    deleted before using QProcessTaskDeleter. The call should be executed from
     the main thread.
 */
-void QProcessDeleter::syncAll()
+void QProcessTaskDeleter::syncAll()
 {
     if (!QThread::isMainThread()) {
-        qWarning("The QProcessDeleter::syncAll() should be called from the main thread. "
+        qWarning("The QProcessTaskDeleter::syncAll() should be called from the main thread. "
                  "The current call is ignored.");
         return;
     }
@@ -312,7 +312,7 @@ void QProcessDeleter::syncAll()
     with \c {500 ms} timeout, and if the process is still running after
     this timeout passed, the additional call to QProcess::kill() is performed.
 */
-void QProcessDeleter::operator()(QProcess *process)
+void QProcessTaskDeleter::operator()(QProcess *process)
 {
     ProcessReaper::reap(process);
 }
@@ -337,7 +337,7 @@ void QProcessTaskAdapter::operator()(QProcess *task, QTaskInterface *iface) cons
     \typedef QProcessTask
     \relates QCustomTask
 
-    Type alias for the QCustomTask<QProcess>, using QProcessDeleter,
+    Type alias for the QCustomTask<QProcess>, using QProcessTaskDeleter,
     to be used inside recipes.
 */
 
