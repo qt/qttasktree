@@ -317,6 +317,8 @@ When::When(const When &other) = default;
 When &When::operator=(const When &other) = default;
 
 /*!
+    \fn Group operator>>(const When &whenItem, const Do &doItem)
+
     Combines \a whenItem with \a doItem body and returns a \l Group
     ready to be used in task tree recipes.
 */
