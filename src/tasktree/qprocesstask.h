@@ -26,7 +26,7 @@ public:
 class QProcessTaskAdapter final
 {
 public:
-    Q_TASKTREE_EXPORT void operator()(QProcess *task, QTaskInterface *iface);
+    Q_TASKTREE_EXPORT void operator()(QProcess *task, QTaskInterface *iface) const;
 };
 
 using QProcessTask = QCustomTask<QProcess, QProcessTaskAdapter, QProcessDeleter>;
