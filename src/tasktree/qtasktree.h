@@ -524,9 +524,6 @@ private:
     QExplicitlySharedDataPointer<DoPrivate> d;
 };
 
-Q_TASKTREE_EXPORT Group operator>>(const For &forItem, const Do &doItem);
-Q_TASKTREE_EXPORT Group operator>>(const When &whenItem, const Do &doItem);
-
 class Forever final : public ExecutableItem
 {
 public:

@@ -192,11 +192,6 @@ private:
     QExplicitlySharedDataPointer<ElseIfItemPrivate> d;
 };
 
-Q_TASKTREE_EXPORT ThenItem operator>>(const If &ifItem, const Then &thenItem);
-Q_TASKTREE_EXPORT ElseIfItem operator>>(const ThenItem &thenItem, const ElseIf &elseIfItem);
-Q_TASKTREE_EXPORT ElseItem operator>>(const ThenItem &thenItem, const Else &elseItem);
-Q_TASKTREE_EXPORT ThenItem operator>>(const ElseIfItem &elseIfItem, const Then &thenItem);
-
 } // namespace QtTaskTree
 
 QT_END_NAMESPACE
