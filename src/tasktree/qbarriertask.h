@@ -21,18 +21,19 @@ class Q_TASKTREE_EXPORT QBarrier : public QObject
     Q_DECLARE_PRIVATE(QBarrier)
 
 public:
-    QBarrier(QObject *parent = nullptr);
+    QBarrier() : QBarrier(nullptr) {}
+    explicit QBarrier(QObject *parent);
     ~QBarrier() override;
 
-    void setLimit(int value);
-    int limit() const;
+    void setLimit(qsizetype value);
+    qsizetype limit() const;
 
     void start();
     void advance();
     void stopWithResult(QtTaskTree::DoneResult result);
 
     bool isRunning() const;
-    int current() const;
+    qsizetype current() const;
     std::optional<QtTaskTree::DoneResult> result() const;
 
 Q_SIGNALS:
@@ -41,22 +42,19 @@ Q_SIGNALS:
 
 using QBarrierTask = QCustomTask<QBarrier>;
 
-template <int Limit = 1>
-class QStartedBarrier : public QBarrier
+class Q_TASKTREE_EXPORT QStartedBarrier : public QBarrier
 {
+    Q_OBJECT
+
 public:
-    static_assert(Limit > 0, "StartedBarrier's limit should be 1 or more.");
-    QStartedBarrier(QObject *parent = nullptr)
-        : QBarrier(parent)
-    {
-        setLimit(Limit);
-        start();
-    }
+    QStartedBarrier() : QStartedBarrier(nullptr) {}
+    explicit QStartedBarrier(QObject *parent);
+    explicit QStartedBarrier(qsizetype limit, QObject *parent = nullptr);
+
+    ~QStartedBarrier() override;
 };
 
-template <int Limit = 1>
-using QStoredMultiBarrier = QtTaskTree::Storage<QStartedBarrier<Limit>>;
-using QStoredBarrier = QStoredMultiBarrier<1>;
+using QStoredBarrier = QtTaskTree::Storage<QStartedBarrier>;
 
 namespace QtTaskTree { class WhenPrivate; }
 
@@ -64,28 +62,7 @@ QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::WhenPrivate)
 
 namespace QtTaskTree {
 
-template <int Limit>
-ExecutableItem barrierAwaiterTask(const QStoredMultiBarrier<Limit> &storedBarrier)
-{
-    return QBarrierTask([storedBarrier](QBarrier &barrier) {
-        QBarrier *activeBarrier = storedBarrier.activeStorage();
-        if (!activeBarrier) {
-            qWarning("The barrier referenced from WaitForBarrier element "
-                     "is not reachable in the running tree. "
-                     "It is possible that no barrier was added to the tree, "
-                     "or the barrier is not reachable from where it is referenced. "
-                     "The WaitForBarrier task finishes with an error. ");
-            return SetupResult::StopWithError;
-        }
-        const std::optional<DoneResult> result = activeBarrier->result();
-        if (result.has_value()) {
-            return *result == DoneResult::Success ? SetupResult::StopWithSuccess
-                                                  : SetupResult::StopWithError;
-        }
-        QObject::connect(activeBarrier, &QBarrier::done, &barrier, &QBarrier::stopWithResult);
-        return SetupResult::Continue;
-    });
-}
+Q_TASKTREE_EXPORT ExecutableItem barrierAwaiterTask(const QStoredBarrier &storedBarrier);
 
 template <typename Signal>
 ExecutableItem signalAwaiterTask(const typename QtPrivate::FunctionPointer<Signal>::Object *sender,
