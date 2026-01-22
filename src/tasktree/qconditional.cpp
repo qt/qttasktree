@@ -54,7 +54,6 @@ public:
 
 If::~If() = default;
 If::If(const If &other) = default;
-If::If(If &&other) noexcept = default;
 If &If::operator=(const If &other) = default;
 
 /*!
@@ -128,7 +127,6 @@ public:
 
 ElseIf::~ElseIf() = default;
 ElseIf::ElseIf(const ElseIf &other) = default;
-ElseIf::ElseIf(ElseIf &&other) noexcept = default;
 ElseIf &ElseIf::operator=(const ElseIf &other) = default;
 
 /*!
@@ -180,7 +178,6 @@ public:
 
 Else::~Else() = default;
 Else::Else(const Else &other) = default;
-Else::Else(Else &&other) noexcept = default;
 Else &Else::operator=(const Else &other) = default;
 
 /*!
@@ -226,7 +223,6 @@ public:
 
 Then::~Then() = default;
 Then::Then(const Then &other) = default;
-Then::Then(Then &&other) noexcept = default;
 Then &Then::operator=(const Then &other) = default;
 
 /*!
@@ -291,7 +287,6 @@ public:
 
 ThenItem::~ThenItem() = default;
 ThenItem::ThenItem(const ThenItem &other) = default;
-ThenItem::ThenItem(ThenItem &&other) noexcept = default;
 ThenItem &ThenItem::operator=(const ThenItem &other) = default;
 
 ThenItem::operator ExecutableItem() const
@@ -319,7 +314,6 @@ public:
 
 ElseItem::~ElseItem() = default;
 ElseItem::ElseItem(const ElseItem &other) = default;
-ElseItem::ElseItem(ElseItem &&other) noexcept = default;
 ElseItem &ElseItem::operator=(const ElseItem &other) = default;
 
 ElseItem::operator ExecutableItem() const
@@ -346,7 +340,6 @@ public:
 
 ElseIfItem::~ElseIfItem() = default;
 ElseIfItem::ElseIfItem(const ElseIfItem &other) = default;
-ElseIfItem::ElseIfItem(ElseIfItem &&other) noexcept = default;
 ElseIfItem &ElseIfItem::operator=(const ElseIfItem &other) = default;
 
 ElseIfItem::ElseIfItem(const ThenItem &thenItem, const ElseIf &elseIfItem)
@@ -377,5 +370,13 @@ ElseItem operator>>(const ThenItem &thenItem, const Else &elseItem)
 }
 
 } // namespace QtTaskTree
+
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ElsePrivate)
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ElseIfPrivate)
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::IfPrivate)
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ThenPrivate)
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ElseIfItemPrivate)
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ElseItemPrivate)
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ThenItemPrivate)
 
 QT_END_NAMESPACE

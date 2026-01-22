@@ -1779,7 +1779,6 @@ public:
 
 For::~For() = default;
 For::For(const For &other) = default;
-For::For(For &&other) noexcept = default;
 For &For::operator=(const For &other) = default;
 
 /*!
@@ -1823,7 +1822,6 @@ public:
 
 Do::~Do() = default;
 Do::Do(const Do &other) = default;
-Do::Do(Do &&other) noexcept = default;
 Do &Do::operator=(const Do &other) = default;
 
 /*!
@@ -2536,7 +2534,6 @@ GroupItem::GroupItem(std::initializer_list<GroupItem> children)
 
 GroupItem::~GroupItem() = default;
 GroupItem::GroupItem(const GroupItem &other) = default;
-GroupItem::GroupItem(GroupItem &&other) noexcept = default;
 GroupItem &GroupItem::operator=(const GroupItem &other) = default;
 
 GroupItem::GroupItem(const Iterator &loop)
@@ -4682,5 +4679,9 @@ void QTimeoutTaskAdapter::operator()(milliseconds *task, QTaskInterface *iface)
 
     \sa {QtTaskTree::timeoutTask} {timeoutTask()}
 */
+
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::DoPrivate)
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ForPrivate)
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::GroupItemPrivate)
 
 QT_END_NAMESPACE

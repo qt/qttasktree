@@ -58,6 +58,10 @@ template <int Limit = 1>
 using QStoredMultiBarrier = QtTaskTree::Storage<QStartedBarrier<Limit>>;
 using QStoredBarrier = QStoredMultiBarrier<1>;
 
+namespace QtTaskTree { class WhenPrivate; }
+
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::WhenPrivate)
+
 namespace QtTaskTree {
 
 template <int Limit>
@@ -94,8 +98,6 @@ ExecutableItem signalAwaiterTask(const typename QtPrivate::FunctionPointer<Signa
 
 using BarrierKickerGetter = std::function<ExecutableItem(const QStoredBarrier &)>;
 
-class WhenPrivate;
-
 class When final
 {
 public:
@@ -109,7 +111,7 @@ public:
     {}
     Q_TASKTREE_EXPORT ~When();
     Q_TASKTREE_EXPORT When(const When &other);
-    Q_TASKTREE_EXPORT When(When &&other) noexcept;
+    When(When &&other) noexcept = default;
     Q_TASKTREE_EXPORT When &operator=(const When &other);
     QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(When)
 

@@ -30,6 +30,18 @@ class ElseIfItemPrivate;
 class ElseItemPrivate;
 class ThenItemPrivate;
 
+}
+
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ElsePrivate)
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ElseIfPrivate)
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::IfPrivate)
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ThenPrivate)
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ElseIfItemPrivate)
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ElseItemPrivate)
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ThenItemPrivate)
+
+namespace QtTaskTree {
+
 class If final
 {
 public:
@@ -40,7 +52,7 @@ public:
 
     Q_TASKTREE_EXPORT ~If();
     Q_TASKTREE_EXPORT If(const If &other);
-    Q_TASKTREE_EXPORT If(If &&other) noexcept;
+    If(If &&other) noexcept = default;
     Q_TASKTREE_EXPORT If &operator=(const If &other);
     QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(If)
     void swap(If &other) noexcept { d.swap(other.d); }
@@ -63,7 +75,7 @@ public:
 
     Q_TASKTREE_EXPORT ~ElseIf();
     Q_TASKTREE_EXPORT ElseIf(const ElseIf &other);
-    Q_TASKTREE_EXPORT ElseIf(ElseIf &&other) noexcept;
+    ElseIf(ElseIf &&other) noexcept = default;
     Q_TASKTREE_EXPORT ElseIf &operator=(const ElseIf &other);
     QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(ElseIf)
     void swap(ElseIf &other) noexcept { d.swap(other.d); }
@@ -82,7 +94,7 @@ public:
 
     Q_TASKTREE_EXPORT ~Else();
     Q_TASKTREE_EXPORT Else(const Else &other);
-    Q_TASKTREE_EXPORT Else(Else &&other) noexcept;
+    Else(Else &&other) noexcept = default;
     Q_TASKTREE_EXPORT Else &operator=(const Else &other);
     QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(Else)
     void swap(Else &other) noexcept { d.swap(other.d); }
@@ -101,7 +113,7 @@ public:
 
     Q_TASKTREE_EXPORT ~Then();
     Q_TASKTREE_EXPORT Then(const Then &other);
-    Q_TASKTREE_EXPORT Then(Then &&other) noexcept;
+    Then(Then &&other) noexcept = default;
     Q_TASKTREE_EXPORT Then &operator=(const Then &other);
     QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(Then)
     void swap(Then &other) noexcept { d.swap(other.d); }
@@ -118,7 +130,7 @@ public:
     Q_TASKTREE_EXPORT operator ExecutableItem() const;
     Q_TASKTREE_EXPORT ~ThenItem();
     Q_TASKTREE_EXPORT ThenItem(const ThenItem &other);
-    Q_TASKTREE_EXPORT ThenItem(ThenItem &&other) noexcept;
+    ThenItem(ThenItem &&other) noexcept = default;
     Q_TASKTREE_EXPORT ThenItem &operator=(const ThenItem &other);
     QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(ThenItem)
     void swap(ThenItem &other) noexcept { d.swap(other.d); }
@@ -144,7 +156,7 @@ public:
     Q_TASKTREE_EXPORT operator ExecutableItem() const;
     Q_TASKTREE_EXPORT ~ElseItem();
     Q_TASKTREE_EXPORT ElseItem(const ElseItem &other);
-    Q_TASKTREE_EXPORT ElseItem(ElseItem &&other) noexcept;
+    ElseItem(ElseItem &&other) noexcept = default;
     Q_TASKTREE_EXPORT ElseItem &operator=(const ElseItem &other);
     QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(ElseItem)
     void swap(ElseItem &other) noexcept { d.swap(other.d); }
@@ -163,7 +175,7 @@ class ElseIfItem final
 public:
     Q_TASKTREE_EXPORT ~ElseIfItem();
     Q_TASKTREE_EXPORT ElseIfItem(const ElseIfItem &other);
-    Q_TASKTREE_EXPORT ElseIfItem(ElseIfItem &&other) noexcept;
+    ElseIfItem(ElseIfItem &&other) noexcept = default;
     Q_TASKTREE_EXPORT ElseIfItem &operator=(const ElseIfItem &other);
     QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(ElseIfItem)
     void swap(ElseIfItem &other) noexcept { d.swap(other.d); }
