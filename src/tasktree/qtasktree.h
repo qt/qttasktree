@@ -29,7 +29,6 @@ class Do;
 class DoPrivate;
 class For;
 class ForPrivate;
-class ForeverPrivate;
 class Group;
 class GroupItem;
 class GroupItemPrivate;
@@ -38,6 +37,14 @@ class IteratorData;
 class QTaskTreePrivate;
 class StorageData;
 class When;
+
+}
+
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::DoPrivate)
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ForPrivate)
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::GroupItemPrivate)
+
+namespace QtTaskTree {
 
 Q_NAMESPACE_EXPORT(Q_TASKTREE_EXPORT)
 
@@ -228,7 +235,7 @@ public:
     ~GroupItem();
 
     GroupItem(const GroupItem &other);
-    GroupItem(GroupItem &&other) noexcept;
+    GroupItem(GroupItem &&other) noexcept = default;
     GroupItem &operator=(const GroupItem &other);
     QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(GroupItem)
 
@@ -482,7 +489,7 @@ public:
 
     Q_TASKTREE_EXPORT ~For();
     Q_TASKTREE_EXPORT For(const For &other);
-    Q_TASKTREE_EXPORT For(For &&other) noexcept;
+    For(For &&other) noexcept = default;
     Q_TASKTREE_EXPORT For &operator=(const For &other);
     QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(For)
     void swap(For &other) noexcept { d.swap(other.d); }
@@ -503,7 +510,7 @@ public:
 
     Q_TASKTREE_EXPORT ~Do();
     Q_TASKTREE_EXPORT Do(const Do &other);
-    Q_TASKTREE_EXPORT Do(Do &&other) noexcept;
+    Do(Do &&other) noexcept = default;
     Q_TASKTREE_EXPORT Do &operator=(const Do &other);
     QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(Do)
     void swap(Do &other) noexcept { d.swap(other.d); }

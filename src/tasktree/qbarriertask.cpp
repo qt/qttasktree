@@ -314,7 +314,6 @@ When::When(const BarrierKickerGetter &kicker, WorkflowPolicy policy)
 
 When::~When() = default;
 When::When(const When &other) = default;
-When::When(When &&other) noexcept = default;
 When &When::operator=(const When &other) = default;
 
 /*!
@@ -338,5 +337,7 @@ Group operator>>(const When &whenItem, const Do &doItem)
 }
 
 } // namespace QtTaskTree
+
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::WhenPrivate)
 
 QT_END_NAMESPACE
