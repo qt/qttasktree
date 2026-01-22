@@ -2084,9 +2084,18 @@ private:
     QList<int> m_activeIteratorStack;
 };
 
-class IteratorData
+class IteratorPrivate : public QSharedData
 {
 public:
+    IteratorPrivate() = default;
+    explicit IteratorPrivate(int count, const Iterator::ValueGetter &valueGetter)
+        : m_loopCount(count)
+        , m_valueGetter(valueGetter)
+    {}
+    explicit IteratorPrivate(const Iterator::Condition &condition)
+        : m_condition(condition)
+    {}
+
     IteratorThreadData &threadData() { return m_threadData.data(); }
 
     const std::optional<int> m_loopCount = {};
@@ -2106,16 +2115,25 @@ public:
 */
 
 Iterator::Iterator()
-    : m_iteratorData(new IteratorData)
+    : d(new IteratorPrivate)
 {}
 
 Iterator::Iterator(int count, const ValueGetter &valueGetter)
-    : m_iteratorData(new IteratorData{count, valueGetter})
+    : d(new IteratorPrivate{count, valueGetter})
 {}
 
 Iterator::Iterator(const Condition &condition)
-    : m_iteratorData(new IteratorData{{}, {}, condition})
+    : d(new IteratorPrivate{condition})
 {}
+
+Iterator::~Iterator()
+    = default;
+
+Iterator::Iterator(const Iterator &other)
+    = default;
+
+Iterator &Iterator::operator=(const Iterator &other)
+    = default;
 
 /*!
     Returns the iteration index of the currently executing handler inside
@@ -2183,12 +2201,12 @@ Iterator::Iterator(const Condition &condition)
 */
 int Iterator::iteration() const
 {
-    return m_iteratorData->threadData().iteration();
+    return d->threadData().iteration();
 }
 
 const void *Iterator::valuePtr() const
 {
-    return m_iteratorData->m_valueGetter(iteration());
+    return d->m_valueGetter(iteration());
 }
 
 /*!
@@ -3029,7 +3047,7 @@ public:
         for (int i = m_activeStorages.size() - 1; i >= 0; --i) // iterate in reverse order
             m_activeStorages[i].m_storageData->threadData().popStorage();
         for (int i = m_activeIterators.size() - 1; i >= 0; --i) // iterate in reverse order
-            m_activeIterators[i].m_iteratorData->threadData().popIteration();
+            m_activeIterators[i].d->threadData().popIteration();
         QT_TASKTREE_ASSERT(s_activeTaskTrees.size(), return);
         s_activeTaskTrees.pop_back();
     }
@@ -3154,7 +3172,7 @@ public:
 
     static int effectiveIteratorCount(const std::optional<Iterator> &iterator)
     {
-        return iterator && iterator->m_iteratorData->m_loopCount ? *iterator->m_iteratorData->m_loopCount : 1;
+        return iterator && iterator->d->m_loopCount ? *iterator->d->m_loopCount : 1;
     }
 
     QTaskTree *q = nullptr;
@@ -3309,7 +3327,7 @@ void ExecutionContextActivator::activateContext(RuntimeIteration *iteration)
 {
     std::optional<Iterator> loop = iteration->iterator();
     if (loop) {
-        loop->m_iteratorData->threadData().pushIteration(iteration->m_iterationIndex);
+        loop->d->threadData().pushIteration(iteration->m_iterationIndex);
         m_activeIterators.append(*loop);
     }
     activateContext(iteration->m_container);
@@ -3622,7 +3640,7 @@ bool QTaskTreePrivate::invokeDoneHandler(RuntimeContainer *container, DoneWith d
 bool QTaskTreePrivate::invokeIteratorHandler(RuntimeContainer *container)
 {
     if (container->m_shouldIterate) {
-        const IteratorData *loopData = container->m_containerNode.m_iterator->m_iteratorData.get();
+        const IteratorPrivate *loopData = container->m_containerNode.m_iterator->d.get();
         if (loopData->m_loopCount) {
             container->m_shouldIterate = container->m_iterationCount < loopData->m_loopCount;
         } else if (loopData->m_condition) {
@@ -4685,5 +4703,6 @@ void QTimeoutTaskAdapter::operator()(milliseconds *task, QTaskInterface *iface)
 QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::DoPrivate)
 QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ForPrivate)
 QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::GroupItemPrivate)
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::IteratorPrivate)
 
 QT_END_NAMESPACE
