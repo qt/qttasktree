@@ -17,8 +17,8 @@ class QBarrierPrivate : public QObjectPrivate
 {
 public:
     std::optional<QtTaskTree::DoneResult> m_result;
-    int m_limit = 1;
-    int m_current = -1;
+    qsizetype m_limit = 1;
+    qsizetype m_current = -1;
 };
 
 /*!
@@ -50,7 +50,7 @@ QBarrier::~QBarrier() = default;
     Sets the limit to \a value. After it is started, the barrier finishes
     when the number of calls to \l advance() reaches the limit.
 */
-void QBarrier::setLimit(int value)
+void QBarrier::setLimit(qsizetype value)
 {
     QT_TASKTREE_ASSERT(!isRunning(), return);
     QT_TASKTREE_ASSERT(value > 0, return);
@@ -61,7 +61,7 @@ void QBarrier::setLimit(int value)
 /*!
     Returns the current limit of the barrier.
 */
-int QBarrier::limit() const
+qsizetype QBarrier::limit() const
 {
     return d_func()->m_limit;
 }
@@ -119,7 +119,7 @@ bool QBarrier::isRunning() const
 /*!
     Returns the current advance count of the barrier.
 */
-int QBarrier::current() const
+qsizetype QBarrier::current() const
 {
     return d_func()->m_current;
 }
@@ -152,40 +152,40 @@ std::optional<DoneResult> QBarrier::result() const
     \class QStartedBarrier
     \inheaderfile qbarriertask.h
     \inmodule QtTaskTree
-    \brief A started QBarrier with a given Limit.
+    \brief A started QBarrier with a given limit.
     \reentrant
 
-    QStartedBarrier is a QBarrier with a given Limit,
+    QStartedBarrier is a QBarrier with a given limit,
     already started when constucted.
 */
 
 /*!
-    \fn template <int Limit = 1> QStartedBarrier<Limit>::QStartedBarrier(QObject *parent = nullptr)
-
-    Creates started QBarrier with a given \a parent and Limit.
-    The default Limit is 1.
+    Creates started QBarrier with a given \a parent and the default limit of 1.
 */
+QStartedBarrier::QStartedBarrier(QObject *parent) : QStartedBarrier(1, parent) {}
 
 /*!
-    \typedef QStoredMultiBarrier
-    \relates QStartedBarrier
-
-    Type alias for the QtTaskTree::Storage<QStartedBarrier<Limit>>,
-    to be used inside recipes.
+    Creates started QBarrier with a given \a limit and \a parent.
 */
+QStartedBarrier::QStartedBarrier(qsizetype limit, QObject *parent)
+    : QBarrier(parent)
+{
+    setLimit(limit);
+    start();
+}
+
+QStartedBarrier::~QStartedBarrier() = default;
 
 /*!
     \typedef QStoredBarrier
     \relates QStartedBarrier
 
-    Type alias for the QStoredMultiBarrier<1>, to be used inside recipes.
+    Type alias for the QtTaskTree::Storage<QStartedBarrier>, to be used inside recipes.
 */
 
 namespace QtTaskTree {
 
 /*!
-    \fn template <int Limit> ExecutableItem barrierAwaiterTask(const QStoredMultiBarrier<Limit> &storedBarrier)
-
     Returns the awaiter task that finishes when passed \a storedBarrier
     is finished.
 
@@ -193,6 +193,27 @@ namespace QtTaskTree {
           as a sibling item to the returned task or in any ancestor \l Group,
           otherwise you may expect a crash.
 */
+ExecutableItem barrierAwaiterTask(const QStoredBarrier &storedBarrier)
+{
+    return QBarrierTask([storedBarrier](QBarrier &barrier) {
+        QBarrier *activeBarrier = storedBarrier.activeStorage();
+        if (!activeBarrier) {
+            qWarning("The barrier referenced from WaitForBarrier element "
+                     "is not reachable in the running tree. "
+                     "It is possible that no barrier was added to the tree, "
+                     "or the barrier is not reachable from where it is referenced. "
+                     "The WaitForBarrier task finishes with an error. ");
+            return SetupResult::StopWithError;
+        }
+        const std::optional<DoneResult> result = activeBarrier->result();
+        if (result.has_value()) {
+            return *result == DoneResult::Success ? SetupResult::StopWithSuccess
+                                                  : SetupResult::StopWithError;
+        }
+        QObject::connect(activeBarrier, &QBarrier::done, &barrier, &QBarrier::stopWithResult);
+        return SetupResult::Continue;
+    });
+}
 
 /*!
     \fn template <typename Signal> ExecutableItem signalAwaiterTask(const typename QtPrivate::FunctionPointer<Signal>::Object *sender, Signal signal)

@@ -2756,7 +2756,7 @@ void tst_TaskTree::testTree_data()
     }
 
     {
-        QStoredMultiBarrier<2> barrier;
+        const QStoredBarrier barrier{2};
 
         // Test that multi barrier advance, triggered from inside the tasks described by
         // createBarrierAdvance, placed BEFORE the group containing the waitFor() element
