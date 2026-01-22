@@ -841,10 +841,12 @@ public:
 class QTimeoutTaskAdapter final
 {
 public:
+    QTimeoutTaskAdapter() = default;
     Q_TASKTREE_EXPORT ~QTimeoutTaskAdapter();
     Q_TASKTREE_EXPORT void operator()(std::chrono::milliseconds *task, QTaskInterface *iface);
 
 private:
+    Q_DISABLE_COPY_MOVE(QTimeoutTaskAdapter)
     std::optional<size_t> m_timerId;
 };
 
