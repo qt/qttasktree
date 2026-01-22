@@ -110,20 +110,20 @@ static constexpr bool isInvocable()
 }
 
 // TODO: pimpl me?
-class Q_TASKTREE_EXPORT Iterator
+class Iterator
 {
 public:
     using Condition = std::function<bool(int)>; // Takes iteration, called prior to each iteration.
     using ValueGetter = std::function<const void *(int)>; // Takes iteration, returns ptr to ref.
 
-    int iteration() const;
+    Q_TASKTREE_EXPORT int iteration() const;
 
 protected:
-    Iterator(); // LoopForever
-    Iterator(int count, const ValueGetter &valueGetter = {}); // LoopRepeat, LoopList
-    Iterator(const Condition &condition); // LoopUntil
+    Q_TASKTREE_EXPORT Iterator(); // LoopForever
+    Q_TASKTREE_EXPORT Iterator(int count, const ValueGetter &valueGetter = {}); // LoopRepeat, LoopList
+    Q_TASKTREE_EXPORT Iterator(const Condition &condition); // LoopUntil
 
-    const void *valuePtr() const;
+    Q_TASKTREE_EXPORT const void *valuePtr() const;
 
 private:
     friend class ExecutionContextActivator;
