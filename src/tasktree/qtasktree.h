@@ -309,12 +309,12 @@ private:
     QExplicitlySharedDataPointer<GroupItemPrivate> d;
 };
 
-class Q_TASKTREE_EXPORT ExecutableItem : public GroupItem
+class ExecutableItem : public GroupItem
 {
 public:
-    Group withTimeout(std::chrono::milliseconds timeout,
-                      const std::function<void()> &handler = {}) const;
-    Group withLog(const QString &logName) const;
+    Q_TASKTREE_EXPORT Group withTimeout(std::chrono::milliseconds timeout,
+                                        const std::function<void()> &handler = {}) const;
+    Q_TASKTREE_EXPORT Group withLog(const QString &logName) const;
     template <typename SenderSignalPairGetter>
     Group withCancel(SenderSignalPairGetter &&getter,
                      std::initializer_list<GroupItem> postCancelRecipe = {}) const;
@@ -322,8 +322,8 @@ public:
     Group withAccept(SenderSignalPairGetter &&getter) const;
 
 protected:
-    ExecutableItem();
-    ExecutableItem(const TaskHandler &handler);
+    Q_TASKTREE_EXPORT ExecutableItem();
+    Q_TASKTREE_EXPORT ExecutableItem(const TaskHandler &handler);
 
 private:
     Q_TASKTREE_EXPORT friend Group operator!(const ExecutableItem &item);
@@ -336,9 +336,9 @@ private:
 
     using ConnectWrapper = std::function<void(QObject *, const std::function<void()> &)>;
 
-    Group withCancelImpl(const ConnectWrapper &connectWrapper,
-                         const GroupItems &postCancelRecipe) const;
-    Group withAcceptImpl(const ConnectWrapper &connectWrapper) const;
+    Q_TASKTREE_EXPORT Group withCancelImpl(const ConnectWrapper &connectWrapper,
+                                           const GroupItems &postCancelRecipe) const;
+    Q_TASKTREE_EXPORT Group withAcceptImpl(const ConnectWrapper &connectWrapper) const;
 
     template <typename SenderSignalPairGetter>
     static ConnectWrapper connectWrapper(SenderSignalPairGetter &&getter)
