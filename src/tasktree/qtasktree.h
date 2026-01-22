@@ -218,7 +218,7 @@ private:
     }
 };
 
-class Q_TASKTREE_EXPORT GroupItem
+class GroupItem
 {
 public:
     // Called when group entered, after group's storages are created
@@ -230,19 +230,19 @@ public:
     GroupItem(const Storage<StorageStruct> &storage) : GroupItem(static_cast<StorageBase>(storage)) {}
 
     // TODO: Add tests.
-    GroupItem(const GroupItems &children);
-    GroupItem(std::initializer_list<GroupItem> children);
-    ~GroupItem();
+    Q_TASKTREE_EXPORT GroupItem(const GroupItems &children);
+    Q_TASKTREE_EXPORT GroupItem(std::initializer_list<GroupItem> children);
+    Q_TASKTREE_EXPORT ~GroupItem();
 
-    GroupItem(const GroupItem &other);
+    Q_TASKTREE_EXPORT GroupItem(const GroupItem &other);
     GroupItem(GroupItem &&other) noexcept = default;
-    GroupItem &operator=(const GroupItem &other);
+    Q_TASKTREE_EXPORT GroupItem &operator=(const GroupItem &other);
     QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(GroupItem)
 
     void swap(GroupItem &other) noexcept { d.swap(other.d); }
 
 protected:
-    GroupItem(const Iterator &loop);
+    Q_TASKTREE_EXPORT GroupItem(const Iterator &loop);
 
     using TaskAdapterPtr = void *;
     // Internal, provided by QCustomTask
@@ -286,18 +286,18 @@ protected:
         TaskHandler,
     };
 
-    GroupItem();
-    GroupItem(Type type);
-    GroupItem(const GroupData &data);
-    GroupItem(const TaskHandler &handler);
-    void addChildren(const GroupItems &children);
+    Q_TASKTREE_EXPORT GroupItem();
+    Q_TASKTREE_EXPORT GroupItem(Type type);
+    Q_TASKTREE_EXPORT GroupItem(const GroupData &data);
+    Q_TASKTREE_EXPORT GroupItem(const TaskHandler &handler);
+    Q_TASKTREE_EXPORT void addChildren(const GroupItems &children);
 
-    static GroupItem groupHandler(const GroupHandler &handler);
+    Q_TASKTREE_EXPORT static GroupItem groupHandler(const GroupHandler &handler);
 
-    TaskHandler taskHandler() const;
+    Q_TASKTREE_EXPORT TaskHandler taskHandler() const;
 
 private:
-    GroupItem(const StorageBase &storage);
+    Q_TASKTREE_EXPORT GroupItem(const StorageBase &storage);
 
     Q_TASKTREE_EXPORT friend Group operator>>(const For &forItem, const Do &doItem);
     friend class ContainerNode;
