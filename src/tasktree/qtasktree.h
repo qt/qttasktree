@@ -33,7 +33,7 @@ class Group;
 class GroupItem;
 class GroupItemPrivate;
 using GroupItems = QList<GroupItem>;
-class IteratorData;
+class IteratorPrivate;
 class QTaskTreePrivate;
 class StorageData;
 class When;
@@ -43,6 +43,7 @@ class When;
 QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::DoPrivate)
 QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ForPrivate)
 QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::GroupItemPrivate)
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::IteratorPrivate)
 
 namespace QtTaskTree {
 
@@ -109,12 +110,20 @@ static constexpr bool isInvocable()
     return false;
 }
 
-// TODO: pimpl me?
 class Iterator
 {
 public:
     using Condition = std::function<bool(int)>; // Takes iteration, called prior to each iteration.
     using ValueGetter = std::function<const void *(int)>; // Takes iteration, returns ptr to ref.
+
+    Q_TASKTREE_EXPORT ~Iterator();
+
+    Q_TASKTREE_EXPORT Iterator(const Iterator &other);
+    Iterator(Iterator &&other) = default;
+    Q_TASKTREE_EXPORT Iterator &operator=(const Iterator &other);
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(Iterator)
+
+    void swap(Iterator &other) noexcept { d.swap(other.d); }
 
     Q_TASKTREE_EXPORT int iteration() const;
 
@@ -128,7 +137,7 @@ protected:
 private:
     friend class ExecutionContextActivator;
     friend class QTaskTreePrivate;
-    std::shared_ptr<IteratorData> m_iteratorData;
+    QExplicitlySharedDataPointer<IteratorPrivate> d;
 };
 
 class ForeverIterator final : public Iterator
