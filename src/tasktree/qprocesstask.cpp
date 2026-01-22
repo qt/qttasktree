@@ -312,7 +312,7 @@ void QProcessTaskDeleter::syncAll()
     with \c {500 ms} timeout, and if the process is still running after
     this timeout passed, the additional call to QProcess::kill() is performed.
 */
-void QProcessTaskDeleter::operator()(QProcess *process)
+void QProcessTaskDeleter::operator()(QProcess *process) const
 {
     ProcessReaper::reap(process);
 }

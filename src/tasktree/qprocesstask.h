@@ -20,7 +20,7 @@ class QProcessTaskDeleter final
 public:
     // Blocking, should be called after all QProcessAdapter instances are deleted.
     Q_TASKTREE_EXPORT static void syncAll();
-    Q_TASKTREE_EXPORT void operator()(QProcess *process);
+    Q_TASKTREE_EXPORT void operator()(QProcess *process) const;
 };
 
 class QProcessTaskAdapter final
