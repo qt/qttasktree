@@ -35,7 +35,7 @@ class GroupItemPrivate;
 using GroupItems = QList<GroupItem>;
 class IteratorPrivate;
 class QTaskTreePrivate;
-class StorageData;
+class StorageBasePrivate;
 class When;
 
 }
@@ -44,6 +44,7 @@ QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::DoPrivate)
 QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ForPrivate)
 QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::GroupItemPrivate)
 QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::IteratorPrivate)
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::StorageBasePrivate)
 
 namespace QtTaskTree {
 
@@ -170,6 +171,16 @@ public:
 
 class Q_TASKTREE_EXPORT StorageBase
 {
+public:
+    ~StorageBase();
+
+    StorageBase(const StorageBase &other);
+    StorageBase(StorageBase &&other) = default;
+    StorageBase &operator=(const StorageBase &other);
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(StorageBase)
+
+    void swap(StorageBase &other) noexcept { d.swap(other.d); }
+
 private:
     using StorageConstructor = std::function<void *(void)>;
     using StorageDestructor = std::function<void(void *)>;
@@ -181,19 +192,18 @@ private:
 
     // TODO: de-inline?
     friend bool operator==(const StorageBase &first, const StorageBase &second)
-    { return first.m_storageData == second.m_storageData; }
-
+    { return first.d == second.d; }
     friend bool operator!=(const StorageBase &first, const StorageBase &second)
-    { return first.m_storageData != second.m_storageData; }
+    { return first.d != second.d; }
 
-    friend size_t qHash(const StorageBase &storage, size_t seed = 0)
-    { return size_t(storage.m_storageData.get()) ^ seed; }
+    friend size_t qHash(const StorageBase &storage, size_t seed = 0) noexcept
+    { return size_t(storage.d.get()) ^ seed; }
 
-    std::shared_ptr<StorageData> m_storageData;
+    QExplicitlySharedDataPointer<StorageBasePrivate> d;
 
     template <typename StorageStruct> friend class Storage;
     friend class ExecutionContextActivator;
-    friend class StorageData;
+    friend class StorageBasePrivate;
     friend class RuntimeContainer;
     friend class QT_PREPEND_NAMESPACE(QTaskTree);
     friend class QTaskTreePrivate;

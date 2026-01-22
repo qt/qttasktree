@@ -2474,9 +2474,14 @@ private:
     QList<QPair<StoragePtr, QTaskTree *>> m_activeStorageStack;
 };
 
-class StorageData
+class StorageBasePrivate : public QSharedData
 {
 public:
+    StorageBasePrivate(const StorageBase::StorageConstructor &ctor,
+                       const StorageBase::StorageDestructor &dtor)
+        : m_constructor(ctor)
+        , m_destructor(dtor)
+    {}
     StorageThreadData &threadData() { return m_threadData.data(); }
 
     const StorageBase::StorageConstructor m_constructor = {};
@@ -2484,13 +2489,17 @@ public:
     LocalThreadStorage<StorageThreadData> m_threadData = {};
 };
 
+StorageBase::~StorageBase() = default;
+StorageBase::StorageBase(const StorageBase &other) = default;
+StorageBase &StorageBase::operator=(const StorageBase &other) = default;
+
 StorageBase::StorageBase(const StorageConstructor &ctor, const StorageDestructor &dtor)
-    : m_storageData(new StorageData{ctor, dtor})
+    : d(new StorageBasePrivate{ctor, dtor})
 {}
 
 StoragePtr StorageBase::activeStorageVoid() const
 {
-    return m_storageData->threadData().activeStorage();
+    return d->threadData().activeStorage();
 }
 
 class GroupItemPrivate : public QSharedData
@@ -3045,7 +3054,7 @@ public:
     }
     ~ExecutionContextActivator() {
         for (int i = m_activeStorages.size() - 1; i >= 0; --i) // iterate in reverse order
-            m_activeStorages[i].m_storageData->threadData().popStorage();
+            m_activeStorages[i].d->threadData().popStorage();
         for (int i = m_activeIterators.size() - 1; i >= 0; --i) // iterate in reverse order
             m_activeIterators[i].d->threadData().popIteration();
         QT_TASKTREE_ASSERT(s_activeTaskTrees.size(), return);
@@ -3239,7 +3248,7 @@ public:
             StoragePtr storagePtr = m_storages.value(i);
             if (m_callStorageDoneHandlersOnDestruction)
                 m_containerNode.m_taskTreePrivate->callDoneHandler(storage, storagePtr);
-            storage.m_storageData->m_destructor(storagePtr);
+            storage.d->m_destructor(storagePtr);
         }
     }
 
@@ -3341,7 +3350,7 @@ void ExecutionContextActivator::activateContext(RuntimeContainer *container)
         if (m_activeStorages.contains(storage))
             continue; // Storage shadowing: The storage is already active, skipping it...
         m_activeStorages.append(storage);
-        storage.m_storageData->threadData().pushStorage(container->m_storages.value(i));
+        storage.d->threadData().pushStorage(container->m_storages.value(i));
     }
     // Go to the parent after activating this storages so that storage shadowing works
     // in the direction from child to parent root.
@@ -3458,7 +3467,7 @@ QList<StoragePtr> RuntimeContainer::createStorages(const ContainerNode &containe
 {
     QList<StoragePtr> storages;
     for (const StorageBase &storage : container.m_storageList) {
-        StoragePtr storagePtr = storage.m_storageData->m_constructor();
+        StoragePtr storagePtr = storage.d->m_constructor();
         storages.append(storagePtr);
         container.m_taskTreePrivate->callSetupHandler(storage, storagePtr);
     }
@@ -4704,5 +4713,6 @@ QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::DoPrivate)
 QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ForPrivate)
 QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::GroupItemPrivate)
 QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::IteratorPrivate)
+QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::StorageBasePrivate)
 
 QT_END_NAMESPACE
