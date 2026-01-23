@@ -23,7 +23,8 @@ class Q_TASKTREE_EXPORT QNetworkReplyWrapper : public QObject
     Q_DECLARE_PRIVATE(QNetworkReplyWrapper)
 
 public:
-    QNetworkReplyWrapper(QObject *parent = nullptr);
+    QNetworkReplyWrapper() : QNetworkReplyWrapper(nullptr) {}
+    explicit QNetworkReplyWrapper(QObject *parent);
     ~QNetworkReplyWrapper() override;
     void setRequest(const QNetworkRequest &request);
     void setOperation(QNetworkAccessManager::Operation operation);

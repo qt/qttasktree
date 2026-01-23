@@ -29,7 +29,8 @@ public:
     using TreeSetupHandler = std::function<void(QTaskTree &)>;
     using TreeDoneHandler = std::function<void(const QTaskTree &, QtTaskTree::DoneWith)>;
 
-    QAbstractTaskTreeRunner(QObject *parent = nullptr);
+    QAbstractTaskTreeRunner() : QAbstractTaskTreeRunner(nullptr) {}
+    explicit QAbstractTaskTreeRunner(QObject *parent);
     ~QAbstractTaskTreeRunner() override;
 
     virtual bool isRunning() const = 0;
@@ -99,7 +100,8 @@ class Q_TASKTREE_EXPORT QSingleTaskTreeRunner : public QAbstractTaskTreeRunner
     Q_DECLARE_PRIVATE(QSingleTaskTreeRunner)
 
 public:
-    QSingleTaskTreeRunner(QObject *parent = nullptr);
+    QSingleTaskTreeRunner() : QSingleTaskTreeRunner(nullptr) {}
+    explicit QSingleTaskTreeRunner(QObject *parent);
     ~QSingleTaskTreeRunner() override;
 
     bool isRunning() const override;
@@ -131,7 +133,8 @@ class Q_TASKTREE_EXPORT QSequentialTaskTreeRunner : public QAbstractTaskTreeRunn
     Q_DECLARE_PRIVATE(QSequentialTaskTreeRunner)
 
 public:
-    QSequentialTaskTreeRunner(QObject *parent = nullptr);
+    QSequentialTaskTreeRunner() : QSequentialTaskTreeRunner(nullptr) {}
+    explicit QSequentialTaskTreeRunner(QObject *parent);
     ~QSequentialTaskTreeRunner();
 
     bool isRunning() const override;
@@ -166,7 +169,8 @@ class Q_TASKTREE_EXPORT QParallelTaskTreeRunner : public QAbstractTaskTreeRunner
     Q_DECLARE_PRIVATE(QParallelTaskTreeRunner)
 
 public:
-    QParallelTaskTreeRunner(QObject *parent = nullptr);
+    QParallelTaskTreeRunner() : QParallelTaskTreeRunner(nullptr) {}
+    explicit QParallelTaskTreeRunner(QObject *parent);
     ~QParallelTaskTreeRunner();
 
     bool isRunning() const override;
@@ -196,7 +200,8 @@ template <typename Key>
 class QMappedTaskTreeRunner : public QAbstractTaskTreeRunner
 {
 public:
-    QMappedTaskTreeRunner(QObject *parent = nullptr)
+    QMappedTaskTreeRunner() : QMappedTaskTreeRunner(nullptr) {}
+    explicit QMappedTaskTreeRunner(QObject *parent)
         : QAbstractTaskTreeRunner(parent)
     {}
 
