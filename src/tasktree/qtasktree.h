@@ -149,20 +149,21 @@ public:
 class RepeatIterator final : public Iterator
 {
 public:
-    Q_TASKTREE_EXPORT RepeatIterator(int count);
+    Q_TASKTREE_EXPORT explicit RepeatIterator(int count);
 };
 
 class UntilIterator final : public Iterator
 {
 public:
-    Q_TASKTREE_EXPORT UntilIterator(const Condition &condition);
+    Q_TASKTREE_EXPORT explicit UntilIterator(const Condition &condition);
 };
 
 template <typename T>
 class ListIterator final : public Iterator
 {
 public:
-    ListIterator(const QList<T> &list) : Iterator(list.size(), [list](int i) { return &list.at(i); }) {}
+    explicit ListIterator(const QList<T> &list)
+        : Iterator(list.size(), [list](int i) { return &list.at(i); }) {}
     const T *operator->() const { return static_cast<const T *>(valuePtr()); }
     const T &operator*() const { return *static_cast<const T *>(valuePtr()); }
 };
@@ -542,7 +543,7 @@ class QSyncTask final : public QtTaskTree::ExecutableItem
 {
 public:
     template <typename Handler>
-    QSyncTask(Handler &&handler) {
+    explicit QSyncTask(Handler &&handler) {
         addChildren({ QtTaskTree::onGroupDone(wrapHandler(std::forward<Handler>(handler))) });
     }
 
@@ -566,7 +567,8 @@ class Q_TASKTREE_EXPORT QTaskInterface final : public QObject
     Q_OBJECT
 
 public:
-    QTaskInterface(QObject *parent = nullptr);
+    QTaskInterface() : QTaskInterface(nullptr) {}
+    explicit QTaskInterface(QObject *parent);
     void reportDone(QtTaskTree::DoneResult result);
 
 Q_SIGNALS:
@@ -636,8 +638,9 @@ public:
     using TaskDoneHandler = std::function<QtTaskTree::DoneResult(const Task &, QtTaskTree::DoneWith)>;
 
     template <typename SetupHandler = TaskSetupHandler, typename DoneHandler = TaskDoneHandler>
-    QCustomTask(SetupHandler &&setup = TaskSetupHandler(), DoneHandler &&done = TaskDoneHandler(),
-                QtTaskTree::CallDoneFlags callDone = QtTaskTree::CallDone::Always)
+    explicit QCustomTask(SetupHandler &&setup = TaskSetupHandler(),
+                         DoneHandler &&done = TaskDoneHandler(),
+                         QtTaskTree::CallDoneFlags callDone = QtTaskTree::CallDone::Always)
         : ExecutableItem({&taskAdapterConstructor, &taskAdapterDestructor, &taskAdapterStarter,
                           wrapSetup(std::forward<SetupHandler>(setup)),
                           wrapDone(std::forward<DoneHandler>(done)), callDone})
@@ -764,8 +767,9 @@ class Q_TASKTREE_EXPORT QTaskTree : public QObject
     Q_DECLARE_PRIVATE(QtTaskTree::QTaskTree)
 
 public:
-    QTaskTree(QObject *parent = nullptr);
-    QTaskTree(const QtTaskTree::Group &recipe, QObject *parent = nullptr);
+    QTaskTree() : QTaskTree(nullptr) {}
+    explicit QTaskTree(QObject *parent);
+    explicit QTaskTree(const QtTaskTree::Group &recipe, QObject *parent = nullptr);
     ~QTaskTree() override;
 
     void setRecipe(const QtTaskTree::Group &recipe);

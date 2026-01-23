@@ -21,7 +21,8 @@ class Q_TASKTREE_EXPORT QTcpSocketWrapper : public QObject
     Q_DECLARE_PRIVATE(QTcpSocketWrapper)
 
 public:
-    QTcpSocketWrapper(QObject *parent = nullptr);
+    QTcpSocketWrapper() : QTcpSocketWrapper(nullptr) {}
+    explicit QTcpSocketWrapper(QObject *parent);
     ~QTcpSocketWrapper() override;
     void setAddress(const QHostAddress &address);
     void setPort(quint16 port);

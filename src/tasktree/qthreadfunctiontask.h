@@ -21,7 +21,8 @@ class Q_TASKTREE_EXPORT QThreadFunctionBase : public QObject
     Q_DECLARE_PRIVATE(QThreadFunctionBase)
 
 public:
-    QThreadFunctionBase(QObject *parent = nullptr);
+    QThreadFunctionBase() : QThreadFunctionBase(nullptr) {}
+    explicit QThreadFunctionBase(QObject *parent);
     ~QThreadFunctionBase() override;
 
     void setThreadPool(QThreadPool *pool);
@@ -54,7 +55,8 @@ class QThreadFunction : public QThreadFunctionBase
     Q_DISABLE_COPY_MOVE(QThreadFunction)
 
 public:
-    explicit QThreadFunction(QObject *parent = nullptr)
+    QThreadFunction() : QThreadFunction(nullptr) {}
+    explicit QThreadFunction(QObject *parent)
         : QThreadFunctionBase(parent)
     {
         connect(&m_watcher, &QFutureWatcherBase::finished, this, [this] {
