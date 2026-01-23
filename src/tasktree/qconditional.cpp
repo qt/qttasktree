@@ -247,7 +247,7 @@ Group Then::body() const { return d->m_body; }
 class ConditionData final
 {
 public:
-    std::optional<ExecutableItem> m_condition;
+    std::optional<ExecutableItem> m_condition = std::nullopt;
     Group m_body;
 };
 

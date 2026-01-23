@@ -16,7 +16,7 @@ using namespace QtTaskTree;
 class QBarrierPrivate : public QObjectPrivate
 {
 public:
-    std::optional<QtTaskTree::DoneResult> m_result;
+    std::optional<QtTaskTree::DoneResult> m_result = std::nullopt;
     qsizetype m_limit = 1;
     qsizetype m_current = -1;
 };

@@ -66,7 +66,7 @@ public:
     QThreadPool *m_threadPool = nullptr;
     bool m_isAutoSync = true;
     bool m_isSyncSkipped = false;
-    std::optional<QFuture<void>> m_future;
+    std::optional<QFuture<void>> m_future = std::nullopt;
 };
 
 /*!
