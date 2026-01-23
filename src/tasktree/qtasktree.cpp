@@ -2061,7 +2061,7 @@ class IteratorThreadData
 
 public:
     IteratorThreadData() = default;
-    void pushIteration(int index)
+    void pushIteration(qsizetype index)
     {
         m_activeIteratorStack.push_back(index);
     }
@@ -2070,7 +2070,7 @@ public:
         QT_TASKTREE_ASSERT(m_activeIteratorStack.size(), return);
         m_activeIteratorStack.pop_back();
     }
-    int iteration() const
+    qsizetype iteration() const
     {
         QT_TASKTREE_ASSERT(m_activeIteratorStack.size(), qWarning(
             "The referenced iterator is not reachable in the running tree. "
@@ -2081,14 +2081,14 @@ public:
     }
 
 private:
-    QList<int> m_activeIteratorStack;
+    QList<qsizetype> m_activeIteratorStack;
 };
 
 class IteratorPrivate : public QSharedData
 {
 public:
     IteratorPrivate() = default;
-    explicit IteratorPrivate(int count, const Iterator::ValueGetter &valueGetter)
+    explicit IteratorPrivate(qsizetype count, const Iterator::ValueGetter &valueGetter)
         : m_loopCount(count)
         , m_valueGetter(valueGetter)
     {}
@@ -2098,7 +2098,7 @@ public:
 
     IteratorThreadData &threadData() { return m_threadData.data(); }
 
-    const std::optional<int> m_loopCount = {};
+    const std::optional<qsizetype> m_loopCount = {};
     const Iterator::ValueGetter m_valueGetter = {};
     const Iterator::Condition m_condition = {};
     LocalThreadStorage<IteratorThreadData> m_threadData = {};
@@ -2118,7 +2118,7 @@ Iterator::Iterator()
     : d(new IteratorPrivate)
 {}
 
-Iterator::Iterator(int count, const ValueGetter &valueGetter)
+Iterator::Iterator(qsizetype count, const ValueGetter &valueGetter)
     : d(new IteratorPrivate{count, valueGetter})
 {}
 
@@ -2199,7 +2199,7 @@ Iterator &Iterator::operator=(const Iterator &other)
     for the corresponding setup handler, so the order of iteration indices
     in subsequent done handlers may not be ascending.
 */
-int Iterator::iteration() const
+qsizetype Iterator::iteration() const
 {
     return d->threadData().iteration();
 }
@@ -2338,7 +2338,7 @@ ForeverIterator::ForeverIterator() : Iterator() {}
         You have lost. Try again.
     \endcode
 */
-RepeatIterator::RepeatIterator(int count) : Iterator(count) {}
+RepeatIterator::RepeatIterator(qsizetype count) : Iterator(count) {}
 
 /*!
     \class QtTaskTree::UntilIterator
