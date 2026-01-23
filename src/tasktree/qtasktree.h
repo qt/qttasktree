@@ -113,8 +113,8 @@ static constexpr bool isInvocable()
 class Iterator
 {
 public:
-    using Condition = std::function<bool(int)>; // Takes iteration, called prior to each iteration.
-    using ValueGetter = std::function<const void *(int)>; // Takes iteration, returns ptr to ref.
+    using Condition = std::function<bool(qsizetype)>; // Takes iteration, called prior to each iteration.
+    using ValueGetter = std::function<const void *(qsizetype)>; // Takes iteration, returns ptr to ref.
 
     Q_TASKTREE_EXPORT ~Iterator();
 
@@ -125,11 +125,11 @@ public:
 
     void swap(Iterator &other) noexcept { d.swap(other.d); }
 
-    Q_TASKTREE_EXPORT int iteration() const;
+    Q_TASKTREE_EXPORT qsizetype iteration() const;
 
 protected:
     Q_TASKTREE_EXPORT Iterator(); // LoopForever
-    Q_TASKTREE_EXPORT Iterator(int count, const ValueGetter &valueGetter = {}); // LoopRepeat, LoopList
+    Q_TASKTREE_EXPORT Iterator(qsizetype count, const ValueGetter &valueGetter = {}); // LoopRepeat, LoopList
     Q_TASKTREE_EXPORT Iterator(const Condition &condition); // LoopUntil
 
     Q_TASKTREE_EXPORT const void *valuePtr() const;
@@ -149,7 +149,7 @@ public:
 class RepeatIterator final : public Iterator
 {
 public:
-    Q_TASKTREE_EXPORT explicit RepeatIterator(int count);
+    Q_TASKTREE_EXPORT explicit RepeatIterator(qsizetype count);
 };
 
 class UntilIterator final : public Iterator
@@ -163,7 +163,7 @@ class ListIterator final : public Iterator
 {
 public:
     explicit ListIterator(const QList<T> &list)
-        : Iterator(list.size(), [list](int i) { return &list.at(i); }) {}
+        : Iterator(list.size(), [list](qsizetype i) { return &list.at(i); }) {}
     const T *operator->() const { return static_cast<const T *>(valuePtr()); }
     const T &operator*() const { return *static_cast<const T *>(valuePtr()); }
 };
