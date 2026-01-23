@@ -203,17 +203,10 @@ class Storage final : public StorageBase
 {
 public:
     Storage() : StorageBase(Storage::ctor(), Storage::dtor()) {}
-#if __cplusplus >= 201803L // C++20: Allow pack expansion in lambda init-capture.
     template <typename ...Args>
-    Storage(const Args &...args)
-        : StorageBase([...args = args] { return new StorageStruct{args...}; }, Storage::dtor()) {}
-#else // C++17
-    template <typename ...Args>
-    Storage(const Args &...args)
-        : StorageBase([argsTuple = std::tuple(args...)] {
-            return std::apply([](const Args &...arguments) { return new StorageStruct{arguments...}; }, argsTuple);
-        }, Storage::dtor()) {}
-#endif
+    explicit Storage(const Args &...args)
+        : StorageBase([=] { return new StorageStruct{args...}; }, Storage::dtor()) {}
+
     StorageStruct &operator*() const noexcept { return *activeStorage(); }
     StorageStruct *operator->() const noexcept { return activeStorage(); }
     StorageStruct *activeStorage() const {
