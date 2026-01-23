@@ -844,7 +844,7 @@ public:
 
 private:
     Q_DISABLE_COPY_MOVE(QTimeoutTaskAdapter)
-    std::optional<size_t> m_timerId;
+    std::optional<size_t> m_timerId = std::nullopt;
 };
 
 using QTaskTreeTask = QCustomTask<QTaskTree, QTaskTreeTaskAdapter>;

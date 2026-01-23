@@ -4705,7 +4705,7 @@ void tst_TaskTree::storageInitialization()
     QFETCH(Storage<int>, storage);
     QFETCH(int, initValue);
 
-    std::optional<int> storageValue;
+    std::optional<int> storageValue = std::nullopt;
 
     const auto onSetup = [storage, &storageValue] { storageValue = *storage; };
 
@@ -5009,7 +5009,7 @@ using BoolDoneTask = QCustomTask<BoolDone>;
 
 void tst_TaskTree::boolDoneAdapter()
 {
-    std::optional<bool> result = {};
+    std::optional<bool> result = std::nullopt;
     const auto onDone = [&result](DoneWith doneWith) {
         result = doneWith == DoneWith::Success ? true : false;
     };

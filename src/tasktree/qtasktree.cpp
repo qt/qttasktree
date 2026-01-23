@@ -2098,7 +2098,7 @@ public:
 
     IteratorThreadData &threadData() { return m_threadData.data(); }
 
-    const std::optional<qsizetype> m_loopCount = {};
+    const std::optional<qsizetype> m_loopCount = std::nullopt;
     const Iterator::ValueGetter m_valueGetter = {};
     const Iterator::Condition m_condition = {};
     LocalThreadStorage<IteratorThreadData> m_threadData = {};
@@ -3074,7 +3074,7 @@ public:
     const GroupItem::GroupHandler m_groupHandler;
     const int m_parallelLimit = 1;
     const WorkflowPolicy m_workflowPolicy = WorkflowPolicy::StopOnError;
-    const std::optional<Iterator> m_iterator;
+    const std::optional<Iterator> m_iterator = std::nullopt;
     const QList<StorageBase> m_storageList;
     std::vector<TaskNode> m_children;
     const int m_taskCount = 0;
@@ -3181,7 +3181,7 @@ public:
     int m_asyncCount = 0;
     QSet<StorageBase> m_storages;
     QHash<StorageBase, StorageHandler> m_storageHandlers;
-    std::optional<TaskNode> m_root;
+    std::optional<TaskNode> m_root = std::nullopt;
     std::shared_ptr<RuntimeTask> m_runtimeRoot; // Keep me last in order to destruct first
 };
 
@@ -3295,7 +3295,7 @@ public:
 
     const TaskNode &m_taskNode; // Not owning.
     RuntimeIteration *m_parentIteration = nullptr; // Not owning.
-    std::optional<RuntimeContainer> m_container = {}; // Owning.
+    std::optional<RuntimeContainer> m_container = std::nullopt; // Owning.
     std::unique_ptr<TaskInterfaceAdapter> m_taskInterfaceAdapter = {}; // Owning.
     SetupResult m_setupResult = SetupResult::Continue;
 };
