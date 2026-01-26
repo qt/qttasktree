@@ -169,14 +169,14 @@ public:
     const T &operator*() const { return *static_cast<const T *>(valuePtr()); }
 };
 
-class Q_TASKTREE_EXPORT StorageBase
+class StorageBase
 {
 public:
-    ~StorageBase();
+    Q_TASKTREE_EXPORT ~StorageBase();
 
-    StorageBase(const StorageBase &other);
+    Q_TASKTREE_EXPORT StorageBase(const StorageBase &other);
     StorageBase(StorageBase &&other) = default;
-    StorageBase &operator=(const StorageBase &other);
+    Q_TASKTREE_EXPORT StorageBase &operator=(const StorageBase &other);
     QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(StorageBase)
 
     void swap(StorageBase &other) noexcept { d.swap(other.d); }
@@ -186,9 +186,9 @@ private:
     using StorageDestructor = std::function<void(void *)>;
     using StorageHandler = std::function<void(void *)>;
 
-    StorageBase(const StorageConstructor &ctor, const StorageDestructor &dtor);
+    Q_TASKTREE_EXPORT StorageBase(const StorageConstructor &ctor, const StorageDestructor &dtor);
 
-    void *activeStorageVoid() const;
+    Q_TASKTREE_EXPORT void *activeStorageVoid() const;
 
     // TODO: de-inline?
     friend bool operator==(const StorageBase &first, const StorageBase &second)
