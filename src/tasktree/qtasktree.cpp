@@ -1779,10 +1779,6 @@ public:
     Iterator m_iterator;
 };
 
-For::~For() = default;
-For::For(const For &other) = default;
-For &For::operator=(const For &other) = default;
-
 /*!
     \class QtTaskTree::For
     \inheaderfile qtasktree.h
@@ -1821,10 +1817,6 @@ public:
     DoPrivate(const GroupItem &children) : m_children(children) {}
     GroupItem m_children;
 };
-
-Do::~Do() = default;
-Do::Do(const Do &other) = default;
-Do &Do::operator=(const Do &other) = default;
 
 /*!
     \class QtTaskTree::Do
@@ -2127,15 +2119,6 @@ Iterator::Iterator(qsizetype count, const ValueGetter &valueGetter)
 Iterator::Iterator(const Condition &condition)
     : d(new IteratorPrivate{condition})
 {}
-
-Iterator::~Iterator()
-    = default;
-
-Iterator::Iterator(const Iterator &other)
-    = default;
-
-Iterator &Iterator::operator=(const Iterator &other)
-    = default;
 
 /*!
     Returns the iteration index of the currently executing handler inside
@@ -2491,10 +2474,6 @@ public:
     LocalThreadStorage<StorageThreadData> m_threadData = {};
 };
 
-StorageBase::~StorageBase() = default;
-StorageBase::StorageBase(const StorageBase &other) = default;
-StorageBase &StorageBase::operator=(const StorageBase &other) = default;
-
 StorageBase::StorageBase(const StorageConstructor &ctor, const StorageDestructor &dtor)
     : d(new StorageBasePrivate{ctor, dtor})
 {}
@@ -2562,10 +2541,6 @@ GroupItem::GroupItem(std::initializer_list<GroupItem> children)
 {
     addChildren(children);
 }
-
-GroupItem::~GroupItem() = default;
-GroupItem::GroupItem(const GroupItem &other) = default;
-GroupItem &GroupItem::operator=(const GroupItem &other) = default;
 
 GroupItem::GroupItem(const Iterator &loop)
     : GroupItem(GroupData{{}, {}, {}, loop})
@@ -3737,6 +3712,12 @@ bool QTaskTreePrivate::invokeTaskDoneHandler(RuntimeTask *node, DoneWith doneWit
         advanceProgress(1);
     return result == DoneResult::Success;
 }
+
+QT_TASKTREE_DEFINE_SMF(Do)
+QT_TASKTREE_DEFINE_SMF(For)
+QT_TASKTREE_DEFINE_SMF(GroupItem)
+QT_TASKTREE_DEFINE_SMF(Iterator)
+QT_TASKTREE_DEFINE_SMF(StorageBase)
 
 } // namespace QtTaskTree
 

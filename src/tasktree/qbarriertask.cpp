@@ -335,9 +335,7 @@ When::When(const BarrierKickerGetter &kicker, WorkflowPolicy policy)
     \sa Do
 */
 
-When::~When() = default;
-When::When(const When &other) = default;
-When &When::operator=(const When &other) = default;
+QT_TASKTREE_DEFINE_SMF(When)
 
 /*!
     \fn Group operator>>(const When &whenItem, const Do &doItem)
