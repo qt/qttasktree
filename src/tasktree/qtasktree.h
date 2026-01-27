@@ -42,6 +42,21 @@ class When;
 
 }
 
+#define QT_TASKTREE_DECLARE_SMFS(Class, ExportMacro) \
+    ExportMacro ~Class(); \
+    ExportMacro Class(const Class &other); \
+    ExportMacro Class &operator=(const Class &other); \
+    Class(Class &&other) = default; \
+    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(Class) \
+    void swap(Class &other) noexcept { d.swap(other.d); } \
+    /* end */
+
+#define QT_TASKTREE_DEFINE_SMF(Class) \
+    Class::~Class() = default; \
+    Class::Class(const Class &other) = default; \
+    Class &Class::operator=(const Class &other) = default; \
+    /* end */
+
 QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::DoPrivate)
 QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ForPrivate)
 QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::GroupItemPrivate)
@@ -119,14 +134,7 @@ public:
     using Condition = std::function<bool(qsizetype)>; // Takes iteration, called prior to each iteration.
     using ValueGetter = std::function<const void *(qsizetype)>; // Takes iteration, returns ptr to ref.
 
-    Q_TASKTREE_EXPORT ~Iterator();
-
-    Q_TASKTREE_EXPORT Iterator(const Iterator &other);
-    Iterator(Iterator &&other) = default;
-    Q_TASKTREE_EXPORT Iterator &operator=(const Iterator &other);
-    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(Iterator)
-
-    void swap(Iterator &other) noexcept { d.swap(other.d); }
+    QT_TASKTREE_DECLARE_SMFS(Iterator, Q_TASKTREE_EXPORT)
 
     Q_TASKTREE_EXPORT qsizetype iteration() const;
 
@@ -174,14 +182,7 @@ public:
 class StorageBase
 {
 public:
-    Q_TASKTREE_EXPORT ~StorageBase();
-
-    Q_TASKTREE_EXPORT StorageBase(const StorageBase &other);
-    StorageBase(StorageBase &&other) = default;
-    Q_TASKTREE_EXPORT StorageBase &operator=(const StorageBase &other);
-    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(StorageBase)
-
-    void swap(StorageBase &other) noexcept { d.swap(other.d); }
+    QT_TASKTREE_DECLARE_SMFS(StorageBase, Q_TASKTREE_EXPORT)
 
 private:
     using StorageConstructor = std::function<void *(void)>;
@@ -247,14 +248,8 @@ public:
     // TODO: Add tests.
     Q_TASKTREE_EXPORT GroupItem(const GroupItems &children);
     Q_TASKTREE_EXPORT GroupItem(std::initializer_list<GroupItem> children);
-    Q_TASKTREE_EXPORT ~GroupItem();
 
-    Q_TASKTREE_EXPORT GroupItem(const GroupItem &other);
-    GroupItem(GroupItem &&other) noexcept = default;
-    Q_TASKTREE_EXPORT GroupItem &operator=(const GroupItem &other);
-    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(GroupItem)
-
-    void swap(GroupItem &other) noexcept { d.swap(other.d); }
+    QT_TASKTREE_DECLARE_SMFS(GroupItem, Q_TASKTREE_EXPORT)
 
 protected:
     Q_TASKTREE_EXPORT GroupItem(const Iterator &loop);
@@ -502,12 +497,7 @@ class For final
 public:
     Q_TASKTREE_EXPORT explicit For(const Iterator &loop);
 
-    Q_TASKTREE_EXPORT ~For();
-    Q_TASKTREE_EXPORT For(const For &other);
-    For(For &&other) noexcept = default;
-    Q_TASKTREE_EXPORT For &operator=(const For &other);
-    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(For)
-    void swap(For &other) noexcept { d.swap(other.d); }
+    QT_TASKTREE_DECLARE_SMFS(For, Q_TASKTREE_EXPORT)
 
 private:
     Q_TASKTREE_EXPORT friend Group operator>>(const For &forItem, const Do &doItem);
@@ -523,12 +513,7 @@ public:
     Q_TASKTREE_EXPORT explicit Do(const GroupItems &children);
     Q_TASKTREE_EXPORT explicit Do(std::initializer_list<GroupItem> children);
 
-    Q_TASKTREE_EXPORT ~Do();
-    Q_TASKTREE_EXPORT Do(const Do &other);
-    Do(Do &&other) noexcept = default;
-    Q_TASKTREE_EXPORT Do &operator=(const Do &other);
-    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(Do)
-    void swap(Do &other) noexcept { d.swap(other.d); }
+    QT_TASKTREE_DECLARE_SMFS(Do, Q_TASKTREE_EXPORT)
 
 private:
     Q_TASKTREE_EXPORT friend Group operator>>(const For &forItem, const Do &doItem);

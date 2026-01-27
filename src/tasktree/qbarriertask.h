@@ -88,13 +88,8 @@ public:
                   WorkflowPolicy policy = WorkflowPolicy::StopOnError)
         : When(kickerForSignal(customTask, signal), policy)
     {}
-    Q_TASKTREE_EXPORT ~When();
-    Q_TASKTREE_EXPORT When(const When &other);
-    When(When &&other) noexcept = default;
-    Q_TASKTREE_EXPORT When &operator=(const When &other);
-    QT_MOVE_ASSIGNMENT_OPERATOR_IMPL_VIA_MOVE_AND_SWAP(When)
 
-    void swap(When &other) noexcept { d.swap(other.d); }
+    QT_TASKTREE_DECLARE_SMFS(When, Q_TASKTREE_EXPORT)
 
 private:
     Q_TASKTREE_EXPORT friend Group operator>>(const When &whenItem, const Do &doItem);
