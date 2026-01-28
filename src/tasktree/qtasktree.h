@@ -138,16 +138,19 @@ public:
 
     Q_TASKTREE_EXPORT qsizetype iteration() const;
 
-protected:
+private:
     Q_TASKTREE_EXPORT Iterator(); // LoopForever
     Q_TASKTREE_EXPORT Iterator(qsizetype count, const ValueGetter &valueGetter = {}); // LoopRepeat, LoopList
     Q_TASKTREE_EXPORT Iterator(const Condition &condition); // LoopUntil
 
     Q_TASKTREE_EXPORT const void *valuePtr() const;
 
-private:
     friend class ExecutionContextActivator;
     friend class QTaskTreePrivate;
+    friend class ForeverIterator;
+    friend class RepeatIterator;
+    friend class UntilIterator;
+    template <typename T> friend class ListIterator;
     QExplicitlySharedDataPointer<IteratorPrivate> d;
 };
 
