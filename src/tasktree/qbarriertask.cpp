@@ -200,11 +200,11 @@ ExecutableItem barrierAwaiterTask(const QStoredBarrier &storedBarrier)
     return QBarrierTask([storedBarrier](QBarrier &barrier) {
         QBarrier *activeBarrier = storedBarrier.activeStorage();
         if (!activeBarrier) {
-            qWarning("The barrier referenced from WaitForBarrier element "
+            qWarning("The barrier referenced from barrierAwaiterTask element "
                      "is not reachable in the running tree. "
                      "It is possible that no barrier was added to the tree, "
                      "or the barrier is not reachable from where it is referenced. "
-                     "The WaitForBarrier task finishes with an error. ");
+                     "The barrierAwaiterTask task finishes with an error. ");
             return SetupResult::StopWithError;
         }
         const std::optional<DoneResult> result = activeBarrier->result();
