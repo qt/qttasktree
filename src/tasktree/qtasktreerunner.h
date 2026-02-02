@@ -44,6 +44,7 @@ Q_SIGNALS:
     void done(QtTaskTree::DoneWith result, QTaskTree *taskTree);
 
 protected:
+    bool event(QEvent *event) override;
     QAbstractTaskTreeRunner(QAbstractTaskTreeRunnerPrivate &dd, QObject *parent);
 
     template <typename Handler>
@@ -122,6 +123,9 @@ public:
                   callDone);
     }
 
+protected:
+    bool event(QEvent *event) override;
+
 private:
     void startImpl(const QtTaskTree::Group &recipe,
                    const TreeSetupHandler &setupHandler,
@@ -158,6 +162,9 @@ public:
                     callDone);
     }
 
+protected:
+    bool event(QEvent *event) override;
+
 private:
     void enqueueImpl(const QtTaskTree::Group &recipe,
                      const TreeSetupHandler &setupHandler,
@@ -190,6 +197,9 @@ public:
                   wrapTreeDoneHandler(std::forward<DoneHandler>(doneHandler)),
                   callDone);
     }
+
+protected:
+    bool event(QEvent *event) override;
 
 private:
     void startImpl(const QtTaskTree::Group &recipe,

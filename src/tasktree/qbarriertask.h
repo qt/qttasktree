@@ -40,6 +40,9 @@ public:
 
 Q_SIGNALS:
     void done(QtTaskTree::DoneResult success, QPrivateSignal);
+
+protected:
+    bool event(QEvent *event) override;
 };
 
 using QBarrierTask = QCustomTask<QBarrier>;
@@ -54,6 +57,9 @@ public:
     explicit QStartedBarrier(qsizetype limit, QObject *parent = nullptr);
 
     ~QStartedBarrier() override;
+
+protected:
+    bool event(QEvent *event) override;
 };
 
 using QStoredBarrier = QtTaskTree::Storage<QStartedBarrier>;

@@ -144,6 +144,12 @@ void QTcpSocketWrapper::start()
     d->m_socket->connectToHost(d->m_address, d->m_port);
 }
 
+/*! \reimp */
+bool QTcpSocketWrapper::event(QEvent *event)
+{
+    return QObject::event(event);
+}
+
 /*!
     \fn void QTcpSocketWrapper::started()
 

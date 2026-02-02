@@ -181,6 +181,12 @@ void QNetworkReplyWrapper::start()
         Q_EMIT started();
 }
 
+/*! \reimp */
+bool QNetworkReplyWrapper::event(QEvent *event)
+{
+    return QObject::event(event);
+}
+
 /*!
     \fn void QNetworkReplyWrapper::started()
 

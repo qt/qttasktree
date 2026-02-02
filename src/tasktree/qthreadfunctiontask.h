@@ -48,6 +48,7 @@ Q_SIGNALS:
     void progressTextChanged(const QString &text);
 
 protected:
+    bool event(QEvent *event) override;
     void storeFuture(const QFuture<void> &future);
 };
 

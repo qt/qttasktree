@@ -43,6 +43,9 @@ Q_SIGNALS:
     void sslErrors(const QList<QSslError> &errors);
 #endif
     void done(QtTaskTree::DoneResult result);
+
+protected:
+    bool event(QEvent *event) override;
 };
 
 using QNetworkReplyWrapperTask = QCustomTask<QNetworkReplyWrapper>;

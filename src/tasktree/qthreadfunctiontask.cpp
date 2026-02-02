@@ -444,6 +444,12 @@ void QThreadFunctionBase::syncAll()
     s_futureSynchronizer->waitForFinished();
 }
 
+/*! \reimp */
+bool QThreadFunctionBase::event(QEvent *event)
+{
+    return QObject::event(event);
+}
+
 void QThreadFunctionBase::storeFuture(const QFuture<void> &future)
 {
     Q_D(QThreadFunctionBase);
