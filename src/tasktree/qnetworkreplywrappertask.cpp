@@ -15,7 +15,7 @@
 
 QT_BEGIN_NAMESPACE
 
-using namespace QtTaskTree;
+namespace QtTaskTree {
 
 class QNetworkReplyWrapperPrivate : public QObjectPrivate
 {
@@ -29,7 +29,7 @@ public:
 };
 
 /*!
-    \class QNetworkReplyWrapper
+    \class QtTaskTree::QNetworkReplyWrapper
     \inheaderfile qnetworkwrappertask.h
     \inmodule QtTaskTree
     \brief A wrapper around QNetworkReply and QNetworkAccessManager.
@@ -225,11 +225,13 @@ bool QNetworkReplyWrapper::event(QEvent *event)
 */
 
 /*!
-    \typedef QNetworkReplyWrapperTask
-    \relates QCustomTask
+    \typedef QtTaskTree::QNetworkReplyWrapperTask
+    \relates QtTaskTree::QCustomTask
 
     Type alias for the QCustomTask<QNetworkReplyWrapper>,
     to be used inside recipes.
 */
+
+} // namespace QtTaskTree
 
 QT_END_NAMESPACE

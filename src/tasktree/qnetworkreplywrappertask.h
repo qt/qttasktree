@@ -17,6 +17,9 @@ QT_BEGIN_NAMESPACE
 
 class QNetworkAccessManager;
 class QNetworkRequest;
+
+namespace QtTaskTree {
+
 class QNetworkReplyWrapperPrivate;
 
 class Q_TASKTREE_EXPORT QNetworkReplyWrapper : public QObject
@@ -49,6 +52,8 @@ protected:
 };
 
 using QNetworkReplyWrapperTask = QCustomTask<QNetworkReplyWrapper>;
+
+} // namespace QtTaskTree
 
 QT_END_NAMESPACE
 

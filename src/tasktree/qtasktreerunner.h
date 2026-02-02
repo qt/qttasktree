@@ -17,6 +17,8 @@
 
 QT_BEGIN_NAMESPACE
 
+namespace QtTaskTree {
+
 class QAbstractTaskTreeRunnerPrivate;
 class QSingleTaskTreeRunnerPrivate;
 class QSequentialTaskTreeRunnerPrivate;
@@ -29,7 +31,7 @@ class Q_TASKTREE_EXPORT QAbstractTaskTreeRunner : public QObject
 
 public:
     using TreeSetupHandler = std::function<void(QTaskTree &)>;
-    using TreeDoneHandler = std::function<void(const QTaskTree &, QtTaskTree::DoneWith)>;
+    using TreeDoneHandler = std::function<void(const QTaskTree &, DoneWith)>;
 
     QAbstractTaskTreeRunner() : QAbstractTaskTreeRunner(nullptr) {}
     explicit QAbstractTaskTreeRunner(QObject *parent);
@@ -49,7 +51,6 @@ protected:
 
     template <typename Handler>
     static TreeSetupHandler wrapTreeSetupHandler(Handler &&handler) {
-        using QtTaskTree::isInvocable;
         if constexpr (std::is_same_v<std::decay_t<Handler>, TreeSetupHandler>) {
             if (!handler)
                 return {}; // User passed {} for the setup handler.
@@ -70,21 +71,20 @@ protected:
 
     template <typename Handler>
     static TreeDoneHandler wrapTreeDoneHandler(Handler &&handler) {
-        using QtTaskTree::isInvocable;
         if constexpr (std::is_same_v<std::decay_t<Handler>, TreeDoneHandler>) {
             if (!handler)
                 return {}; // User passed {} for the done handler.
         }
         // V, T, D stands for: [V]oid, [T]askTree, [D]oneWith
-        static constexpr bool isVTD = isInvocable<void, Handler, const QTaskTree &, QtTaskTree::DoneWith>();
+        static constexpr bool isVTD = isInvocable<void, Handler, const QTaskTree &, DoneWith>();
         static constexpr bool isVT = isInvocable<void, Handler, const QTaskTree &>();
-        static constexpr bool isVD = isInvocable<void, Handler, QtTaskTree::DoneWith>();
+        static constexpr bool isVD = isInvocable<void, Handler, DoneWith>();
         static constexpr bool isV = isInvocable<void, Handler>();
         static_assert(isVTD || isVT || isVD || isV,
             "Task done handler needs to take (const TaskTree &, DoneWith), (const Task &), "
             "(DoneWith) or (void) as arguments and has to return void. "
             "The passed handler doesn't fulfill these requirements.");
-        return [handler = std::forward<Handler>(handler)](const QTaskTree &taskTree, QtTaskTree::DoneWith result) {
+        return [handler = std::forward<Handler>(handler)](const QTaskTree &taskTree, DoneWith result) {
             if constexpr (isVTD)
                 std::invoke(handler, taskTree, result);
             else if constexpr (isVT)
@@ -112,10 +112,10 @@ public:
     void reset() override;
 
     template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler>
-    void start(const QtTaskTree::Group &recipe,
+    void start(const Group &recipe,
                SetupHandler &&setupHandler = {},
                DoneHandler &&doneHandler = {},
-               QtTaskTree::CallDone callDone = QtTaskTree::CallDoneFlag::Always)
+               CallDone callDone = CallDoneFlag::Always)
     {
         startImpl(recipe,
                   wrapTreeSetupHandler(std::forward<SetupHandler>(setupHandler)),
@@ -127,10 +127,10 @@ protected:
     bool event(QEvent *event) override;
 
 private:
-    void startImpl(const QtTaskTree::Group &recipe,
+    void startImpl(const Group &recipe,
                    const TreeSetupHandler &setupHandler,
                    const TreeDoneHandler &doneHandler,
-                   QtTaskTree::CallDone callDone);
+                   CallDone callDone);
 };
 
 class Q_TASKTREE_EXPORT QSequentialTaskTreeRunner : public QAbstractTaskTreeRunner
@@ -151,10 +151,10 @@ public:
     void resetCurrent();
 
     template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler>
-    void enqueue(const QtTaskTree::Group &recipe,
+    void enqueue(const Group &recipe,
                  SetupHandler &&setupHandler = {},
                  DoneHandler &&doneHandler = {},
-                 QtTaskTree::CallDone callDone = QtTaskTree::CallDoneFlag::Always)
+                 CallDone callDone = CallDoneFlag::Always)
     {
         enqueueImpl(recipe,
                     wrapTreeSetupHandler(std::forward<SetupHandler>(setupHandler)),
@@ -166,10 +166,10 @@ protected:
     bool event(QEvent *event) override;
 
 private:
-    void enqueueImpl(const QtTaskTree::Group &recipe,
+    void enqueueImpl(const Group &recipe,
                      const TreeSetupHandler &setupHandler,
                      const TreeDoneHandler &doneHandler,
-                     QtTaskTree::CallDone callDone);
+                     CallDone callDone);
 };
 
 class Q_TASKTREE_EXPORT QParallelTaskTreeRunner : public QAbstractTaskTreeRunner
@@ -187,10 +187,10 @@ public:
     void reset() override;
 
     template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler>
-    void start(const QtTaskTree::Group &recipe,
+    void start(const Group &recipe,
                SetupHandler &&setupHandler = {},
                DoneHandler &&doneHandler = {},
-               QtTaskTree::CallDone callDone = QtTaskTree::CallDoneFlag::Always)
+               CallDone callDone = CallDoneFlag::Always)
     {
         startImpl(recipe,
                   wrapTreeSetupHandler(std::forward<SetupHandler>(setupHandler)),
@@ -202,10 +202,10 @@ protected:
     bool event(QEvent *event) override;
 
 private:
-    void startImpl(const QtTaskTree::Group &recipe,
+    void startImpl(const Group &recipe,
                    const TreeSetupHandler &setupHandler,
                    const TreeDoneHandler &doneHandler,
-                   QtTaskTree::CallDone callDone);
+                   CallDone callDone);
 };
 
 template <typename Key>
@@ -244,10 +244,10 @@ public:
     }
 
     template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler>
-    void start(const Key &key, const QtTaskTree::Group &recipe,
+    void start(const Key &key, const Group &recipe,
                SetupHandler &&setupHandler = {},
                DoneHandler &&doneHandler = {},
-               QtTaskTree::CallDone callDone = QtTaskTree::CallDoneFlag::Always)
+               CallDone callDone = CallDoneFlag::Always)
     {
         startImpl(key, recipe,
                   wrapTreeSetupHandler(std::forward<SetupHandler>(setupHandler)),
@@ -256,14 +256,14 @@ public:
     }
 
 private:
-    void startImpl(const Key &key, const QtTaskTree::Group &recipe,
+    void startImpl(const Key &key, const Group &recipe,
                    const TreeSetupHandler &setupHandler,
                    const TreeDoneHandler &doneHandler,
-                   QtTaskTree::CallDone callDone)
+                   CallDone callDone)
     {
         QTaskTree *taskTree = new QTaskTree(recipe);
         connect(taskTree, &QTaskTree::done,
-                this, [this, key, doneHandler, callDone](QtTaskTree::DoneWith result) {
+                this, [this, key, doneHandler, callDone](DoneWith result) {
             const auto it = m_taskTrees.find(key);
             QTaskTree *runningTaskTree = it->second.release();
             runningTaskTree->deleteLater();
@@ -280,6 +280,8 @@ private:
     }
     std::unordered_map<Key, std::unique_ptr<QTaskTree>> m_taskTrees;
 };
+
+} // namespace QtTaskTree
 
 QT_END_NAMESPACE
 

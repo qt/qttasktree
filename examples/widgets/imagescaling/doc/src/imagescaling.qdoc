@@ -35,10 +35,11 @@
     For each item in the \c urls list, the app:
     \list
         \li Downloads the image for a given address using
-            \l QNetworkReplyWrapper and stores the received \l QByteArray data
-            locally.
-        \li Uses \l QThreadFunction to convert the \l QByteArray data to a
-            \l QImage and scales it to a thumbnail in a separate thread.
+            \l {QtTaskTree::} {QNetworkReplyWrapper} and stores the received
+            \l QByteArray data locally.
+        \li Uses \l {QtTaskTree::} {QThreadFunction} to convert the
+            \l QByteArray data to a \l QImage and scales it to a thumbnail
+            in a separate thread.
         \li Displays the resulting thumbnail in the grid.
     \endlist
 
@@ -133,17 +134,20 @@
     \section1 Download and scale images
 
     Each iteration runs in parallel with others and consists of two sequential
-    tasks. The first task in each iteration is \l QNetworkReplyWrapperTask. Here
-    is how its setup and done handlers are implemented:
+    tasks. The first task in each iteration is
+    \l {QtTaskTree::} {QNetworkReplyWrapperTask}.
+    Here is how its setup and done handlers are implemented:
 
     \snippet widgets/imagescaling/imagescaling.cpp 4
 
-    The \c onDownloadSetup handler runs when \l QNetworkReplyWrapper is about to
+    The \c onDownloadSetup handler runs when
+    \l {QtTaskTree::} {QNetworkReplyWrapper} is about to
     start. It sets up the network access manager and network request. The
     handler captures the \c iterator, which gives access to the current address
     from the \c urls list.
 
-    The \c onDownloadDone handler runs when \l QNetworkReplyWrapper finishes. It
+    The \c onDownloadDone handler runs when
+    \l {QtTaskTree::} {QNetworkReplyWrapper} finishes. It
     captures the \c storage and \c iterator. If the task succeeds, it stores
     the received \l QByteArray data in \c storage. The task tree creates a
     separate \l QByteArray instance for each iteration. Dereferencing \c storage
@@ -152,7 +156,8 @@
     label immediately. The index of the current iteration is returned by
     \c {iterator.iteration()}.
 
-    The second task in each iteration is \l {QThreadFunctionTask}<QImage>. Its
+    The second task in each iteration is
+    \l {QtTaskTree::} {QThreadFunctionTask}<QImage>. Its
     setup and done handlers are as follows:
 
     \snippet widgets/imagescaling/imagescaling.cpp 5

@@ -15,6 +15,9 @@ QT_BEGIN_NAMESPACE
 
 class QHostAddress;
 class QTcpSocket;
+
+namespace QtTaskTree {
+
 class QTcpSocketWrapperPrivate;
 
 class Q_TASKTREE_EXPORT QTcpSocketWrapper : public QObject
@@ -41,6 +44,8 @@ protected:
 };
 
 using QTcpSocketWrapperTask = QCustomTask<QTcpSocketWrapper>;
+
+} // namespace QtTaskTree
 
 QT_END_NAMESPACE
 

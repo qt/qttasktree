@@ -12,7 +12,7 @@
 
 QT_BEGIN_NAMESPACE
 
-using namespace QtTaskTree;
+namespace QtTaskTree {
 
 class QAbstractTaskTreeRunnerPrivate : public QObjectPrivate
 {
@@ -21,7 +21,7 @@ public:
 };
 
 /*!
-    \class QAbstractTaskTreeRunner
+    \class QtTaskTree::QAbstractTaskTreeRunner
     \inheaderfile qtasktreerunner.h
     \inmodule QtTaskTree
     \brief An abstract base class for various task tree controllers.
@@ -69,7 +69,7 @@ public:
 */
 
 /*!
-    \typealias QAbstractTaskTreeRunner::TreeSetupHandler
+    \typealias QtTaskTree::QAbstractTaskTreeRunner::TreeSetupHandler
 
     Type alias for std::function<void(QTaskTree &)>.
 
@@ -84,7 +84,7 @@ public:
 */
 
 /*!
-    \typealias QAbstractTaskTreeRunner::TreeDoneHandler
+    \typealias QtTaskTree::QAbstractTaskTreeRunner::TreeDoneHandler
 
     Type alias for std::function<void(const QTaskTree &, QtTaskTree::DoneWith)>.
 
@@ -175,7 +175,7 @@ public:
 };
 
 /*!
-    \class QSingleTaskTreeRunner
+    \class QtTaskTree::QSingleTaskTreeRunner
     \inheaderfile qtasktreerunner.h
     \inmodule QtTaskTree
     \brief A single task tree execution controller.
@@ -271,8 +271,6 @@ void QSingleTaskTreeRunner::startImpl(const Group &recipe,
     d->m_taskTree->start();
 }
 
-namespace QtTaskTree {
-
 struct TreeData
 {
     Group recipe;
@@ -280,8 +278,6 @@ struct TreeData
     QAbstractTaskTreeRunner::TreeDoneHandler doneHandler;
     CallDone callDone;
 };
-
-} // namespace QtTaskTree
 
 class QSequentialTaskTreeRunnerPrivate : public QAbstractTaskTreeRunnerPrivate
 {
@@ -293,7 +289,7 @@ public:
 };
 
 /*!
-    \class QSequentialTaskTreeRunner
+    \class QtTaskTree::QSequentialTaskTreeRunner
     \inheaderfile qtasktreerunner.h
     \inmodule QtTaskTree
     \brief A sequential task tree execution controller.
@@ -438,7 +434,7 @@ public:
 };
 
 /*!
-    \class QParallelTaskTreeRunner
+    \class QtTaskTree::QParallelTaskTreeRunner
     \inheaderfile qtasktreerunner.h
     \inmodule QtTaskTree
     \brief A parallel task tree execution controller.
@@ -538,7 +534,7 @@ void QParallelTaskTreeRunner::startImpl(const Group &recipe,
 }
 
 /*!
-    \class QMappedTaskTreeRunner
+    \class QtTaskTree::QMappedTaskTreeRunner
     \inheaderfile qtasktreerunner.h
     \inmodule QtTaskTree
     \brief A mapped task tree execution controller with a given Key type.
@@ -626,5 +622,7 @@ void QParallelTaskTreeRunner::startImpl(const Group &recipe,
     Calls \a doneHandler when the task tree is finished.
     The \a doneHandler is called according to the passed \a callDone.
 */
+
+} // namespace QtTaskTree
 
 QT_END_NAMESPACE

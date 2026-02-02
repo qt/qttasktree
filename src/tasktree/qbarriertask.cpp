@@ -10,7 +10,7 @@
 
 QT_BEGIN_NAMESPACE
 
-using namespace QtTaskTree;
+namespace QtTaskTree {
 
 #define QT_TASKTREE_STRING(cond) qDebug("SOFT ASSERT: \"%s\" in %s: %s", cond,  __FILE__, QT_STRINGIFY(__LINE__))
 #define QT_TASKTREE_ASSERT(cond, action) if (Q_LIKELY(cond)) {} else { QT_TASKTREE_STRING(#cond); action; } do {} while (0)
@@ -18,13 +18,13 @@ using namespace QtTaskTree;
 class QBarrierPrivate : public QObjectPrivate
 {
 public:
-    std::optional<QtTaskTree::DoneResult> m_result = std::nullopt;
+    std::optional<DoneResult> m_result = std::nullopt;
     qsizetype m_limit = 1;
     qsizetype m_current = -1;
 };
 
 /*!
-    \class QBarrier
+    \class QtTaskTree::QBarrier
     \inheaderfile qbarriertask.h
     \inmodule QtTaskTree
     \brief An asynchronous task that finishes on demand.
@@ -150,14 +150,14 @@ bool QBarrier::event(QEvent *event)
 */
 
 /*!
-    \typedef QBarrierTask
-    \relates QCustomTask
+    \typedef QtTaskTree::QBarrierTask
+    \relates QtTaskTree::QCustomTask
 
     Type alias for the QCustomTask<QBarrier>, to be used inside recipes.
 */
 
 /*!
-    \class QStartedBarrier
+    \class QtTaskTree::QStartedBarrier
     \inheaderfile qbarriertask.h
     \inmodule QtTaskTree
     \brief A started QBarrier with a given limit.
@@ -191,13 +191,11 @@ bool QStartedBarrier::event(QEvent *event)
 }
 
 /*!
-    \typedef QStoredBarrier
-    \relates QStartedBarrier
+    \typedef QtTaskTree::QStoredBarrier
+    \relates QtTaskTree::QStartedBarrier
 
     Type alias for the QtTaskTree::Storage<QStartedBarrier>, to be used inside recipes.
 */
-
-namespace QtTaskTree {
 
 /*!
     Returns the awaiter task that finishes when passed \a storedBarrier
@@ -246,7 +244,7 @@ ExecutableItem barrierAwaiterTask(const QStoredBarrier &storedBarrier)
 
 /*!
     \typedef QtTaskTree::BarrierKickerGetter
-    \relates QStartedBarrier
+    \relates QtTaskTree::QStartedBarrier
 
     Type alias for the function taking a QStoredBarrier and returning
     \l {QtTaskTree::} {ExecutableItem}, i.e.

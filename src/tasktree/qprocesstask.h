@@ -17,6 +17,8 @@ QT_BEGIN_NAMESPACE
 
 #if QT_CONFIG(process)
 
+namespace QtTaskTree {
+
 class QProcessTaskDeleter final
 {
 public:
@@ -32,6 +34,8 @@ public:
 };
 
 using QProcessTask = QCustomTask<QProcess, QProcessTaskAdapter, QProcessTaskDeleter>;
+
+} // namespace QtTaskTree
 
 #endif // QT_CONFIG(process)
 
