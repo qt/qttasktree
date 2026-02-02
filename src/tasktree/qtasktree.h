@@ -177,7 +177,7 @@ class ListIterator final : public Iterator
 {
 public:
     explicit ListIterator(const QList<T> &list)
-        : Iterator(list.size(), [list](qsizetype i) { return &list.at(i); }) {}
+        : Iterator(list.size(), [list](qsizetype i) { return std::addressof(list.at(i)); }) {}
     const T *operator->() const { return static_cast<const T *>(valuePtr()); }
     const T &operator*() const { return *static_cast<const T *>(valuePtr()); }
 };
