@@ -18,8 +18,6 @@ QT_BEGIN_NAMESPACE
 
 #if QT_CONFIG(process)
 
-using namespace QtTaskTree;
-
 namespace QtTaskTree {
 
 class ProcessReaperPrivate;
@@ -258,10 +256,8 @@ void ProcessReaper::reap(QProcess *process, int timeoutMs)
     priv->scheduleReap(reaperSetup);
 }
 
-} // namespace QtTaskTree
-
 /*!
-    \class QProcessTaskDeleter
+    \class QtTaskTree::QProcessTaskDeleter
     \inheaderfile qprocesstask.h
     \inmodule QtTaskTree
     \brief A custom deleter for QProcess, used by QProcessTask.
@@ -325,23 +321,25 @@ void QProcessTaskAdapter::operator()(QProcess *task, QTaskInterface *iface) cons
         const bool success = task->exitStatus() == QProcess::NormalExit
                              && task->error() == QProcess::UnknownError
                              && task->exitCode() == 0;
-        iface->reportDone(QtTaskTree::toDoneResult(success));
+        iface->reportDone(toDoneResult(success));
     });
     QObject::connect(task, &QProcess::errorOccurred, iface, [iface](QProcess::ProcessError error) {
         if (error != QProcess::FailedToStart)
             return;
-        iface->reportDone(QtTaskTree::DoneResult::Error);
+        iface->reportDone(DoneResult::Error);
     });
     task->start();
 }
 
 /*!
-    \typedef QProcessTask
-    \relates QCustomTask
+    \typedef QtTaskTree::QProcessTask
+    \relates QtTaskTree::QCustomTask
 
     Type alias for the QCustomTask<QProcess>, using QProcessTaskDeleter,
     to be used inside recipes.
 */
+
+} // namespace QtTaskTree
 
 #endif // QT_CONFIG(process)
 

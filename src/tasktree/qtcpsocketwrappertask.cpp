@@ -14,7 +14,7 @@
 
 QT_BEGIN_NAMESPACE
 
-using namespace QtTaskTree;
+namespace QtTaskTree {
 
 class QTcpSocketWrapperPrivate : public QObjectPrivate
 {
@@ -27,7 +27,7 @@ public:
 };
 
 /*!
-    \class QTcpSocketWrapper
+    \class QtTaskTree::QTcpSocketWrapper
     \inheaderfile qtcpsocketwrappertask.h
     \inmodule QtTaskTree
     \brief A wrapper around QTcpSocket.
@@ -169,11 +169,13 @@ bool QTcpSocketWrapper::event(QEvent *event)
 */
 
 /*!
-    \typedef QTcpSocketWrapperTask
-    \relates QCustomTask
+    \typedef QtTaskTree::QTcpSocketWrapperTask
+    \relates QtTaskTree::QCustomTask
 
     Type alias for the QCustomTask<QTcpSocketWrapper>,
     to be used inside recipes.
 */
+
+} // namespace QtTaskTree
 
 QT_END_NAMESPACE

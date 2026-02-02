@@ -15,6 +15,12 @@
 
 QT_BEGIN_NAMESPACE
 
+namespace QtTaskTree { class WhenPrivate; }
+
+QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::WhenPrivate)
+
+namespace QtTaskTree {
+
 class QBarrierPrivate;
 
 class Q_TASKTREE_EXPORT QBarrier : public QObject
@@ -32,11 +38,11 @@ public:
 
     void start();
     void advance();
-    void stopWithResult(QtTaskTree::DoneResult result);
+    void stopWithResult(DoneResult result);
 
     bool isRunning() const;
     qsizetype current() const;
-    std::optional<QtTaskTree::DoneResult> result() const;
+    std::optional<DoneResult> result() const;
 
 Q_SIGNALS:
     void done(QtTaskTree::DoneResult success, QPrivateSignal);
@@ -62,13 +68,7 @@ protected:
     bool event(QEvent *event) override;
 };
 
-using QStoredBarrier = QtTaskTree::Storage<QStartedBarrier>;
-
-namespace QtTaskTree { class WhenPrivate; }
-
-QT_DECLARE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::WhenPrivate)
-
-namespace QtTaskTree {
+using QStoredBarrier = Storage<QStartedBarrier>;
 
 Q_TASKTREE_EXPORT ExecutableItem barrierAwaiterTask(const QStoredBarrier &storedBarrier);
 

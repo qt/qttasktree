@@ -683,7 +683,7 @@ using namespace Qt::StringLiterals;
     of asynchronous tasks in a tree. A nested QTaskTree is counted
     as a single task, and its child tasks are not counted in the
     top level tree. Groups themselves are not counted as tasks,
-    but their tasks are counted. \l QSyncTask tasks are not asynchronous,
+    but their tasks are counted. \l QtTaskTree::QSyncTask tasks are not asynchronous,
     so they are not counted as tasks.
 
     To set additional initial data for the running tree, modify the storage
@@ -3721,12 +3721,8 @@ QT_TASKTREE_DEFINE_SMF(GroupItem)
 QT_TASKTREE_DEFINE_SMF(Iterator)
 QT_TASKTREE_DEFINE_SMF(StorageBase)
 
-} // namespace QtTaskTree
-
-using namespace QtTaskTree;
-
 /*!
-    \class QSyncTask
+    \class QtTaskTree::QSyncTask
     \inheaderfile qtasktree.h
     \inmodule QtTaskTree
     \brief Synchronously executes a custom handler between other tasks.
@@ -3762,7 +3758,7 @@ using namespace QtTaskTree;
 */
 
 /*!
-    \class QDefaultTaskAdapter
+    \class QtTaskTree::QDefaultTaskAdapter
     \inheaderfile qtasktree.h
     \inmodule QtTaskTree
     \brief A class template providing default task adapter used in QCustomTask.
@@ -3787,7 +3783,7 @@ using namespace QtTaskTree;
 */
 
 /*!
-    \class QCustomTask
+    \class QtTaskTree::QCustomTask
     \inheaderfile qtasktree.h
     \inmodule QtTaskTree
     \brief A class template used for declaring custom task items and
@@ -3878,7 +3874,7 @@ using namespace QtTaskTree;
 */
 
 /*!
-    \typealias QCustomTask::TaskSetupHandler
+    \typealias QtTaskTree::QCustomTask::TaskSetupHandler
 
     Type alias for \c std::function<SetupResult(Task &)>.
 
@@ -3923,7 +3919,7 @@ using namespace QtTaskTree;
 */
 
 /*!
-    \typealias QCustomTask::TaskDoneHandler
+    \typealias QtTaskTree::QCustomTask::TaskDoneHandler
 
     Type alias for
     \c std::function<QtTaskTree::DoneResult(const Task &, QtTaskTree::DoneWith)>
@@ -4013,7 +4009,7 @@ using namespace QtTaskTree;
 */
 
 /*!
-    \class QTaskInterface
+    \class QtTaskTree::QTaskInterface
     \inheaderfile qtasktree.h
     \inmodule QtTaskTree
     \brief QTaskInterface is a helper class used when adapting custom
@@ -4051,7 +4047,7 @@ QTaskInterface::QTaskInterface(QObject *parent) : QObject(parent) {}
     public:
         void operator()(Worker *task, QTaskInterface *iface) {
             connect(task, &Worker::finished, iface, [iface](bool success) {
-                iface->reportDone(QtTaskTree::toDoneResult(success));
+                iface->reportDone(toDoneResult(success));
             });
             task->execute();
         }
@@ -4075,7 +4071,7 @@ bool QTaskInterface::event(QEvent *event)
 }
 
 /*!
-    \class QTaskTree
+    \class QtTaskTree::QTaskTree
     \inheaderfile qtasktree.h
     \inmodule QtTaskTree
     \brief The QTaskTree class runs the tree of asynchronous tasks
@@ -4676,15 +4672,15 @@ void QTimeoutTaskAdapter::operator()(milliseconds *task, QTaskInterface *iface)
 }
 
 /*!
-    \typedef QTaskTreeTask
-    \relates QCustomTask
+    \typedef QtTaskTree::QTaskTreeTask
+    \relates QtTaskTree::QCustomTask
 
     Type alias for the QCustomTask<QTaskTree>, to be used inside recipes.
 */
 
 /*!
-    \typedef QTimeoutTask
-    \relates QCustomTask
+    \typedef QtTaskTree::QTimeoutTask
+    \relates QtTaskTree::QCustomTask
 
     Type alias for the QCustomTask<\c std::chrono::milliseconds>,
     to be used inside recipes. The \c std::chrono::milliseconds
@@ -4708,6 +4704,8 @@ void QTimeoutTaskAdapter::operator()(milliseconds *task, QTaskInterface *iface)
 
     \sa {QtTaskTree::timeoutTask} {timeoutTask()}
 */
+
+} // namespace QtTaskTree
 
 QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::DoPrivate)
 QT_DEFINE_QESDP_SPECIALIZATION_DTOR(QtTaskTree::ForPrivate)

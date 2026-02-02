@@ -15,6 +15,8 @@ QT_REQUIRE_CONFIG(concurrent);
 
 QT_BEGIN_NAMESPACE
 
+namespace QtTaskTree {
+
 class QThreadFunctionBasePrivate;
 
 class Q_TASKTREE_EXPORT QThreadFunctionBase : public QObject
@@ -63,7 +65,7 @@ public:
         : QThreadFunctionBase(parent)
     {
         connect(&m_watcher, &QFutureWatcherBase::finished, this, [this] {
-            Q_EMIT done(QtTaskTree::toDoneResult(!m_watcher.isCanceled()));
+            Q_EMIT done(toDoneResult(!m_watcher.isCanceled()));
         });
         connect(&m_watcher, &QFutureWatcherBase::resultReadyAt,
                 this, &QThreadFunctionBase::resultReadyAt);
@@ -106,7 +108,7 @@ public:
 
         if (!m_startHandler) {
             qWarning("QThreadFunction: No start handler specified.");
-            Q_EMIT done(QtTaskTree::DoneResult::Error);
+            Q_EMIT done(DoneResult::Error);
             return;
         }
 
@@ -124,7 +126,7 @@ public:
 
 Q_SIGNALS:
     void started();
-    void done(QtTaskTree::DoneResult result);
+    void done(DoneResult result);
     void resultReadyAt(int index);
     void resultsReadyAt(int beginIndex, int endIndex);
     void progressRangeChanged(int min, int max);
@@ -158,6 +160,8 @@ private:
 
 template <typename ResultType>
 using QThreadFunctionTask = QCustomTask<QThreadFunction<ResultType>>;
+
+} // namespace QtTaskTree
 
 QT_END_NAMESPACE
 

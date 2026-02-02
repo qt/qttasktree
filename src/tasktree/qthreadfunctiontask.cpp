@@ -56,9 +56,7 @@ private:
     QList<QFuture<void>> m_futures;
 };
 
-} // namespace QtTaskTree
-
-Q_APPLICATION_STATIC(QtTaskTree::FutureSynchronizer, s_futureSynchronizer);
+Q_APPLICATION_STATIC(FutureSynchronizer, s_futureSynchronizer);
 
 class QThreadFunctionBasePrivate : public QObjectPrivate
 {
@@ -72,7 +70,7 @@ public:
 };
 
 /*!
-    \class QThreadFunctionBase
+    \class QtTaskTree::QThreadFunctionBase
     \inheaderfile qthreadfunctiontask.h
     \inmodule QtTaskTree
     \brief A base class for QThreadFunction class template.
@@ -80,7 +78,7 @@ public:
 */
 
 /*!
-    \class QThreadFunction
+    \class QtTaskTree::QThreadFunction
     \inheaderfile qthreadfunctiontask.h
     \inmodule QtTaskTree
     \brief A class template controlling the execution of a function in a
@@ -459,12 +457,14 @@ void QThreadFunctionBase::storeFuture(const QFuture<void> &future)
 }
 
 /*!
-    \typedef QThreadFunctionTask
-    \relates QCustomTask
+    \typedef QtTaskTree::QThreadFunctionTask
+    \relates QtTaskTree::QCustomTask
 
     Type alias for QCustomTask<QThreadFunction<ResultType>>,
     where \a ResultType specifies the return type of the thread function,
     to be used inside recipes.
 */
+
+} // namespace QtTaskTree
 
 QT_END_NAMESPACE

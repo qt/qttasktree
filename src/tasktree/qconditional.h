@@ -13,6 +13,10 @@
 
 #include <QtCore/QSharedData>
 
+#if 0
+#pragma qt_class(QConditional)
+#endif
+
 QT_BEGIN_NAMESPACE
 
 namespace QtTaskTree {

@@ -25,7 +25,7 @@ private:
     QList<QLabel *> labels;
 
     QNetworkAccessManager qnam;
-    QSingleTaskTreeRunner taskTreeRunner;
+    QtTaskTree::QSingleTaskTreeRunner taskTreeRunner;
 };
 
 #endif // IMAGESCALING_H
