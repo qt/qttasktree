@@ -19,7 +19,7 @@ QT_BEGIN_NAMESPACE
 
 namespace QtTaskTree {
 
-class QProcessTaskDeleter final
+class QProcessTaskDeleter
 {
 public:
     // Blocking, should be called after all QProcessAdapter instances are deleted.
@@ -27,7 +27,7 @@ public:
     Q_TASKTREE_EXPORT void operator()(QProcess *process) const;
 };
 
-class QProcessTaskAdapter final
+class QProcessTaskAdapter
 {
 public:
     Q_TASKTREE_EXPORT void operator()(QProcess *task, QTaskInterface *iface) const;
