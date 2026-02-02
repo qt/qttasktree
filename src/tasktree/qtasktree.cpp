@@ -4063,6 +4063,12 @@ void QTaskInterface::reportDone(DoneResult result)
     Q_EMIT done(result, QPrivateSignal());
 }
 
+/*! \reimp */
+bool QTaskInterface::event(QEvent *event)
+{
+    return QObject::event(event);
+}
+
 /*!
     \class QTaskTree
     \inheaderfile qtasktree.h
@@ -4453,6 +4459,12 @@ int QTaskTree::taskCount() const
 int QTaskTree::progressValue() const
 {
     return d_func()->m_progressValue;
+}
+
+/*! \reimp */
+bool QTaskTree::event(QEvent *event)
+{
+    return QObject::event(event);
 }
 
 /*!

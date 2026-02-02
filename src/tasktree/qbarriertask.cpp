@@ -136,6 +136,12 @@ std::optional<DoneResult> QBarrier::result() const
     return d_func()->m_result;
 }
 
+/*! \reimp */
+bool QBarrier::event(QEvent *event)
+{
+    return QObject::event(event);
+}
+
 /*!
     \fn void QBarrier::done(QtTaskTree::DoneResult result)
 
@@ -177,6 +183,12 @@ QStartedBarrier::QStartedBarrier(qsizetype limit, QObject *parent)
 }
 
 QStartedBarrier::~QStartedBarrier() = default;
+
+/*! \reimp */
+bool QStartedBarrier::event(QEvent *event)
+{
+    return QBarrier::event(event);
+}
 
 /*!
     \typedef QStoredBarrier

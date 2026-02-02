@@ -120,6 +120,12 @@ QAbstractTaskTreeRunner::QAbstractTaskTreeRunner(QAbstractTaskTreeRunnerPrivate 
 */
 QAbstractTaskTreeRunner::~QAbstractTaskTreeRunner() = default;
 
+/*! \reimp */
+bool QAbstractTaskTreeRunner::event(QEvent *event)
+{
+    return QObject::event(event);
+}
+
 /*!
     \fn bool QAbstractTaskTreeRunner::isRunning() const
 
@@ -226,6 +232,12 @@ void QSingleTaskTreeRunner::cancel()
 void QSingleTaskTreeRunner::reset()
 {
     d_func()->m_taskTree.reset();
+}
+
+/*! \reimp */
+bool QSingleTaskTreeRunner::event(QEvent *event)
+{
+    return QAbstractTaskTreeRunner::event(event);
 }
 
 /*!
@@ -390,6 +402,12 @@ void QSequentialTaskTreeRunner::resetCurrent()
     d->startNext();
 }
 
+/*! \reimp */
+bool QSequentialTaskTreeRunner::event(QEvent *event)
+{
+    return QAbstractTaskTreeRunner::event(event);
+}
+
 /*!
     \fn template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler> void QSequentialTaskTreeRunner::enqueue(const QtTaskTree::Group &recipe, SetupHandler &&setupHandler = {}, DoneHandler &&doneHandler = {}, QtTaskTree::CallDone callDone = QtTaskTree::CallDoneFlag::Always)
 
@@ -478,6 +496,12 @@ void QParallelTaskTreeRunner::cancel()
 void QParallelTaskTreeRunner::reset()
 {
     d_func()->m_taskTrees.clear();
+}
+
+/*! \reimp */
+bool QParallelTaskTreeRunner::event(QEvent *event)
+{
+    return QAbstractTaskTreeRunner::event(event);
 }
 
 /*!

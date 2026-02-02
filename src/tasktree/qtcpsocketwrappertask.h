@@ -35,6 +35,9 @@ public:
 Q_SIGNALS:
     void started();
     void done(QtTaskTree::DoneResult result);
+
+protected:
+    bool event(QEvent *event) override;
 };
 
 using QTcpSocketWrapperTask = QCustomTask<QTcpSocketWrapper>;

@@ -573,6 +573,9 @@ public:
 
 Q_SIGNALS:
     void done(QtTaskTree::DoneResult result, QPrivateSignal);
+
+protected:
+    bool event(QEvent *event) override;
 };
 
 // A convenient default helper, when:
@@ -815,6 +818,9 @@ Q_SIGNALS:
     void done(QtTaskTree::DoneWith result);
     void asyncCountChanged(int count);
     void progressValueChanged(int value); // updated whenever task finished / skipped / stopped
+
+protected:
+    bool event(QEvent *event) override;
 
 private:
     void setupStorageHandler(const QtTaskTree::StorageBase &storage,
