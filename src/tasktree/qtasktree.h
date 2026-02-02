@@ -102,7 +102,7 @@ enum class DoneWith
 };
 Q_ENUM_NS(DoneWith)
 
-enum class CallDone
+enum class CallDoneFlag
 {
     Never = 0,
     OnSuccess = 1 << 0,
@@ -110,12 +110,12 @@ enum class CallDone
     OnCancel  = 1 << 2,
     Always = OnSuccess | OnError | OnCancel,
 };
-Q_ENUM_NS(CallDone)
-Q_DECLARE_FLAGS(CallDoneFlags, CallDone)
-Q_DECLARE_OPERATORS_FOR_FLAGS(CallDoneFlags)
+Q_ENUM_NS(CallDoneFlag)
+Q_DECLARE_FLAGS(CallDone, CallDoneFlag)
+Q_DECLARE_OPERATORS_FOR_FLAGS(CallDone)
 
 Q_TASKTREE_EXPORT DoneResult toDoneResult(bool success);
-Q_TASKTREE_EXPORT bool shouldCallDone(CallDoneFlags callDone, DoneWith result);
+Q_TASKTREE_EXPORT bool shouldCallDone(CallDone callDone, DoneWith result);
 
 // Checks if Function may be invoked with Args and if Function's return type is Result.
 template <typename Result, typename Function, typename ...Args,
@@ -275,13 +275,13 @@ protected:
         TaskAdapterStarter m_taskAdapterStarter;
         TaskAdapterSetupHandler m_taskAdapterSetupHandler = {};
         TaskAdapterDoneHandler m_taskAdapterDoneHandler = {};
-        CallDoneFlags m_callDoneFlags = CallDone::Always;
+        CallDone m_callDoneFlags = CallDoneFlag::Always;
     };
 
     struct GroupHandler { // TODO: Make it a pimpled value type?
         GroupSetupHandler m_setupHandler;
         GroupDoneHandler m_doneHandler = {};
-        CallDoneFlags m_callDoneFlags = CallDone::Always;
+        CallDone m_callDoneFlags = CallDoneFlag::Always;
     };
 
     struct GroupData { // TODO: Make it a pimpled value type?
@@ -380,7 +380,7 @@ public:
         return groupHandler({wrapGroupSetup(std::forward<Handler>(handler))});
     }
     template <typename Handler>
-    static GroupItem onGroupDone(Handler &&handler, CallDoneFlags callDone = CallDone::Always) {
+    static GroupItem onGroupDone(Handler &&handler, CallDone callDone = CallDoneFlag::Always) {
         return groupHandler({{}, wrapGroupDone(std::forward<Handler>(handler)), callDone});
     }
 
@@ -458,7 +458,7 @@ static GroupItem onGroupSetup(Handler &&handler)
 }
 
 template <typename Handler>
-static GroupItem onGroupDone(Handler &&handler, CallDoneFlags callDone = CallDone::Always)
+static GroupItem onGroupDone(Handler &&handler, CallDone callDone = CallDoneFlag::Always)
 {
     return Group::onGroupDone(std::forward<Handler>(handler), callDone);
 }
@@ -640,7 +640,7 @@ public:
     template <typename SetupHandler = TaskSetupHandler, typename DoneHandler = TaskDoneHandler>
     explicit QCustomTask(SetupHandler &&setup = TaskSetupHandler(),
                          DoneHandler &&done = TaskDoneHandler(),
-                         QtTaskTree::CallDoneFlags callDone = QtTaskTree::CallDone::Always)
+                         QtTaskTree::CallDone callDone = QtTaskTree::CallDoneFlag::Always)
         : ExecutableItem({&taskAdapterConstructor, &taskAdapterDestructor, &taskAdapterStarter,
                           wrapSetup(std::forward<SetupHandler>(setup)),
                           wrapDone(std::forward<DoneHandler>(done)), callDone})

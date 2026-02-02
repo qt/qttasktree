@@ -595,8 +595,8 @@ using namespace Qt::StringLiterals;
             const Group root {
                 // [7] runtime: task tree creates an instance of CopyStorage when root is entered
                 storage,
-                QThreadFunctionTask<QByteArray>(onLoaderSetup, onLoaderDone, CallDone::OnSuccess),
-                QThreadFunctionTask<void>(onSaverSetup, onSaverDone, CallDone::OnSuccess)
+                QThreadFunctionTask<QByteArray>(onLoaderSetup, onLoaderDone, CallDoneFlag::OnSuccess),
+                QThreadFunctionTask<void>(onSaverSetup, onSaverDone, CallDoneFlag::OnSuccess)
             };
             return root;
         }
@@ -939,7 +939,7 @@ namespace QtTaskTree {
             // the *storage or storage-> operators.
             sequential,
             storage,
-            QNetworkReplyWrapperTask(onFirstSetup, onFirstDone, CallDone::OnSuccess),
+            QNetworkReplyWrapperTask(onFirstSetup, onFirstDone, CallDoneFlag::OnSuccess),
             QThreadFunctionTask<QImage>(onSecondSetup)
         };
     \endcode
@@ -1308,7 +1308,7 @@ namespace QtTaskTree {
 */
 
 /*!
-    \enum QtTaskTree::CallDone
+    \enum QtTaskTree::CallDoneFlag
 
     This enum is an optional argument for the \l onGroupDone()
     element or custom task's constructor. It instructs the task tree
@@ -1609,7 +1609,7 @@ namespace QtTaskTree {
 */
 
 /*!
-    \fn template <typename Handler> GroupItem onGroupDone(Handler &&handler, CallDoneFlags callDone = CallDone::Always)
+    \fn template <typename Handler> GroupItem onGroupDone(Handler &&handler, CallDone callDone = CallDoneFlag::Always)
 
     Constructs a group's element holding the group done handler.
     By default, the \a handler is invoked whenever the group finishes.
@@ -2690,7 +2690,7 @@ Group ExecutableItem::withTimeout(milliseconds timeout,
         stopOnSuccessOrError,
         Group {
             finishAllAndError,
-            handler ? QTimeoutTask(onSetup, [handler] { handler(); }, CallDone::OnSuccess)
+            handler ? QTimeoutTask(onSetup, [handler] { handler(); }, CallDoneFlag::OnSuccess)
                     : QTimeoutTask(onSetup)
         },
         *this
@@ -3601,17 +3601,17 @@ void QTaskTreePrivate::stopContainer(RuntimeContainer *container)
     }
 }
 
-static CallDone toCallDone(DoneWith result)
+static CallDoneFlag toCallDone(DoneWith result)
 {
     switch (result) {
-    case DoneWith::Success: return CallDone::OnSuccess;
-    case DoneWith::Error: return CallDone::OnError;
-    case DoneWith::Cancel: return CallDone::OnCancel;
+    case DoneWith::Success: return CallDoneFlag::OnSuccess;
+    case DoneWith::Error: return CallDoneFlag::OnError;
+    case DoneWith::Cancel: return CallDoneFlag::OnCancel;
     }
-    return CallDone::Never;
+    return CallDoneFlag::Never;
 }
 
-bool shouldCallDone(CallDoneFlags callDone, DoneWith result)
+bool shouldCallDone(CallDone callDone, DoneWith result)
 {
     return callDone & toCallDone(result);
 }
@@ -3965,7 +3965,7 @@ using namespace QtTaskTree;
 */
 
 /*!
-    \fn template <typename Task, typename Adapter = QDefaultTaskAdapter<Task>, typename Deleter = std::default_delete<Task>> template <typename SetupHandler = QCustomTask::TaskSetupHandler, typename DoneHandler = QCustomTask::TaskDoneHandler> QCustomTask<Task, Adapter, Deleter>::QCustomTask<Task, Adapter, Deleter>(SetupHandler &&setup = QCustomTask::TaskSetupHandler(), DoneHandler &&done = QCustomTask::TaskDoneHandler(), QtTaskTree::CallDoneFlags callDone = QtTaskTree::CallDone::Always)
+    \fn template <typename Task, typename Adapter = QDefaultTaskAdapter<Task>, typename Deleter = std::default_delete<Task>> template <typename SetupHandler = QCustomTask::TaskSetupHandler, typename DoneHandler = QCustomTask::TaskDoneHandler> QCustomTask<Task, Adapter, Deleter>::QCustomTask<Task, Adapter, Deleter>(SetupHandler &&setup = QCustomTask::TaskSetupHandler(), DoneHandler &&done = QCustomTask::TaskDoneHandler(), QtTaskTree::CallDone callDone = QtTaskTree::CallDoneFlag::Always)
 
     Constructs a QCustomTask instance and attaches the \a setup and \a done
     handlers to the task. When the running task tree is about to start the task,
@@ -4526,7 +4526,7 @@ int QTaskTree::progressValue() const
 
         const Group root {
             storage,
-            QThreadFunctionTask(onLoaderSetup, onLoaderDone, CallDone::OnSuccess)
+            QThreadFunctionTask(onLoaderSetup, onLoaderDone, CallDoneFlag::OnSuccess)
         };
 
         QTaskTree taskTree(root);
