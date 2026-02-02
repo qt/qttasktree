@@ -829,7 +829,7 @@ private:
     }
 };
 
-class QTaskTreeTaskAdapter final
+class QTaskTreeTaskAdapter
 {
 public:
     Q_TASKTREE_EXPORT void operator()(QTaskTree *task, QTaskInterface *iface) const;
