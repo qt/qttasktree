@@ -181,10 +181,10 @@ void tst_QThreadFunction::taskTree_data()
             storage,
             internalStorage,
             onGroupSetup([internalStorage] { *internalStorage = 1; }),
-            QThreadFunctionTask<int>(onSetup, onDone, CallDone::OnSuccess),
-            QThreadFunctionTask<int>(onSetup, onDone, CallDone::OnSuccess),
-            QThreadFunctionTask<int>(onSetup, onDone, CallDone::OnSuccess),
-            QThreadFunctionTask<int>(onSetup, onDone, CallDone::OnSuccess),
+            QThreadFunctionTask<int>(onSetup, onDone, CallDoneFlag::OnSuccess),
+            QThreadFunctionTask<int>(onSetup, onDone, CallDoneFlag::OnSuccess),
+            QThreadFunctionTask<int>(onSetup, onDone, CallDoneFlag::OnSuccess),
+            QThreadFunctionTask<int>(onSetup, onDone, CallDoneFlag::OnSuccess),
             onGroupDone([storage, internalStorage] { *storage = *internalStorage == 16; })
         };
 

@@ -229,7 +229,7 @@ void QSingleTaskTreeRunner::reset()
 }
 
 /*!
-    \fn template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler> void QSingleTaskTreeRunner::start(const QtTaskTree::Group &recipe, SetupHandler &&setupHandler = {}, DoneHandler &&doneHandler = {}, QtTaskTree::CallDoneFlags callDone = QtTaskTree::CallDone::Always)
+    \fn template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler> void QSingleTaskTreeRunner::start(const QtTaskTree::Group &recipe, SetupHandler &&setupHandler = {}, DoneHandler &&doneHandler = {}, QtTaskTree::CallDone callDone = QtTaskTree::CallDoneFlag::Always)
 
     Starts the \a recipe unconditionally, resetting any possibly
     running task tree.
@@ -241,7 +241,7 @@ void QSingleTaskTreeRunner::reset()
 void QSingleTaskTreeRunner::startImpl(const Group &recipe,
                                       const TreeSetupHandler &setupHandler,
                                       const TreeDoneHandler &doneHandler,
-                                      CallDoneFlags callDone)
+                                      CallDone callDone)
 {
     Q_D(QSingleTaskTreeRunner);
     d->m_taskTree.reset(new QTaskTree(recipe));
@@ -266,7 +266,7 @@ struct TreeData
     Group recipe;
     QAbstractTaskTreeRunner::TreeSetupHandler setupHandler;
     QAbstractTaskTreeRunner::TreeDoneHandler doneHandler;
-    CallDoneFlags callDone;
+    CallDone callDone;
 };
 
 } // namespace QtTaskTree
@@ -391,7 +391,7 @@ void QSequentialTaskTreeRunner::resetCurrent()
 }
 
 /*!
-    \fn template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler> void QSequentialTaskTreeRunner::enqueue(const QtTaskTree::Group &recipe, SetupHandler &&setupHandler = {}, DoneHandler &&doneHandler = {}, QtTaskTree::CallDoneFlags callDone = QtTaskTree::CallDone::Always)
+    \fn template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler> void QSequentialTaskTreeRunner::enqueue(const QtTaskTree::Group &recipe, SetupHandler &&setupHandler = {}, DoneHandler &&doneHandler = {}, QtTaskTree::CallDone callDone = QtTaskTree::CallDoneFlag::Always)
 
     Schedules the \a recipe execution. If no task tree is executing,
     the runner starts a new task tree synchronously, otherwise
@@ -405,7 +405,7 @@ void QSequentialTaskTreeRunner::resetCurrent()
 void QSequentialTaskTreeRunner::enqueueImpl(const Group &recipe,
                                             const TreeSetupHandler &setupHandler,
                                             const TreeDoneHandler &doneHandler,
-                                            CallDoneFlags callDone)
+                                            CallDone callDone)
 {
     Q_D(QSequentialTaskTreeRunner);
     d->m_treeDataQueue.append({recipe, setupHandler, doneHandler, callDone});
@@ -481,7 +481,7 @@ void QParallelTaskTreeRunner::reset()
 }
 
 /*!
-    \fn template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler> void QParallelTaskTreeRunner::start(const QtTaskTree::Group &recipe, SetupHandler &&setupHandler = {}, DoneHandler &&doneHandler = {}, QtTaskTree::CallDoneFlags callDone = QtTaskTree::CallDone::Always)
+    \fn template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler> void QParallelTaskTreeRunner::start(const QtTaskTree::Group &recipe, SetupHandler &&setupHandler = {}, DoneHandler &&doneHandler = {}, QtTaskTree::CallDone callDone = QtTaskTree::CallDoneFlag::Always)
 
     Starts the \a recipe instantly and keeps other possibly running
     task trees in parallel.
@@ -493,7 +493,7 @@ void QParallelTaskTreeRunner::reset()
 void QParallelTaskTreeRunner::startImpl(const Group &recipe,
                                        const TreeSetupHandler &setupHandler,
                                        const TreeDoneHandler &doneHandler,
-                                       CallDoneFlags callDone)
+                                       CallDone callDone)
 {
     Q_D(QParallelTaskTreeRunner);
     QTaskTree *taskTree = new QTaskTree(recipe);
@@ -592,7 +592,7 @@ void QParallelTaskTreeRunner::startImpl(const Group &recipe,
 */
 
 /*!
-    \fn template <typename Key> template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler> void QMappedTaskTreeRunner<Key>::start(const Key &key, const QtTaskTree::Group &recipe, SetupHandler &&setupHandler = {}, DoneHandler &&doneHandler = {}, QtTaskTree::CallDoneFlags callDone = QtTaskTree::CallDone::Always)
+    \fn template <typename Key> template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler> void QMappedTaskTreeRunner<Key>::start(const Key &key, const QtTaskTree::Group &recipe, SetupHandler &&setupHandler = {}, DoneHandler &&doneHandler = {}, QtTaskTree::CallDone callDone = QtTaskTree::CallDoneFlag::Always)
 
     Starts the \a recipe for a given \a key unconditionally,
     resetting any possibly running task tree with the same key,
