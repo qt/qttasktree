@@ -554,7 +554,8 @@ Q_TASKTREE_EXPORT ExecutableItem timeoutTask(const std::chrono::milliseconds &ti
 class QSyncTask final : public ExecutableItem
 {
 public:
-    template <typename Handler>
+    template <typename Handler,
+              std::enable_if_t<!std::is_same_v<q20::remove_cvref_t<Handler>, QSyncTask>, bool> = true>
     explicit QSyncTask(Handler &&handler) {
         addChildren({ onGroupDone(wrapHandler(std::forward<Handler>(handler))) });
     }

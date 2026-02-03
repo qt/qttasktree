@@ -3737,7 +3737,7 @@ QT_TASKTREE_DEFINE_SMF(StorageBase)
 */
 
 /*!
-    \fn template <typename Handler> QSyncTask::QSyncTask(Handler &&handler)
+    \fn template <typename Handler, std::enable_if_t<!std::is_same_v<q20::remove_cvref_t<Handler>, QSyncTask>, bool> = true> QSyncTask::QSyncTask(Handler &&handler)
 
     Constructs an element that executes a passed \a handler synchronously.
     The \c Handler is of the \c std::function<DoneResult()> type.
