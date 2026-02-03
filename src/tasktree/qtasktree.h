@@ -358,9 +358,8 @@ private:
         return [getter = std::forward<SenderSignalPairGetter>(getter)](
                    QObject *guard, const std::function<void()> &trigger) {
             const auto senderSignalPair = getter();
-            QObject::connect(senderSignalPair.first, senderSignalPair.second, guard, [trigger] {
-                trigger();
-            }, static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::SingleShotConnection));
+            QObject::connect(senderSignalPair.first, senderSignalPair.second, guard, trigger,
+                             static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::SingleShotConnection));
         };
     }
 
