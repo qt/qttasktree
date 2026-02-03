@@ -119,7 +119,7 @@ Q_TASKTREE_EXPORT bool shouldCallDone(CallDone callDone, DoneWith result);
 // Checks if Function may be invoked with Args and if Function's return type is Result.
 template <typename Result, typename Function, typename ...Args,
           typename DecayedFunction = std::decay_t<Function>>
-static constexpr bool isInvocable()
+constexpr bool isInvocable()
 {
     // Note, that std::is_invocable_r_v doesn't check Result type properly.
     if constexpr (std::is_invocable_r_v<Result, DecayedFunction, Args...>)
@@ -451,13 +451,13 @@ Group ExecutableItem::withAccept(SenderSignalPairGetter &&getter) const
 }
 
 template <typename Handler>
-static GroupItem onGroupSetup(Handler &&handler)
+GroupItem onGroupSetup(Handler &&handler)
 {
     return Group::onGroupSetup(std::forward<Handler>(handler));
 }
 
 template <typename Handler>
-static GroupItem onGroupDone(Handler &&handler, CallDone callDone = CallDoneFlag::Always)
+GroupItem onGroupDone(Handler &&handler, CallDone callDone = CallDoneFlag::Always)
 {
     return Group::onGroupDone(std::forward<Handler>(handler), callDone);
 }
