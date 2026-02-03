@@ -2872,7 +2872,7 @@ Group operator||(const ExecutableItem &item, DoneResult result)
 }
 
 /*!
-    \fn template <typename SenderSignalPairGetter> Group ExecutableItem::withCancel(SenderSignalPairGetter &&getter, std::initializer_list<GroupItem> postCancelRecipe = {}) const
+    \fn template <typename ObjectSignalGetter> Group ExecutableItem::withCancel(ObjectSignalGetter &&getter, std::initializer_list<GroupItem> postCancelRecipe = {}) const
 
     Makes a copy of \c this ExecutableItem cancelable.
     The passed \a getter is a function returning a
@@ -2923,7 +2923,7 @@ Group ExecutableItem::withCancelImpl(
 }
 
 /*!
-    \fn template <typename SenderSignalPairGetter> Group ExecutableItem::withAccept(SenderSignalPairGetter &&getter) const
+    \fn template <typename ObjectSignalGetter> Group ExecutableItem::withAccept(ObjectSignalGetter &&getter) const
 
     Returns a copy of \c this ExecutableItem coupled with a signal awaiter.
     The passed \a getter is a function returning a

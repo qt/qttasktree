@@ -323,17 +323,31 @@ private:
     QExplicitlySharedDataPointer<GroupItemPrivate> d;
 };
 
+template <typename Signal>
+struct ObjectSignal
+{
+    typename QtPrivate::FunctionPointer<Signal>::Object *object;
+    Signal signal;
+};
+
+template <typename Signal>
+ObjectSignal<std::decay_t<Signal>> makeObjectSignal(
+    typename QtPrivate::FunctionPointer<Signal>::Object *object, Signal &&signal)
+{
+    return ObjectSignal<std::decay_t<Signal>>{object, std::forward<Signal>(signal)};
+}
+
 class ExecutableItem : public GroupItem
 {
 public:
     Q_TASKTREE_EXPORT Group withTimeout(std::chrono::milliseconds timeout,
                                         const std::function<void()> &handler = {}) const;
     Q_TASKTREE_EXPORT Group withLog(const QString &logName) const;
-    template <typename SenderSignalPairGetter>
-    Group withCancel(SenderSignalPairGetter &&getter,
+    template <typename ObjectSignalGetter>
+    Group withCancel(ObjectSignalGetter &&getter,
                      std::initializer_list<GroupItem> postCancelRecipe = {}) const;
-    template <typename SenderSignalPairGetter>
-    Group withAccept(SenderSignalPairGetter &&getter) const;
+    template <typename ObjectSignalGetter>
+    Group withAccept(ObjectSignalGetter &&getter) const;
 
 protected:
     Q_TASKTREE_EXPORT ExecutableItem();
@@ -354,13 +368,13 @@ private:
                                            const GroupItems &postCancelRecipe) const;
     Q_TASKTREE_EXPORT Group withAcceptImpl(const ConnectWrapper &connectWrapper) const;
 
-    template <typename SenderSignalPairGetter>
-    static ConnectWrapper connectWrapper(SenderSignalPairGetter &&getter)
+    template <typename ObjectSignalGetter>
+    static ConnectWrapper connectWrapper(ObjectSignalGetter &&getter)
     {
-        return [getter = std::forward<SenderSignalPairGetter>(getter)](
+        return [getter = std::forward<ObjectSignalGetter>(getter)](
                    QObject *guard, const std::function<void()> &trigger) {
-            const auto senderSignalPair = getter();
-            QObject::connect(senderSignalPair.first, senderSignalPair.second, guard, trigger,
+            const auto objectSignal = getter();
+            QObject::connect(objectSignal.object, objectSignal.signal, guard, trigger,
                              static_cast<Qt::ConnectionType>(Qt::QueuedConnection | Qt::SingleShotConnection));
         };
     }
@@ -437,18 +451,18 @@ private:
     }
 };
 
-template <typename SenderSignalPairGetter>
-Group ExecutableItem::withCancel(SenderSignalPairGetter &&getter,
+template <typename ObjectSignalGetter>
+Group ExecutableItem::withCancel(ObjectSignalGetter &&getter,
                                  std::initializer_list<GroupItem> postCancelRecipe) const
 {
-    return withCancelImpl(connectWrapper(std::forward<SenderSignalPairGetter>(getter)),
+    return withCancelImpl(connectWrapper(std::forward<ObjectSignalGetter>(getter)),
                           postCancelRecipe);
 }
 
-template <typename SenderSignalPairGetter>
-Group ExecutableItem::withAccept(SenderSignalPairGetter &&getter) const
+template <typename ObjectSignalGetter>
+Group ExecutableItem::withAccept(ObjectSignalGetter &&getter) const
 {
-    return withAcceptImpl(connectWrapper(std::forward<SenderSignalPairGetter>(getter)));
+    return withAcceptImpl(connectWrapper(std::forward<ObjectSignalGetter>(getter)));
 }
 
 template <typename Handler>

@@ -4197,7 +4197,7 @@ void tst_TaskTree::testTree_data()
         };
 
         const auto onTickSetup = [tickStorage] {
-            return std::make_pair(tickStorage->get(), &QTimer::timeout);
+            return makeObjectSignal(tickStorage->get(), &QTimer::timeout);
         };
 
         const Group cancelTriggeredRecipe {
