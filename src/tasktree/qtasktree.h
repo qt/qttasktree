@@ -14,6 +14,8 @@
 #include <QtCore/QSharedData>
 
 #include <memory>
+#include <QtCore/qxptype_traits.h>
+
 
 QT_BEGIN_NAMESPACE
 
@@ -597,25 +599,21 @@ private:
     static_assert(std::is_base_of_v<QObject, Task>,
                   "QDefaultTaskAdapter<Task>: The Task type needs to be derived from QObject.");
 
-    template <typename, typename = void>
-    struct has_start : std::false_type {};
     template <typename T>
-    struct has_start<T, std::void_t<decltype(std::declval<T>().start())>> : std::true_type {};
-    template <typename T>
-    static inline constexpr bool has_start_v = has_start<T>::value;
-    static_assert(has_start_v<Task>,
+    using HasStartTest = decltype(
+        std::declval<T>().start()
+    );
+    static_assert(qxp::is_detected_v<HasStartTest, Task>,
                   "QDefaultTaskAdapter<Task>: The Task type needs to specify public start() method.");
 
 #define DoneError "QDefaultTaskAdapter<Task>: The Task type needs to specify " \
                   "public done(DoneResult) or done(bool) signal."
 
-    template <typename, typename = void>
-    struct has_done : std::false_type {};
     template <typename T>
-    struct has_done<T, std::void_t<decltype(&T::done)>> : std::true_type {};
-    template <typename T>
-    static inline constexpr bool has_done_v = has_done<T>::value;
-    static_assert(has_done_v<Task>, DoneError);
+    using HasDoneTest = decltype(
+        &T::done
+    );
+    static_assert(qxp::is_detected_v<HasDoneTest, Task>, DoneError);
 
     using WithDoneResult = std::function<void(DoneResult)>;
     using WithBool = std::function<void(bool)>;
