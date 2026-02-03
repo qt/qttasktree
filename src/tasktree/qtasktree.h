@@ -109,9 +109,9 @@ enum class CallDoneFlag
     OnCancel  = 1 << 2,
     Always = OnSuccess | OnError | OnCancel,
 };
-Q_ENUM_NS(CallDoneFlag)
 Q_DECLARE_FLAGS(CallDone, CallDoneFlag)
 Q_DECLARE_OPERATORS_FOR_FLAGS(CallDone)
+Q_FLAG_NS(CallDone)
 
 Q_TASKTREE_EXPORT DoneResult toDoneResult(bool success);
 Q_TASKTREE_EXPORT bool shouldCallDone(CallDone callDone, DoneWith result);
