@@ -41,8 +41,7 @@ using namespace Qt::StringLiterals;
 
 /*!
     \module QtTaskTree
-    \techpreview
-    \modulestate Technical Preview
+    \preliminary
     \since 6.11
     \ingroup modules
     \title Qt TaskTree C++ Classes
