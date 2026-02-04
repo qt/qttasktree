@@ -9,7 +9,7 @@
     Qt TaskTree provides a declarative way to compose and execute asynchronous
     task workflows with proper error handling and execution policies.
 
-    \note Qt TaskTree in \QtVer is in \e{Technical Preview}, excluding its
+    \note Qt TaskTree in \QtVer is in \e{Technology Preview}, excluding its
     API from \l[QtDoc]{Compatibility promises}{Qt's compatibility promises}.
 
     \section1 Getting started
