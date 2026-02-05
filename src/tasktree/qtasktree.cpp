@@ -3063,7 +3063,7 @@ public:
     const std::optional<Iterator> m_iterator = std::nullopt;
     const QList<StorageBase> m_storageList;
     std::vector<TaskNode> m_children;
-    const int m_taskCount = 0;
+    const qsizetype m_taskCount = 0;
 };
 
 class TaskNode
@@ -3078,7 +3078,7 @@ public:
     {}
 
     bool isTask() const { return bool(m_taskHandler.m_taskAdapterConstructor); }
-    int taskCount() const { return isTask() ? 1 : m_container.m_taskCount; }
+    qsizetype taskCount() const { return isTask() ? 1 : m_container.m_taskCount; }
 
     const GroupItem::TaskHandler m_taskHandler;
     ContainerNode m_container;
@@ -3163,8 +3163,8 @@ public:
 
     QTaskTree *q = nullptr;
     Guard m_guard;
-    int m_progressValue = 0;
-    int m_asyncCount = 0;
+    qsizetype m_progressValue = 0;
+    qsizetype m_asyncCount = 0;
     QSet<StorageBase> m_storages;
     QHash<StorageBase, StorageHandler> m_storageHandlers;
     std::optional<TaskNode> m_root = std::nullopt;
@@ -4382,13 +4382,13 @@ DoneWith QTaskTree::runBlocking(const Group &recipe, const QFuture<void> &future
 
     \sa asyncCountChanged()
 */
-int QTaskTree::asyncCount() const
+qsizetype QTaskTree::asyncCount() const
 {
     return d_func()->m_asyncCount;
 }
 
 /*!
-    \fn void QTaskTree::asyncCountChanged(int count)
+    \fn void QTaskTree::asyncCountChanged(qsizetype count)
 
     This signal is emitted when the running task tree is about to
     return control to the caller's event loop. When the task tree is started,
@@ -4410,14 +4410,14 @@ int QTaskTree::asyncCount() const
 
     \sa setRecipe(), progressMaximum()
 */
-int QTaskTree::taskCount() const
+qsizetype QTaskTree::taskCount() const
 {
     Q_D(const QTaskTree);
     return d->m_root ? d->m_root->taskCount() : 0;
 }
 
 /*!
-    \fn void QTaskTree::progressValueChanged(int value)
+    \fn void QTaskTree::progressValueChanged(qsizetype value)
 
     This signal is emitted when the running task tree finished, canceled,
     or skipped some tasks. The \a value gives the current total number of
@@ -4452,7 +4452,7 @@ int QTaskTree::taskCount() const
 
     \sa progressMaximum(), progressValueChanged()
 */
-int QTaskTree::progressValue() const
+qsizetype QTaskTree::progressValue() const
 {
     return d_func()->m_progressValue;
 }

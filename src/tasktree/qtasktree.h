@@ -796,10 +796,10 @@ public:
     static DoneWith runBlocking(const Group &recipe, const QFuture<void> &future);
 #endif
 
-    int asyncCount() const;
-    int taskCount() const;
-    int progressMaximum() const { return taskCount(); }
-    int progressValue() const; // all finished / skipped / stopped tasks, groups itself excluded
+    qsizetype asyncCount() const;
+    qsizetype taskCount() const;
+    qsizetype progressMaximum() const { return taskCount(); }
+    qsizetype progressValue() const; // all finished / skipped / stopped tasks, groups itself excluded
 
     template <typename StorageStruct, typename Handler>
     void onStorageSetup(const Storage<StorageStruct> &storage, Handler &&handler) {
@@ -821,8 +821,8 @@ public:
 Q_SIGNALS:
     void started();
     void done(QtTaskTree::DoneWith result);
-    void asyncCountChanged(int count);
-    void progressValueChanged(int value); // updated whenever task finished / skipped / stopped
+    void asyncCountChanged(qsizetype count);
+    void progressValueChanged(qsizetype value); // updated whenever task finished / skipped / stopped
 
 protected:
     bool event(QEvent *event) override;
