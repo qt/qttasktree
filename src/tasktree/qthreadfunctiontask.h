@@ -19,15 +19,14 @@ namespace QtTaskTree {
 
 class QThreadFunctionBasePrivate;
 
-class Q_TASKTREE_EXPORT QThreadFunctionBase : public QObject
+class Q_TASKTREE_EXPORT QThreadFunctionBase
 {
-    Q_OBJECT
     Q_DECLARE_PRIVATE(QThreadFunctionBase)
+    Q_DISABLE_COPY_MOVE(QThreadFunctionBase)
 
 public:
-    QThreadFunctionBase() : QThreadFunctionBase(nullptr) {}
-    explicit QThreadFunctionBase(QObject *parent);
-    ~QThreadFunctionBase() override;
+    QThreadFunctionBase();
+    virtual ~QThreadFunctionBase();
 
     void setThreadPool(QThreadPool *pool);
     QThreadPool *threadPool() const;
@@ -40,48 +39,23 @@ public:
 
     static void syncAll();
 
-Q_SIGNALS:
-    void started();
-    void done(QtTaskTree::DoneResult result);
-    void resultReadyAt(int index);
-    void resultsReadyAt(int beginIndex, int endIndex);
-    void progressRangeChanged(int minimum, int maximum);
-    void progressValueChanged(int value);
-    void progressTextChanged(const QString &text);
-
 protected:
-    bool event(QEvent *event) override;
     void storeFuture(const QFuture<void> &future);
+
+    std::unique_ptr<QThreadFunctionBasePrivate> d_ptr;
 };
 
 template <typename ResultType>
-class QThreadFunction : public QThreadFunctionBase
+class QThreadFunction final : public QThreadFunctionBase
 {
     Q_DISABLE_COPY_MOVE(QThreadFunction)
 
 public:
-    QThreadFunction() : QThreadFunction(nullptr) {}
-    explicit QThreadFunction(QObject *parent)
-        : QThreadFunctionBase(parent)
-    {
-        connect(&m_watcher, &QFutureWatcherBase::finished, this, [this] {
-            Q_EMIT done(toDoneResult(!m_watcher.isCanceled()));
-        });
-        connect(&m_watcher, &QFutureWatcherBase::resultReadyAt,
-                this, &QThreadFunctionBase::resultReadyAt);
-        connect(&m_watcher, &QFutureWatcherBase::resultsReadyAt,
-                this, &QThreadFunctionBase::resultsReadyAt);
-        connect(&m_watcher, &QFutureWatcherBase::progressValueChanged,
-                this, &QThreadFunctionBase::progressValueChanged);
-        connect(&m_watcher, &QFutureWatcherBase::progressRangeChanged,
-                this, &QThreadFunctionBase::progressRangeChanged);
-        connect(&m_watcher, &QFutureWatcherBase::progressTextChanged,
-                this, &QThreadFunctionBase::progressTextChanged);
-    }
+    QThreadFunction() : QThreadFunctionBase() {}
 
     ~QThreadFunction() override
     {
-        disconnect(&m_watcher);
+        m_watcher.disconnect();
     }
 
     template <typename Function, typename ...Args>
@@ -93,29 +67,12 @@ public:
     bool isDone() const { return m_watcher.isFinished(); }
     bool isResultAvailable() const { return future().resultCount(); }
 
+    QFutureWatcher<ResultType> *futureWatcher() const { return &m_watcher; }
     QFuture<ResultType> future() const { return m_watcher.future(); }
     ResultType result() const { return m_watcher.result(); }
     ResultType takeResult() const { return future().takeResult(); }
     ResultType resultAt(int index) const { return m_watcher.resultAt(index); }
     QList<ResultType> results() const { return future().results(); }
-
-    void start()
-    {
-        if (future().isRunning()) {
-            qWarning("QThreadFunction: Can't start, the future is still running.");
-            return;
-        }
-
-        if (!m_startHandler) {
-            qWarning("QThreadFunction: No start handler specified.");
-            Q_EMIT done(DoneResult::Error);
-            return;
-        }
-
-        m_watcher.setFuture(m_startHandler());
-        storeFuture(QFuture<void>(future()));
-        Q_EMIT started();
-    }
 
 #ifdef Q_QDOC
     void setThreadPool(QThreadPool *pool);
@@ -123,15 +80,6 @@ public:
 
     void setAutoDelayedSync(bool on);
     bool isAutoDelayedSync() const;
-
-Q_SIGNALS:
-    void started();
-    void done(DoneResult result);
-    void resultReadyAt(int index);
-    void resultsReadyAt(int beginIndex, int endIndex);
-    void progressRangeChanged(int min, int max);
-    void progressValueChanged(int value);
-    void progressTextChanged(const QString &text);
 #endif
 
 private:
@@ -156,10 +104,41 @@ private:
 
     std::function<QFuture<ResultType>()> m_startHandler;
     QFutureWatcher<ResultType> m_watcher;
+
+    template <typename T>
+    friend class QThreadFunctionTaskAdapter;
 };
 
 template <typename ResultType>
-using QThreadFunctionTask = QCustomTask<QThreadFunction<ResultType>>;
+class QThreadFunctionTaskAdapter
+{
+public:
+    void operator()(QThreadFunction<ResultType> *task, QTaskInterface *iface) const
+    {
+        if (task->future().isRunning()) {
+            qWarning("QThreadFunction: Can't start, the future is still running.");
+            return;
+        }
+
+        if (!task->m_startHandler) {
+            qWarning("QThreadFunction: No start handler specified.");
+            iface->reportDone(DoneResult::Error);
+            return;
+        }
+
+        QObject::connect(&task->m_watcher, &QFutureWatcherBase::finished, iface, [task, iface] {
+            iface->reportDone(toDoneResult(!task->m_watcher.isCanceled()));
+        }, Qt::SingleShotConnection);
+
+        task->m_watcher.setFuture(task->m_startHandler());
+        task->storeFuture(QFuture<void>(task->future()));
+    }
+};
+
+
+template <typename ResultType>
+using QThreadFunctionTask = QCustomTask<QThreadFunction<ResultType>,
+                                        QThreadFunctionTaskAdapter<ResultType>>;
 
 } // namespace QtTaskTree
 
