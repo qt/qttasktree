@@ -55,13 +55,13 @@ protected:
             if (!handler)
                 return {}; // User passed {} for the setup handler.
         }
-        // V, T stands for: [V]oid, [T]askTree
-        static constexpr bool isVT = isInvocable<void, Handler, QTaskTree &>();
-        static constexpr bool isV = isInvocable<void, Handler>();
-        static_assert(isVT || isV,
-            "Tree setup handler needs to take (TaskTree &) or (void) as an argument and has to "
-            "return void. The passed handler doesn't fulfill these requirements.");
         return [handler = std::forward<Handler>(handler)](QTaskTree &taskTree) {
+            // V, T stands for: [V]oid, [T]askTree
+            constexpr bool isVT = isInvocable<void, Handler, QTaskTree &>();
+            constexpr bool isV = isInvocable<void, Handler>();
+            static_assert(isVT || isV,
+                          "Tree setup handler needs to take (TaskTree &) or (void) as an argument and has to "
+                          "return void. The passed handler doesn't fulfill these requirements.");
             if constexpr (isVT)
                 std::invoke(handler, taskTree);
             else if constexpr (isV)
@@ -75,16 +75,16 @@ protected:
             if (!handler)
                 return {}; // User passed {} for the done handler.
         }
-        // V, T, D stands for: [V]oid, [T]askTree, [D]oneWith
-        static constexpr bool isVTD = isInvocable<void, Handler, const QTaskTree &, DoneWith>();
-        static constexpr bool isVT = isInvocable<void, Handler, const QTaskTree &>();
-        static constexpr bool isVD = isInvocable<void, Handler, DoneWith>();
-        static constexpr bool isV = isInvocable<void, Handler>();
-        static_assert(isVTD || isVT || isVD || isV,
-            "Task done handler needs to take (const TaskTree &, DoneWith), (const Task &), "
-            "(DoneWith) or (void) as arguments and has to return void. "
-            "The passed handler doesn't fulfill these requirements.");
         return [handler = std::forward<Handler>(handler)](const QTaskTree &taskTree, DoneWith result) {
+            // V, T, D stands for: [V]oid, [T]askTree, [D]oneWith
+            constexpr bool isVTD = isInvocable<void, Handler, const QTaskTree &, DoneWith>();
+            constexpr bool isVT = isInvocable<void, Handler, const QTaskTree &>();
+            constexpr bool isVD = isInvocable<void, Handler, DoneWith>();
+            constexpr bool isV = isInvocable<void, Handler>();
+            static_assert(isVTD || isVT || isVD || isV,
+                          "Task done handler needs to take (const TaskTree &, DoneWith), (const Task &), "
+                          "(DoneWith) or (void) as arguments and has to return void. "
+                          "The passed handler doesn't fulfill these requirements.");
             if constexpr (isVTD)
                 std::invoke(handler, taskTree, result);
             else if constexpr (isVT)
