@@ -22,7 +22,7 @@ Images::Images(QWidget *parent)
     connect(addUrlsButton, &QPushButton::clicked, this, &Images::process);
 
     cancelButton->setEnabled(false);
-    connect(cancelButton, &QPushButton::clicked, &taskTreeRunner, &QSingleTaskTreeRunner::cancel);
+    connect(cancelButton, &QPushButton::clicked, this, [this] { taskTreeRunner.cancel(); });
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
     buttonLayout->addWidget(addUrlsButton);

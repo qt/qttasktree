@@ -229,15 +229,6 @@ int main(int argc, char *argv[])
 //! [5]
     QSingleTaskTreeRunner taskTreeRunner;
 
-    QObject::connect(&taskTreeRunner, &QSingleTaskTreeRunner::aboutToStart,
-                     progressBar, [progressBar](QTaskTree *taskTree) {
-        progressBar->setMaximum(taskTree->progressMaximum());
-        QObject::connect(taskTree, &QTaskTree::progressValueChanged,
-                         progressBar, &QProgressBar::setValue);
-    });
-    QObject::connect(&taskTreeRunner, &QSingleTaskTreeRunner::done,
-                     cancelButton, [cancelButton] { cancelButton->setEnabled(false); });
-
     const auto resetTaskTree = [&] {
         taskTreeRunner.reset();
         tree->reset();
@@ -245,16 +236,26 @@ int main(int argc, char *argv[])
         cancelButton->setEnabled(false);
     };
 
+    const auto cancelTaskTree = [&] { taskTreeRunner.cancel(); };
+
     const auto startTaskTree = [&] {
         resetTaskTree();
         cancelButton->setEnabled(true);
-        taskTreeRunner.start({tree->recipe()});
+
+        const auto onTaskTreeSetup = [progressBar](QTaskTree &taskTree) {
+            progressBar->setMaximum(taskTree.progressMaximum());
+            QObject::connect(&taskTree, &QTaskTree::progressValueChanged,
+                             progressBar, &QProgressBar::setValue);
+        };
+
+        const auto onTaskTreeDone = [cancelButton] { cancelButton->setEnabled(false); };
+
+        taskTreeRunner.start({tree->recipe()}, onTaskTreeSetup, onTaskTreeDone);
     };
 
-    QObject::connect(startButton, &QAbstractButton::clicked, startTaskTree);
-    QObject::connect(cancelButton, &QAbstractButton::clicked,
-                     &taskTreeRunner, &QSingleTaskTreeRunner::cancel);
-    QObject::connect(resetButton, &QAbstractButton::clicked, resetTaskTree);
+    QObject::connect(startButton, &QAbstractButton::clicked, &app, startTaskTree);
+    QObject::connect(cancelButton, &QAbstractButton::clicked, &app, cancelTaskTree);
+    QObject::connect(resetButton, &QAbstractButton::clicked, &app, resetTaskTree);
 
     mainWidget.show();
 

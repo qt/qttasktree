@@ -19,97 +19,72 @@ QT_BEGIN_NAMESPACE
 
 namespace QtTaskTree {
 
-class QAbstractTaskTreeRunnerPrivate;
 class QSingleTaskTreeRunnerPrivate;
 class QSequentialTaskTreeRunnerPrivate;
 class QParallelTaskTreeRunnerPrivate;
 
-class Q_TASKTREE_EXPORT QAbstractTaskTreeRunner : public QObject
-{
-    Q_OBJECT
-    Q_DECLARE_PRIVATE(QAbstractTaskTreeRunner)
+using TreeSetupHandler = std::function<void(QTaskTree &)>;
+using TreeDoneHandler = std::function<void(const QTaskTree &, DoneWith)>;
 
-public:
-    using TreeSetupHandler = std::function<void(QTaskTree &)>;
-    using TreeDoneHandler = std::function<void(const QTaskTree &, DoneWith)>;
-
-    QAbstractTaskTreeRunner() : QAbstractTaskTreeRunner(nullptr) {}
-    explicit QAbstractTaskTreeRunner(QObject *parent);
-    ~QAbstractTaskTreeRunner() override;
-
-    virtual bool isRunning() const = 0;
-    virtual void cancel() = 0;
-    virtual void reset() = 0;
-
-Q_SIGNALS:
-    void aboutToStart(QTaskTree *taskTree);
-    void done(QtTaskTree::DoneWith result, QTaskTree *taskTree);
-
-protected:
-    bool event(QEvent *event) override;
-    QAbstractTaskTreeRunner(QAbstractTaskTreeRunnerPrivate &dd, QObject *parent);
-
-    template <typename Handler>
-    static TreeSetupHandler wrapTreeSetupHandler(Handler &&handler) {
-        if constexpr (std::is_same_v<std::decay_t<Handler>, TreeSetupHandler>) {
-            if (!handler)
-                return {}; // User passed {} for the setup handler.
-        }
-        return [handler = std::forward<Handler>(handler)](QTaskTree &taskTree) {
-            // V, T stands for: [V]oid, [T]askTree
-            constexpr bool isVT = isInvocable<void, Handler, QTaskTree &>();
-            constexpr bool isV = isInvocable<void, Handler>();
-            static_assert(isVT || isV,
-                          "Tree setup handler needs to take (TaskTree &) or (void) as an argument and has to "
-                          "return void. The passed handler doesn't fulfill these requirements.");
-            if constexpr (isVT)
-                std::invoke(handler, taskTree);
-            else if constexpr (isV)
-                std::invoke(handler);
-        };
+template <typename Handler>
+TreeSetupHandler wrapTreeSetupHandler(Handler &&handler) {
+    if constexpr (std::is_same_v<q20::remove_cvref_t<Handler>, TreeSetupHandler>) {
+        if (!handler)
+            return {}; // User passed {} for the setup handler.
     }
+    return [handler = std::forward<Handler>(handler)](QTaskTree &taskTree) {
+        // V, T stands for: [V]oid, [T]askTree
+        constexpr bool isVT = isInvocable<void, Handler, QTaskTree &>();
+        constexpr bool isV = isInvocable<void, Handler>();
+        static_assert(isVT || isV,
+                      "Tree setup handler needs to take (TaskTree &) or (void) as an argument and has to "
+                      "return void. The passed handler doesn't fulfill these requirements.");
+        if constexpr (isVT)
+            std::invoke(handler, taskTree);
+        else if constexpr (isV)
+            std::invoke(handler);
+    };
+}
 
-    template <typename Handler>
-    static TreeDoneHandler wrapTreeDoneHandler(Handler &&handler) {
-        if constexpr (std::is_same_v<std::decay_t<Handler>, TreeDoneHandler>) {
-            if (!handler)
-                return {}; // User passed {} for the done handler.
-        }
-        return [handler = std::forward<Handler>(handler)](const QTaskTree &taskTree, DoneWith result) {
-            // V, T, D stands for: [V]oid, [T]askTree, [D]oneWith
-            constexpr bool isVTD = isInvocable<void, Handler, const QTaskTree &, DoneWith>();
-            constexpr bool isVT = isInvocable<void, Handler, const QTaskTree &>();
-            constexpr bool isVD = isInvocable<void, Handler, DoneWith>();
-            constexpr bool isV = isInvocable<void, Handler>();
-            static_assert(isVTD || isVT || isVD || isV,
-                          "Task done handler needs to take (const TaskTree &, DoneWith), (const Task &), "
-                          "(DoneWith) or (void) as arguments and has to return void. "
-                          "The passed handler doesn't fulfill these requirements.");
-            if constexpr (isVTD)
-                std::invoke(handler, taskTree, result);
-            else if constexpr (isVT)
-                std::invoke(handler, taskTree);
-            else if constexpr (isVD)
-                std::invoke(handler, result);
-            else if constexpr (isV)
-                std::invoke(handler);
-        };
+template <typename Handler>
+TreeDoneHandler wrapTreeDoneHandler(Handler &&handler) {
+    if constexpr (std::is_same_v<q20::remove_cvref_t<Handler>, TreeDoneHandler>) {
+        if (!handler)
+            return {}; // User passed {} for the done handler.
     }
-};
+    return [handler = std::forward<Handler>(handler)](const QTaskTree &taskTree, DoneWith result) {
+        // V, T, D stands for: [V]oid, [T]askTree, [D]oneWith
+        constexpr bool isVTD = isInvocable<void, Handler, const QTaskTree &, DoneWith>();
+        constexpr bool isVT = isInvocable<void, Handler, const QTaskTree &>();
+        constexpr bool isVD = isInvocable<void, Handler, DoneWith>();
+        constexpr bool isV = isInvocable<void, Handler>();
+        static_assert(isVTD || isVT || isVD || isV,
+                      "Task done handler needs to take (const TaskTree &, DoneWith), (const Task &), "
+                      "(DoneWith) or (void) as arguments and has to return void. "
+                      "The passed handler doesn't fulfill these requirements.");
+        if constexpr (isVTD)
+            std::invoke(handler, taskTree, result);
+        else if constexpr (isVT)
+            std::invoke(handler, taskTree);
+        else if constexpr (isVD)
+            std::invoke(handler, result);
+        else if constexpr (isV)
+            std::invoke(handler);
+    };
+}
 
-class Q_TASKTREE_EXPORT QSingleTaskTreeRunner : public QAbstractTaskTreeRunner
+class QSingleTaskTreeRunner final
 {
-    Q_OBJECT
     Q_DECLARE_PRIVATE(QSingleTaskTreeRunner)
+    Q_DISABLE_COPY_MOVE(QSingleTaskTreeRunner)
 
 public:
-    QSingleTaskTreeRunner() : QSingleTaskTreeRunner(nullptr) {}
-    explicit QSingleTaskTreeRunner(QObject *parent);
-    ~QSingleTaskTreeRunner() override;
+    Q_TASKTREE_EXPORT QSingleTaskTreeRunner();
+    Q_TASKTREE_EXPORT ~QSingleTaskTreeRunner();
 
-    bool isRunning() const override;
-    void cancel() override;
-    void reset() override;
+    Q_TASKTREE_EXPORT bool isRunning() const;
+    Q_TASKTREE_EXPORT void cancel() ;
+    Q_TASKTREE_EXPORT void reset() ;
 
     template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler>
     void start(const Group &recipe,
@@ -123,32 +98,30 @@ public:
                   callDone);
     }
 
-protected:
-    bool event(QEvent *event) override;
-
 private:
-    void startImpl(const Group &recipe,
-                   const TreeSetupHandler &setupHandler,
-                   const TreeDoneHandler &doneHandler,
-                   CallDone callDone);
+    Q_TASKTREE_EXPORT void startImpl(const Group &recipe,
+                                     const TreeSetupHandler &setupHandler,
+                                     const TreeDoneHandler &doneHandler,
+                                     CallDone callDone);
+
+    std::unique_ptr<QSingleTaskTreeRunnerPrivate> d_ptr;
 };
 
-class Q_TASKTREE_EXPORT QSequentialTaskTreeRunner : public QAbstractTaskTreeRunner
+class QSequentialTaskTreeRunner final
 {
-    Q_OBJECT
     Q_DECLARE_PRIVATE(QSequentialTaskTreeRunner)
+    Q_DISABLE_COPY_MOVE(QSequentialTaskTreeRunner)
 
 public:
-    QSequentialTaskTreeRunner() : QSequentialTaskTreeRunner(nullptr) {}
-    explicit QSequentialTaskTreeRunner(QObject *parent);
-    ~QSequentialTaskTreeRunner();
+    Q_TASKTREE_EXPORT QSequentialTaskTreeRunner();
+    Q_TASKTREE_EXPORT ~QSequentialTaskTreeRunner();
 
-    bool isRunning() const override;
-    void cancel() override;
-    void reset() override;
+    Q_TASKTREE_EXPORT bool isRunning() const;
+    Q_TASKTREE_EXPORT void cancel();
+    Q_TASKTREE_EXPORT void reset();
 
-    void cancelCurrent();
-    void resetCurrent();
+    Q_TASKTREE_EXPORT void cancelCurrent();
+    Q_TASKTREE_EXPORT void resetCurrent();
 
     template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler>
     void enqueue(const Group &recipe,
@@ -162,29 +135,27 @@ public:
                     callDone);
     }
 
-protected:
-    bool event(QEvent *event) override;
-
 private:
-    void enqueueImpl(const Group &recipe,
-                     const TreeSetupHandler &setupHandler,
-                     const TreeDoneHandler &doneHandler,
-                     CallDone callDone);
+    Q_TASKTREE_EXPORT void enqueueImpl(const Group &recipe,
+                                       const TreeSetupHandler &setupHandler,
+                                       const TreeDoneHandler &doneHandler,
+                                       CallDone callDone);
+
+    std::unique_ptr<QSequentialTaskTreeRunnerPrivate> d_ptr;
 };
 
-class Q_TASKTREE_EXPORT QParallelTaskTreeRunner : public QAbstractTaskTreeRunner
+class QParallelTaskTreeRunner final
 {
-    Q_OBJECT
     Q_DECLARE_PRIVATE(QParallelTaskTreeRunner)
+    Q_DISABLE_COPY_MOVE(QParallelTaskTreeRunner)
 
 public:
-    QParallelTaskTreeRunner() : QParallelTaskTreeRunner(nullptr) {}
-    explicit QParallelTaskTreeRunner(QObject *parent);
-    ~QParallelTaskTreeRunner();
+    Q_TASKTREE_EXPORT QParallelTaskTreeRunner();
+    Q_TASKTREE_EXPORT ~QParallelTaskTreeRunner();
 
-    bool isRunning() const override;
-    void cancel() override;
-    void reset() override;
+    Q_TASKTREE_EXPORT bool isRunning() const;
+    Q_TASKTREE_EXPORT void cancel();
+    Q_TASKTREE_EXPORT void reset();
 
     template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler>
     void start(const Group &recipe,
@@ -198,36 +169,34 @@ public:
                   callDone);
     }
 
-protected:
-    bool event(QEvent *event) override;
-
 private:
-    void startImpl(const Group &recipe,
-                   const TreeSetupHandler &setupHandler,
-                   const TreeDoneHandler &doneHandler,
-                   CallDone callDone);
+    Q_TASKTREE_EXPORT void startImpl(const Group &recipe,
+                                     const TreeSetupHandler &setupHandler,
+                                     const TreeDoneHandler &doneHandler,
+                                     CallDone callDone);
+
+    std::unique_ptr<QParallelTaskTreeRunnerPrivate> d_ptr;
 };
 
 template <typename Key>
-class QMappedTaskTreeRunner : public QAbstractTaskTreeRunner
+class QMappedTaskTreeRunner final
 {
+    Q_DISABLE_COPY_MOVE(QMappedTaskTreeRunner)
+
 public:
-    QMappedTaskTreeRunner() : QMappedTaskTreeRunner(nullptr) {}
-    explicit QMappedTaskTreeRunner(QObject *parent)
-        : QAbstractTaskTreeRunner(parent)
-    {}
+    QMappedTaskTreeRunner() = default;
 
     ~QMappedTaskTreeRunner() = default;
 
-    bool isRunning() const override { return !m_taskTrees.empty(); }
+    bool isRunning() const { return !m_taskTrees.empty(); }
 
-    void cancel() override
+    void cancel()
     {
         while (!m_taskTrees.empty())
             m_taskTrees.begin()->second->cancel();
     }
 
-    void reset() override { m_taskTrees.clear(); }
+    void reset() { m_taskTrees.clear(); }
 
     bool isKeyRunning(const Key &key) const { return m_taskTrees.find(key) != m_taskTrees.end(); }
 
@@ -262,22 +231,21 @@ private:
                    CallDone callDone)
     {
         QTaskTree *taskTree = new QTaskTree(recipe);
-        connect(taskTree, &QTaskTree::done,
-                this, [this, key, doneHandler, callDone](DoneWith result) {
+        QObject::connect(taskTree, &QTaskTree::done, taskTree,
+                         [this, key, doneHandler, callDone](DoneWith result) {
             const auto it = m_taskTrees.find(key);
             QTaskTree *runningTaskTree = it->second.release();
             runningTaskTree->deleteLater();
             m_taskTrees.erase(it);
             if (doneHandler && shouldCallDone(callDone, result))
                 doneHandler(*runningTaskTree, result);
-            Q_EMIT done(result, runningTaskTree);
         });
         m_taskTrees[key].reset(taskTree);
         if (setupHandler)
             setupHandler(*taskTree);
-        Q_EMIT aboutToStart(taskTree);
         taskTree->start();
     }
+
     std::unordered_map<Key, std::unique_ptr<QTaskTree>> m_taskTrees;
 };
 
