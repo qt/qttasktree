@@ -127,8 +127,8 @@
     This code:
     \list
         \li Creates a QSingleTaskTreeRunner to execute the task tree
-        \li Connects the progress bar to track task execution
         \li Sets up handlers for the Start, Cancel, and Reset buttons
+        \li Connects the progress bar to track task execution
     \endlist
 
     \include examples-run.qdocinc

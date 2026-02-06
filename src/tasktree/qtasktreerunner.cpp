@@ -14,62 +14,8 @@ QT_BEGIN_NAMESPACE
 
 namespace QtTaskTree {
 
-class QAbstractTaskTreeRunnerPrivate : public QObjectPrivate
-{
-public:
-    std::unique_ptr<QTaskTree> m_taskTree;
-};
-
 /*!
-    \class QtTaskTree::QAbstractTaskTreeRunner
-    \inheaderfile qtasktreerunner.h
-    \inmodule QtTaskTree
-    \brief An abstract base class for various task tree controllers.
-    \reentrant
-
-    The task tree runner manages the lifetime
-    of the underlying QTaskTree used to execute the given recipe.
-
-    The following table summarizes the differences between various
-    QAbstractTaskTreeRunner subclasses:
-
-    \table
-    \header
-        \li Class name
-        \li Description
-    \row
-        \li QSingleTaskTreeRunner
-        \li Manages single task tree execution.
-            The QSingleTaskTreeRunner::start() method unconditionally starts
-            the passed recipe, resetting any task tree that might be
-            running. Only one task tree can be executing at a time.
-    \row
-        \li QSequentialTaskTreeRunner
-        \li Manages sequential task tree executions.
-            The QSequentialTaskTreeRunner::enqueue() method starts
-            the passed recipe if the task tree runner is idle.
-            Otherwise, the recipe is enqueued. When the current
-            task finishes, the runner executes the dequeued recipe
-            sequentially. Only one task tree can be executing at a time.
-    \row
-        \li QParallelTaskTreeRunner
-        \li Manages parallel task tree executions.
-            The QParallelTaskTreeRunner::start() method unconditionally starts
-            the passed recipe and keeps any possibly
-            running task trees in parallel.
-    \row
-        \li QMappedTaskTreeRunner
-        \li Manages mapped task tree executions.
-            The QMappedTaskTreeRunner::start() method unconditionally starts
-            the passed recipe for a given key,
-            resetting any possibly running task tree with the same key.
-            Task trees with different keys are unaffected and continue
-            their execution.
-    \endtable
-*/
-
-/*!
-    \typealias QtTaskTree::QAbstractTaskTreeRunner::TreeSetupHandler
+    \typealias QtTaskTree::TreeSetupHandler
 
     Type alias for std::function<void(QTaskTree &)>.
 
@@ -84,7 +30,7 @@ public:
 */
 
 /*!
-    \typealias QtTaskTree::QAbstractTaskTreeRunner::TreeDoneHandler
+    \typealias QtTaskTree::TreeDoneHandler
 
     Type alias for std::function<void(const QTaskTree &, QtTaskTree::DoneWith)>.
 
@@ -100,75 +46,7 @@ public:
     \c std::function<void(void)>.
 */
 
-/*!
-    Constructs an abstract task tree runner for the given \a parent.
-*/
-QAbstractTaskTreeRunner::QAbstractTaskTreeRunner(QObject *parent)
-    : QObject(*new QAbstractTaskTreeRunnerPrivate, parent)
-{}
-
-QAbstractTaskTreeRunner::QAbstractTaskTreeRunner(QAbstractTaskTreeRunnerPrivate &dd, QObject *parent)
-    : QObject(dd, parent)
-{}
-
-/*!
-    Destroys the abstract task tree runner. Any possibly running
-    task tree is deleted and any scheduled task tree execution
-    is skipped.
-
-    \sa {QTaskTree::~QTaskTree()} {~QTaskTree()}
-*/
-QAbstractTaskTreeRunner::~QAbstractTaskTreeRunner() = default;
-
-/*! \reimp */
-bool QAbstractTaskTreeRunner::event(QEvent *event)
-{
-    return QObject::event(event);
-}
-
-/*!
-    \fn bool QAbstractTaskTreeRunner::isRunning() const
-
-    Returns whether the task tree runner is currently
-    executing any task tree.
-*/
-
-/*!
-    \fn void QAbstractTaskTreeRunner::cancel()
-
-    Cancels all running task trees. Calls task trees' done
-    handlers and emits done() signals with
-    \l {QtTaskTree::} {DoneWith::Cancel}.
-    Any scheduled and not started task tree executions are removed.
-*/
-
-/*!
-    \fn void QAbstractTaskTreeRunner::reset()
-
-    Resets all running task trees. No task tree's done
-    handlers are called nor done() signals are emitted.
-    Any scheduled and not started task tree executions are removed.
-*/
-
-/*!
-    \fn void QAbstractTaskTreeRunner::aboutToStart(QTaskTree *taskTree)
-
-    This signal is emitted whenever task tree runner is about to
-    start the \a taskTree.
-
-    \sa QTaskTree::started()
-*/
-
-/*!
-    \fn void QAbstractTaskTreeRunner::done(QtTaskTree::DoneWith result, QTaskTree *taskTree)
-
-    This signal is emitted whenever task tree runner finishes the execution
-    of the \a taskTree with a \a result.
-
-    \sa QTaskTree::done()
-*/
-
-class QSingleTaskTreeRunnerPrivate : public QAbstractTaskTreeRunnerPrivate
+class QSingleTaskTreeRunnerPrivate
 {
 public:
     std::unique_ptr<QTaskTree> m_taskTree;
@@ -184,14 +62,14 @@ public:
     Use the start() method to execute a given recipe,
     resetting any possibly running task tree.
     It's guaranteed that at most one task tree is executing at any given time.
+
+    \sa {Task Tree Runners}
 */
 
 /*!
-    Constructs a single task tree runner for the given \a parent.
+    Constructs a single task tree runner.
 */
-QSingleTaskTreeRunner::QSingleTaskTreeRunner(QObject *parent)
-    : QAbstractTaskTreeRunner(*new QSingleTaskTreeRunnerPrivate, parent)
-{}
+QSingleTaskTreeRunner::QSingleTaskTreeRunner() : d_ptr(new QSingleTaskTreeRunnerPrivate) {}
 
 /*!
     Destroys the single task tree runner. A possibly running
@@ -203,16 +81,12 @@ QSingleTaskTreeRunner::QSingleTaskTreeRunner(QObject *parent)
 QSingleTaskTreeRunner::~QSingleTaskTreeRunner() = default;
 
 /*!
-    \reimp
-
     Returns whether the single task tree runner is currently
     executing a task tree.
 */
 bool QSingleTaskTreeRunner::isRunning() const { return bool(d_func()->m_taskTree); }
 
 /*!
-    \reimp
-
     Cancels the running task tree. Calls task tree' done
     handler and emits done() signal with
     \l {QtTaskTree::} {DoneWith::Cancel}.
@@ -224,20 +98,12 @@ void QSingleTaskTreeRunner::cancel()
 }
 
 /*!
-    \reimp
-
     Resets the running task tree. No task tree's done
     handler is called nor done() signal is emitted.
 */
 void QSingleTaskTreeRunner::reset()
 {
     d_func()->m_taskTree.reset();
-}
-
-/*! \reimp */
-bool QSingleTaskTreeRunner::event(QEvent *event)
-{
-    return QAbstractTaskTreeRunner::event(event);
 }
 
 /*!
@@ -257,29 +123,27 @@ void QSingleTaskTreeRunner::startImpl(const Group &recipe,
 {
     Q_D(QSingleTaskTreeRunner);
     d->m_taskTree.reset(new QTaskTree(recipe));
-    connect(d->m_taskTree.get(), &QTaskTree::done, this, [this, doneHandler, callDone](DoneWith result) {
-        Q_D(QSingleTaskTreeRunner);
+    QObject::connect(d->m_taskTree.get(), &QTaskTree::done, d->m_taskTree.get(),
+                     [d, doneHandler, callDone](DoneWith result) {
         QTaskTree *taskTree = d->m_taskTree.release();
         taskTree->deleteLater();
         if (doneHandler && shouldCallDone(callDone, result))
             doneHandler(*taskTree, result);
-        Q_EMIT done(result, taskTree);
     });
     if (setupHandler)
         setupHandler(*d->m_taskTree);
-    Q_EMIT aboutToStart(d->m_taskTree.get());
     d->m_taskTree->start();
 }
 
 struct TreeData
 {
     Group recipe;
-    QAbstractTaskTreeRunner::TreeSetupHandler setupHandler;
-    QAbstractTaskTreeRunner::TreeDoneHandler doneHandler;
+    TreeSetupHandler setupHandler;
+    TreeDoneHandler doneHandler;
     CallDone callDone;
 };
 
-class QSequentialTaskTreeRunnerPrivate : public QAbstractTaskTreeRunnerPrivate
+class QSequentialTaskTreeRunnerPrivate
 {
 public:
     void startNext();
@@ -297,6 +161,8 @@ public:
     Manages sequential task tree execution.
     Use the enqueue() method to schedule the execution of a given recipe.
     It's guaranteed that at most one task tree is executing at any given time.
+
+    \sa {Task Tree Runners}
 */
 
 void QSequentialTaskTreeRunnerPrivate::startNext()
@@ -305,24 +171,19 @@ void QSequentialTaskTreeRunnerPrivate::startNext()
         return;
 
     const auto data = m_treeDataQueue.takeFirst();
-    m_taskTreeRunner.start(data.recipe, data.setupHandler, data.doneHandler, data.callDone);
+    const auto doneHandler = [this, doneHandler = data.doneHandler, callDone = data.callDone]
+        (const QTaskTree &taskTree, QtTaskTree::DoneWith result) {
+            if (doneHandler && shouldCallDone(callDone, result))
+                doneHandler(taskTree, result);
+            startNext();
+        };
+    m_taskTreeRunner.start(data.recipe, data.setupHandler, doneHandler);
 }
 
 /*!
-    Constructs a sequential task tree runner for the given \a parent.
+    Constructs a sequential task tree runner.
 */
-QSequentialTaskTreeRunner::QSequentialTaskTreeRunner(QObject *parent)
-    : QAbstractTaskTreeRunner(*new QSequentialTaskTreeRunnerPrivate, parent)
-{
-    Q_D(QSequentialTaskTreeRunner);
-    connect(&d->m_taskTreeRunner, &QSingleTaskTreeRunner::aboutToStart,
-            this, &QSequentialTaskTreeRunner::aboutToStart);
-    connect(&d->m_taskTreeRunner, &QSingleTaskTreeRunner::done,
-            this, [this](DoneWith result, QTaskTree *taskTree) {
-        Q_EMIT done(result, taskTree);
-        d_func()->startNext();
-    });
-}
+QSequentialTaskTreeRunner::QSequentialTaskTreeRunner() : d_ptr(new QSequentialTaskTreeRunnerPrivate) {}
 
 /*!
     Destroys the sequential task tree runner. A possibly running
@@ -334,8 +195,6 @@ QSequentialTaskTreeRunner::QSequentialTaskTreeRunner(QObject *parent)
 QSequentialTaskTreeRunner::~QSequentialTaskTreeRunner() = default;
 
 /*!
-    \reimp
-
     Returns whether the sequential task tree runner is currently
     executing a task tree.
 */
@@ -346,8 +205,6 @@ bool QSequentialTaskTreeRunner::isRunning() const
 }
 
 /*!
-    \reimp
-
     Cancels the running task tree. Calls task tree' done
     handler and emits done() signal with
     \l {QtTaskTree::} {DoneWith::Cancel}.
@@ -361,8 +218,6 @@ void QSequentialTaskTreeRunner::cancel()
 }
 
 /*!
-    \reimp
-
     Resets the running task tree. No task tree's done
     handler is called nor done() signal is emitted.
     All queued tasks are removed.
@@ -398,12 +253,6 @@ void QSequentialTaskTreeRunner::resetCurrent()
     d->startNext();
 }
 
-/*! \reimp */
-bool QSequentialTaskTreeRunner::event(QEvent *event)
-{
-    return QAbstractTaskTreeRunner::event(event);
-}
-
 /*!
     \fn template <typename SetupHandler = TreeSetupHandler, typename DoneHandler = TreeDoneHandler> void QSequentialTaskTreeRunner::enqueue(const QtTaskTree::Group &recipe, SetupHandler &&setupHandler = {}, DoneHandler &&doneHandler = {}, QtTaskTree::CallDone callDone = QtTaskTree::CallDoneFlag::Always)
 
@@ -427,7 +276,7 @@ void QSequentialTaskTreeRunner::enqueueImpl(const Group &recipe,
         d->startNext();
 }
 
-class QParallelTaskTreeRunnerPrivate : public QAbstractTaskTreeRunnerPrivate
+class QParallelTaskTreeRunnerPrivate
 {
 public:
     std::unordered_map<QTaskTree *, std::unique_ptr<QTaskTree>> m_taskTrees;
@@ -442,14 +291,14 @@ public:
     Manages parallel task tree execution.
     Use the start() method to execute a given recipe instantly,
     keeping other possibly running task trees in parallel.
+
+    \sa {Task Tree Runners}
 */
 
 /*!
-    Constructs a parallel task tree runner for the given \a parent.
+    Constructs a parallel task tree runner.
 */
-QParallelTaskTreeRunner::QParallelTaskTreeRunner(QObject *parent)
-    : QAbstractTaskTreeRunner(*new QParallelTaskTreeRunnerPrivate, parent)
-{}
+QParallelTaskTreeRunner::QParallelTaskTreeRunner() : d_ptr(new QParallelTaskTreeRunnerPrivate) {}
 
 /*!
     Destroys the parallel task tree runner. All running
@@ -461,16 +310,12 @@ QParallelTaskTreeRunner::QParallelTaskTreeRunner(QObject *parent)
 QParallelTaskTreeRunner::~QParallelTaskTreeRunner() = default;
 
 /*!
-    \reimp
-
     Returns whether the parallel task tree runner is currently
     executing at least one task tree.
 */
 bool QParallelTaskTreeRunner::isRunning() const { return !d_func()->m_taskTrees.empty(); }
 
 /*!
-    \reimp
-
     Cancels all running task trees. Calls task trees' done
     handlers and emits done() signals with
     \l {QtTaskTree::} {DoneWith::Cancel}.
@@ -484,20 +329,12 @@ void QParallelTaskTreeRunner::cancel()
 }
 
 /*!
-    \reimp
-
     Resets all running task trees. No task trees' done
     handlers are called nor done() signals are emitted.
 */
 void QParallelTaskTreeRunner::reset()
 {
     d_func()->m_taskTrees.clear();
-}
-
-/*! \reimp */
-bool QParallelTaskTreeRunner::event(QEvent *event)
-{
-    return QAbstractTaskTreeRunner::event(event);
 }
 
 /*!
@@ -517,19 +354,16 @@ void QParallelTaskTreeRunner::startImpl(const Group &recipe,
 {
     Q_D(QParallelTaskTreeRunner);
     QTaskTree *taskTree = new QTaskTree(recipe);
-    connect(taskTree, &QTaskTree::done, this, [this, taskTree, doneHandler, callDone](DoneWith result) {
-        Q_D(QParallelTaskTreeRunner);
+    QObject::connect(taskTree, &QTaskTree::done, taskTree, [d, taskTree, doneHandler, callDone](DoneWith result) {
         const auto it = d->m_taskTrees.find(taskTree);
         it->second.release()->deleteLater();
         d->m_taskTrees.erase(it);
         if (doneHandler && shouldCallDone(callDone, result))
             doneHandler(*taskTree, result);
-        Q_EMIT done(result, taskTree);
     });
     d->m_taskTrees.emplace(taskTree, taskTree);
     if (setupHandler)
         setupHandler(*taskTree);
-    Q_EMIT aboutToStart(taskTree);
     taskTree->start();
 }
 
@@ -544,12 +378,14 @@ void QParallelTaskTreeRunner::startImpl(const Group &recipe,
     resetting a possibly running task tree with the same key,
     and keeping other possibly running task trees with different keys
     in parallel.
+
+    \sa {Task Tree Runners}
 */
 
 /*!
-    \fn template <typename Key> QMappedTaskTreeRunner<Key>::QMappedTaskTreeRunner(QObject *parent = nullptr)
+    \fn template <typename Key> QMappedTaskTreeRunner<Key>::QMappedTaskTreeRunner()
 
-    Constructs a mapped task tree runner for the given \a parent.
+    Constructs a mapped task tree runner.
     The \c Key type is used for task tree mapping.
 */
 
@@ -565,7 +401,6 @@ void QParallelTaskTreeRunner::startImpl(const Group &recipe,
 
 /*!
     \fn template <typename Key> bool QMappedTaskTreeRunner<Key>::isRunning() const
-    \reimp
 
     Returns whether the mapped task tree runner is currently
     executing at least one task tree.
@@ -573,7 +408,6 @@ void QParallelTaskTreeRunner::startImpl(const Group &recipe,
 
 /*!
     \fn template <typename Key> void QMappedTaskTreeRunner<Key>::cancel()
-    \reimp
 
     Cancels all running task trees. Calls task trees' done
     handlers and emits done() signals with
@@ -583,7 +417,6 @@ void QParallelTaskTreeRunner::startImpl(const Group &recipe,
 
 /*!
     \fn template <typename Key> void QMappedTaskTreeRunner<Key>::reset()
-    \reimp
 
     Resets all running task trees. No task trees' done
     handlers are called nor done() signals are emitted.

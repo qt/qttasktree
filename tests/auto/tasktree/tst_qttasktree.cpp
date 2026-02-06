@@ -405,29 +405,6 @@ static int doneCount(const Log &log)
     return count;
 }
 
-class DoneEmitter : public QObject
-{
-    Q_OBJECT
-
-public:
-    DoneEmitter(QAbstractTaskTreeRunner *runner, int expectedDoneCount)
-        : m_expectedDoneCount(expectedDoneCount)
-    {
-        connect(runner, &QAbstractTaskTreeRunner::done, this, [this] {
-            ++m_doneCount;
-            if (m_doneCount == m_expectedDoneCount)
-                Q_EMIT done();
-        });
-    }
-
-Q_SIGNALS:
-    void done();
-
-private:
-    const int m_expectedDoneCount = 0;
-    int m_doneCount = 0;
-};
-
 static Log s_globalLog = {};
 
 void tst_TaskTree::taskTreeRunner_data()
@@ -564,64 +541,67 @@ void tst_TaskTree::taskTreeRunner()
 {
     QFETCH(RunnerData, runnerData);
 
+    int doneCounter = 0;
+    const auto onDone = [&doneCounter] { ++doneCounter; };
+
     {
         s_globalLog = {};
+        doneCounter = 0;
         const Log expectedLog = runnerData.singleLog;
         QSingleTaskTreeRunner taskTreeRunner;
-        DoneEmitter emitter(&taskTreeRunner, doneCount(expectedLog));
-        QSignalSpy doneSpy(&emitter, &DoneEmitter::done);
         for (const QPair<QString, Group> &recipe : runnerData.recipes)
-            taskTreeRunner.start(recipe.second);
+            taskTreeRunner.start(recipe.second, {}, onDone);
 
-        QVERIFY(doneSpy.wait(1s));
+        QTRY_VERIFY_WITH_TIMEOUT(!taskTreeRunner.isRunning(), 1s);
 
         QVERIFY(!taskTreeRunner.isRunning());
         QCOMPARE(s_globalLog, expectedLog);
+        QCOMPARE(doneCounter, doneCount(expectedLog));
     }
 
     {
         s_globalLog = {};
+        doneCounter = 0;
         const Log expectedLog = runnerData.sequentialLog;
         QSequentialTaskTreeRunner taskTreeRunner;
-        DoneEmitter emitter(&taskTreeRunner, doneCount(expectedLog));
-        QSignalSpy doneSpy(&emitter, &DoneEmitter::done);
         for (const QPair<QString, Group> &recipe : runnerData.recipes)
-            taskTreeRunner.enqueue(recipe.second);
+            taskTreeRunner.enqueue(recipe.second, {}, onDone);
 
-        QVERIFY(doneSpy.wait(1s));
+        QTRY_VERIFY_WITH_TIMEOUT(!taskTreeRunner.isRunning(), 1s);
 
         QVERIFY(!taskTreeRunner.isRunning());
         QCOMPARE(s_globalLog, expectedLog);
+        QCOMPARE(doneCounter, doneCount(expectedLog));
     }
 
     {
         s_globalLog = {};
+        doneCounter = 0;
         const Log expectedLog = runnerData.parallelLog;
         QParallelTaskTreeRunner taskTreeRunner;
-        DoneEmitter emitter(&taskTreeRunner, doneCount(expectedLog));
-        QSignalSpy doneSpy(&emitter, &DoneEmitter::done);
         for (const QPair<QString, Group> &recipe : runnerData.recipes)
-            taskTreeRunner.start(recipe.second);
+            taskTreeRunner.start(recipe.second, {}, onDone);
 
-        QVERIFY(doneSpy.wait(1s));
+        QTRY_VERIFY_WITH_TIMEOUT(!taskTreeRunner.isRunning(), 1s);
 
         QVERIFY(!taskTreeRunner.isRunning());
         QCOMPARE(s_globalLog, expectedLog);
+        QCOMPARE(doneCounter, doneCount(expectedLog));
     }
 
     {
         s_globalLog = {};
+        doneCounter = 0;
         const Log expectedLog = runnerData.mappedLog;
         QMappedTaskTreeRunner<QString> taskTreeRunner;
-        DoneEmitter emitter(&taskTreeRunner, doneCount(expectedLog));
-        QSignalSpy doneSpy(&emitter, &DoneEmitter::done);
         for (const QPair<QString, Group> &recipe : runnerData.recipes)
-            taskTreeRunner.start(recipe.first, recipe.second);
+            taskTreeRunner.start(recipe.first, recipe.second, {}, onDone);
 
-        QVERIFY(doneSpy.wait(1s));
+        QTRY_VERIFY_WITH_TIMEOUT(!taskTreeRunner.isRunning(), 1s);
 
         QVERIFY(!taskTreeRunner.isRunning());
         QCOMPARE(s_globalLog, expectedLog);
+        QCOMPARE(doneCounter, doneCount(expectedLog));
     }
 
     s_globalLog = {};
@@ -4969,20 +4949,19 @@ void tst_TaskTree::exactHandlers()
         return DoneResult::Success;
     };
 
-    const QAbstractTaskTreeRunner::TreeSetupHandler onTreeSetup = [&treeSetupCalled](QTaskTree &) {
+    const TreeSetupHandler onTreeSetup = [&treeSetupCalled](QTaskTree &) {
         treeSetupCalled = true;
     };
 
-    const QAbstractTaskTreeRunner::TreeDoneHandler onTreeDone
+    const TreeDoneHandler onTreeDone
             = [&treeDoneCalled](const QTaskTree &, DoneWith) {
         treeDoneCalled = true;
     };
 
     QSingleTaskTreeRunner taskTreeRunner;
-    QSignalSpy doneSpy(&taskTreeRunner, &QAbstractTaskTreeRunner::done);
     taskTreeRunner.start({TestTask(onTaskSetup, onTaskDone)}, onTreeSetup, onTreeDone);
 
-    QVERIFY(doneSpy.wait(1s));
+    QTRY_VERIFY_WITH_TIMEOUT(!taskTreeRunner.isRunning(), 1s);
 
     QVERIFY(taskSetupCalled);
     QVERIFY(taskDoneCalled);
