@@ -650,9 +650,8 @@ private:
 
 using TickAndDoneTask = QCustomTask<TickAndDone>;
 
-template <typename StoredBarrierType>
-ExecutableItem createBarrierAdvance(const Storage<CustomStorage> &storage,
-                                    const StoredBarrierType &barrier, int taskId)
+static ExecutableItem createBarrierAdvance(const Storage<CustomStorage> &storage,
+                                           const QStoredBarrier &barrier, int taskId)
 {
     return TickAndDoneTask([storage, barrier, taskId](TickAndDone &tickAndDone) {
         tickAndDone.setInterval(1ms);
