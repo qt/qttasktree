@@ -348,7 +348,7 @@ When::When(const BarrierKickerGetter &kicker, WorkflowPolicy policy)
 QT_TASKTREE_DEFINE_SMF(When)
 
 /*!
-    \fn Group operator>>(const When &whenItem, const Do &doItem)
+    \fn Group When::operator>>(const When &whenItem, const Do &doItem)
 
     Combines \a whenItem with \a doItem body and returns a \l Group
     ready to be used in task tree recipes.
