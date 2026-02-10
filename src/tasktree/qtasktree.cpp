@@ -3960,7 +3960,7 @@ QT_TASKTREE_DEFINE_SMF(StorageBase)
 */
 
 /*!
-    \fn template <typename Task, typename Adapter = QDefaultTaskAdapter<Task>, typename Deleter = std::default_delete<Task>> template <typename SetupHandler = QCustomTask::TaskSetupHandler, typename DoneHandler = QCustomTask::TaskDoneHandler> QCustomTask<Task, Adapter, Deleter>::QCustomTask<Task, Adapter, Deleter>(SetupHandler &&setup = QCustomTask::TaskSetupHandler(), DoneHandler &&done = QCustomTask::TaskDoneHandler(), QtTaskTree::CallDone callDone = QtTaskTree::CallDoneFlag::Always)
+    \fn template <typename Task, typename Adapter = QDefaultTaskAdapter<Task>, typename Deleter = std::default_delete<Task>> template <typename SetupHandler = QCustomTask::TaskSetupHandler, typename DoneHandler = QCustomTask::TaskDoneHandler, std::enable_if_t<!std::is_same_v<q20::remove_cvref_t<SetupHandler>, QCustomTask<Task, Adapter, Deleter>>, bool> = true> QCustomTask<Task, Adapter, Deleter>::QCustomTask<Task, Adapter, Deleter>(SetupHandler &&setup = QCustomTask::TaskSetupHandler(), DoneHandler &&done = QCustomTask::TaskDoneHandler(), QtTaskTree::CallDone callDone = QtTaskTree::CallDoneFlag::Always)
 
     Constructs a QCustomTask instance and attaches the \a setup and \a done
     handlers to the task. When the running task tree is about to start the task,
