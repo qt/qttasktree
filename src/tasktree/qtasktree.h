@@ -648,7 +648,8 @@ public:
     using TaskSetupHandler = std::function<SetupResult(Task &)>;
     using TaskDoneHandler = std::function<DoneResult(const Task &, DoneWith)>;
 
-    template <typename SetupHandler = TaskSetupHandler, typename DoneHandler = TaskDoneHandler>
+    template <typename SetupHandler = TaskSetupHandler, typename DoneHandler = TaskDoneHandler,
+              std::enable_if_t<!std::is_same_v<q20::remove_cvref_t<SetupHandler>, QCustomTask<Task, Adapter, Deleter>>, bool> = true>
     explicit QCustomTask(SetupHandler &&setup = TaskSetupHandler(),
                          DoneHandler &&done = TaskDoneHandler(),
                          CallDone callDone = CallDoneFlag::Always)
