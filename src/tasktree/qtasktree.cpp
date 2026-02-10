@@ -1927,7 +1927,7 @@ GroupItem Do::children() const
 }
 
 /*!
-    \fn Group operator>>(const For &forItem, const Do &doItem)
+    \fn Group For::operator>>(const For &forItem, const Do &doItem)
 
     Combines \a forItem with \a doItem body and returns a \l Group
     ready to be used in task tree recipes.
