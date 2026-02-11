@@ -1342,9 +1342,6 @@ void tst_TaskTree::testTree_data()
             };
         };
 
-        const Log doneLog = {{0, Handler::GroupSuccess}};
-        const Log errorLog = {{0, Handler::GroupError}};
-
         QTest::newRow("EmptyStopOnError")
             << testData(WorkflowPolicy::StopOnError, DoneWith::Success);
         QTest::newRow("EmptyContinueOnError")
