@@ -703,8 +703,8 @@ static TestData storageShadowingData()
     const auto groupDoneWithStorage = [storage, helperStorage, shadowedStorage](int taskId) {
         return onGroupDone([storage, helperStorage, shadowedStorage, taskId](DoneWith result) {
             storage->m_log.append({taskId, resultToGroupHandler(result)});
-            auto it = helperStorage->find(taskId);
-            if (it == helperStorage->end()) {
+            auto it = helperStorage->constFind(taskId);
+            if (it == helperStorage->constEnd()) {
                 qWarning() << "The helperStorage is missing the shadowedStorage.";
                 return;
             } else if (*it != shadowedStorage.activeStorage()) {
