@@ -1509,10 +1509,10 @@ namespace QtTaskTree {
 */
 
 /*!
-    \fn template <typename StorageStruct> template <typename ...Args> Storage<StorageStruct>::Storage<StorageStruct>(const Args &...args)
+    \fn template <typename StorageStruct> template <typename FirstArg, typename ...Args, std::enable_if_t<!std::is_same_v<q20::remove_cvref_t<FirstArg>, Storage<StorageStruct>>, bool> = true> Storage<StorageStruct>::Storage<StorageStruct>(const FirstArg &firstArg, const Args &...args)
 
     Creates a storage for the given \c StorageStruct type. The passed
-    \a args are stored when creating a storage, and are used later by
+    \a firstArg and \a args are stored when creating a storage, and are used later by
     the running QTaskTree to construct the \c StorageStruct
     with the stored \a args.
 

@@ -221,9 +221,10 @@ class Storage final : public StorageBase
 {
 public:
     Storage() : StorageBase(Storage::ctor(), Storage::dtor()) {}
-    template <typename ...Args>
-    explicit Storage(const Args &...args)
-        : StorageBase([=] { return new StorageStruct{args...}; }, Storage::dtor()) {}
+    template <typename FirstArg, typename ...Args,
+             std::enable_if_t<!std::is_same_v<q20::remove_cvref_t<FirstArg>, Storage<StorageStruct>>, bool> = true>
+    explicit Storage(const FirstArg &firstArg, const Args &...args)
+        : StorageBase([=] { return new StorageStruct{firstArg, args...}; }, Storage::dtor()) {}
 
     StorageStruct &operator*() const noexcept { return *activeStorage(); }
     StorageStruct *operator->() const noexcept { return activeStorage(); }
