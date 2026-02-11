@@ -642,7 +642,7 @@ public:
 
 Q_SIGNALS:
     void tick();
-    void done(DoneResult result);
+    void done(QtTaskTree::DoneResult result);
 
 private:
     milliseconds m_interval;
