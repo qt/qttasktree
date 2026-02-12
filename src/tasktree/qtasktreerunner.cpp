@@ -73,8 +73,7 @@ QSingleTaskTreeRunner::QSingleTaskTreeRunner() : d_ptr(new QSingleTaskTreeRunner
 
 /*!
     Destroys the single task tree runner. A possibly running
-    task tree is deleted. No task tree's done handler is called nor
-    done() signal is emitted.
+    task tree is deleted. No task tree's done handler is called.
 
     \sa {QTaskTree::~QTaskTree()} {~QTaskTree()}
 */
@@ -88,8 +87,7 @@ bool QSingleTaskTreeRunner::isRunning() const { return bool(d_func()->m_taskTree
 
 /*!
     Cancels the running task tree. Calls task tree' done
-    handler and emits done() signal with
-    \l {QtTaskTree::} {DoneWith::Cancel}.
+    handler with \l {QtTaskTree::} {DoneWith::Cancel}.
 */
 void QSingleTaskTreeRunner::cancel()
 {
@@ -98,8 +96,7 @@ void QSingleTaskTreeRunner::cancel()
 }
 
 /*!
-    Resets the running task tree. No task tree's done
-    handler is called nor done() signal is emitted.
+    Resets the running task tree. No task tree's done handler is called.
 */
 void QSingleTaskTreeRunner::reset()
 {
@@ -188,7 +185,7 @@ QSequentialTaskTreeRunner::QSequentialTaskTreeRunner() : d_ptr(new QSequentialTa
 /*!
     Destroys the sequential task tree runner. A possibly running
     task tree is deleted and enqueued tasks are removed.
-    No task tree's done handler is called nor done() signal is emitted.
+    No task tree's done handler is called.
 
     \sa {QTaskTree::~QTaskTree()} {~QTaskTree()}
 */
@@ -206,8 +203,7 @@ bool QSequentialTaskTreeRunner::isRunning() const
 
 /*!
     Cancels the running task tree. Calls task tree' done
-    handler and emits done() signal with
-    \l {QtTaskTree::} {DoneWith::Cancel}.
+    handler with \l {QtTaskTree::} {DoneWith::Cancel}.
     All queued tasks are removed.
 */
 void QSequentialTaskTreeRunner::cancel()
@@ -218,8 +214,7 @@ void QSequentialTaskTreeRunner::cancel()
 }
 
 /*!
-    Resets the running task tree. No task tree's done
-    handler is called nor done() signal is emitted.
+    Resets the running task tree. No task tree's done handler is called.
     All queued tasks are removed.
 */
 void QSequentialTaskTreeRunner::reset()
@@ -231,8 +226,7 @@ void QSequentialTaskTreeRunner::reset()
 
 /*!
     Cancels the running task tree. Calls task tree' done
-    handler and emits done() signal with
-    \l {QtTaskTree::} {DoneWith::Cancel}.
+    handler with \l {QtTaskTree::} {DoneWith::Cancel}.
     If there are any enqueued recipes, the dequeued recipe is started.
 */
 void QSequentialTaskTreeRunner::cancelCurrent()
@@ -242,8 +236,7 @@ void QSequentialTaskTreeRunner::cancelCurrent()
 }
 
 /*!
-    Resets the running task tree. No task tree's done
-    handler is called nor done() signal is emitted.
+    Resets the running task tree. No task tree's done handler is called.
     If there are any enqueued recipes, the dequeued recipe is started.
 */
 void QSequentialTaskTreeRunner::resetCurrent()
@@ -302,8 +295,7 @@ QParallelTaskTreeRunner::QParallelTaskTreeRunner() : d_ptr(new QParallelTaskTree
 
 /*!
     Destroys the parallel task tree runner. All running
-    task trees are deleted. No task trees' done handlers are called nor
-    done() signals are emitted.
+    task trees are deleted. No task trees' done handlers are called.
 
     \sa {QTaskTree::~QTaskTree()} {~QTaskTree()}
 */
@@ -317,8 +309,7 @@ bool QParallelTaskTreeRunner::isRunning() const { return !d_func()->m_taskTrees.
 
 /*!
     Cancels all running task trees. Calls task trees' done
-    handlers and emits done() signals with
-    \l {QtTaskTree::} {DoneWith::Cancel}.
+    handlers with \l {QtTaskTree::} {DoneWith::Cancel}.
     The order of task trees' cancellation is random.
 */
 void QParallelTaskTreeRunner::cancel()
@@ -329,8 +320,7 @@ void QParallelTaskTreeRunner::cancel()
 }
 
 /*!
-    Resets all running task trees. No task trees' done
-    handlers are called nor done() signals are emitted.
+    Resets all running task trees. No task trees' done handlers are called.
 */
 void QParallelTaskTreeRunner::reset()
 {
@@ -393,8 +383,7 @@ void QParallelTaskTreeRunner::startImpl(const Group &recipe,
     \fn template <typename Key> QMappedTaskTreeRunner<Key>::~QMappedTaskTreeRunner()
 
     Destroys the mapped task tree runner. All running
-    task trees are deleted. No task trees' done handlers are called nor
-    done() signals are emitted.
+    task trees are deleted. No task trees' done handlers are called.
 
     \sa {QTaskTree::~QTaskTree()} {~QTaskTree()}
 */
@@ -410,16 +399,14 @@ void QParallelTaskTreeRunner::startImpl(const Group &recipe,
     \fn template <typename Key> void QMappedTaskTreeRunner<Key>::cancel()
 
     Cancels all running task trees. Calls task trees' done
-    handlers and emits done() signals with
-    \l {QtTaskTree::} {DoneWith::Cancel}.
+    handlers with \l {QtTaskTree::} {DoneWith::Cancel}.
     The order of task trees' cancellation is random.
 */
 
 /*!
     \fn template <typename Key> void QMappedTaskTreeRunner<Key>::reset()
 
-    Resets all running task trees. No task trees' done
-    handlers are called nor done() signals are emitted.
+    Resets all running task trees. No task trees' done handlers are called.
 */
 
 /*!
@@ -433,15 +420,14 @@ void QParallelTaskTreeRunner::startImpl(const Group &recipe,
     \fn template <typename Key> void QMappedTaskTreeRunner<Key>::cancelKey(const Key &key)
 
     Cancels a potentially running task tree that was started with the \a key.
-    Calls task tree's done handler and emits done() signal with
-    \l {QtTaskTree::} {DoneWith::Cancel}.
+    Calls task tree's done handler with \l {QtTaskTree::} {DoneWith::Cancel}.
 */
 
 /*!
     \fn template <typename Key> void QMappedTaskTreeRunner<Key>::resetKey(const Key &key)
 
     Resets a potentially running task tree that was started with the \a key.
-    No task tree's done handlers is called nor done() signal is emitted.
+    No task tree's done handlers is called.
 */
 
 /*!
