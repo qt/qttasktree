@@ -35,7 +35,7 @@ using namespace Qt::StringLiterals;
 /*!
     \namespace QtTaskTree
     \inmodule QtTaskTree
-    \brief The QtTaskTree namespace encloses helper classes and global
+    \brief The QtTaskTree namespace encloses all classes and global
            functions of the TaskTree module.
 */
 
