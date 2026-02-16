@@ -4,8 +4,8 @@
 // Qt-Security score:significant reason:default
 
 
-#ifndef QBARRIERTASK_H
-#define QBARRIERTASK_H
+#ifndef QTASKTREE_QBARRIERTASK_H
+#define QTASKTREE_QBARRIERTASK_H
 
 #include <QtTaskTree/qttasktreeglobal.h>
 
@@ -128,4 +128,4 @@ private:
 
 QT_END_NAMESPACE
 
-#endif // QBARRIERTASK_H
+#endif // QTASKTREE_QBARRIERTASK_H

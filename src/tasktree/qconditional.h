@@ -4,8 +4,8 @@
 // Qt-Security score:significant reason:default
 
 
-#ifndef QCONDITIONAL_H
-#define QCONDITIONAL_H
+#ifndef QTASKTREE_QCONDITIONAL_H
+#define QTASKTREE_QCONDITIONAL_H
 
 #include <QtTaskTree/qttasktreeglobal.h>
 
@@ -169,4 +169,4 @@ private:
 
 QT_END_NAMESPACE
 
-#endif // QCONDITIONAL_H
+#endif // QTASKTREE_QCONDITIONAL_H

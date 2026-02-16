@@ -3,10 +3,10 @@
 // Qt-Security score:significant reason:default
 
 
-#ifndef QTTASKTREEGLOBAL_H
-#define QTTASKTREEGLOBAL_H
+#ifndef QTASKTREE_QTTASKTREEGLOBAL_H
+#define QTASKTREE_QTTASKTREEGLOBAL_H
 
 #include <QtCore/qglobal.h>
 #include <QtTaskTree/qttasktreeexports.h>
 
-#endif // QTTASKTREEGLOBAL_H
+#endif // QTASKTREE_QTTASKTREEGLOBAL_H

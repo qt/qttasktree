@@ -4,8 +4,8 @@
 // Qt-Security score:significant reason:default
 
 
-#ifndef QNETWORKREPLYWRAPPERTASK_H
-#define QNETWORKREPLYWRAPPERTASK_H
+#ifndef QTASKTREE_QNETWORKREPLYWRAPPERTASK_H
+#define QTASKTREE_QNETWORKREPLYWRAPPERTASK_H
 
 #include <QtTaskTree/qttasktreeglobal.h>
 
@@ -57,4 +57,4 @@ using QNetworkReplyWrapperTask = QCustomTask<QNetworkReplyWrapper>;
 
 QT_END_NAMESPACE
 
-#endif // QNETWORKREPLYWRAPPERTASK_H
+#endif // QTASKTREE_QNETWORKREPLYWRAPPERTASK_H

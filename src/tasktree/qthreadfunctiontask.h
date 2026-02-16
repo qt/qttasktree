@@ -4,8 +4,8 @@
 // Qt-Security score:significant reason:default
 
 
-#ifndef QTHREADFUNCTIONTASK_H
-#define QTHREADFUNCTIONTASK_H
+#ifndef QTASKTREE_QTHREADFUNCTIONTASK_H
+#define QTASKTREE_QTHREADFUNCTIONTASK_H
 
 #include <QtTaskTree/qtasktree.h>
 
@@ -144,4 +144,4 @@ using QThreadFunctionTask = QCustomTask<QThreadFunction<ResultType>,
 
 QT_END_NAMESPACE
 
-#endif // QTHREADFUNCTIONTASK_H
+#endif // QTASKTREE_QTHREADFUNCTIONTASK_H

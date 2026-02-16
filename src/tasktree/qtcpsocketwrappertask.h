@@ -4,8 +4,8 @@
 // Qt-Security score:significant reason:default
 
 
-#ifndef QTCPSOCKETWRAPPERTASK_H
-#define QTCPSOCKETWRAPPERTASK_H
+#ifndef QTASKTREE_QTCPSOCKETWRAPPERTASK_H
+#define QTASKTREE_QTCPSOCKETWRAPPERTASK_H
 
 #include <QtTaskTree/qttasktreeglobal.h>
 
@@ -49,4 +49,4 @@ using QTcpSocketWrapperTask = QCustomTask<QTcpSocketWrapper>;
 
 QT_END_NAMESPACE
 
-#endif // QTCPSOCKETWRAPPERTASK_H
+#endif // QTASKTREE_QTCPSOCKETWRAPPERTASK_H

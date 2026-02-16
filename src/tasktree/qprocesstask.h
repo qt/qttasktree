@@ -4,8 +4,8 @@
 // Qt-Security score:significant reason:default
 
 
-#ifndef QPROCESSTASK_H
-#define QPROCESSTASK_H
+#ifndef QTASKTREE_QPROCESSTASK_H
+#define QTASKTREE_QPROCESSTASK_H
 
 #include <QtTaskTree/qttasktreeglobal.h>
 
@@ -41,4 +41,4 @@ using QProcessTask = QCustomTask<QProcess, QProcessTaskAdapter, QProcessTaskDele
 
 QT_END_NAMESPACE
 
-#endif // QPROCESSTASK_H
+#endif // QTASKTREE_QPROCESSTASK_H
