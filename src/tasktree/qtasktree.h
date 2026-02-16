@@ -4,8 +4,8 @@
 // Qt-Security score:significant reason:default
 
 
-#ifndef QTASKTREE_H
-#define QTASKTREE_H
+#ifndef QTASKTREE_QTASKTREE_H
+#define QTASKTREE_QTASKTREE_H
 
 #include <QtTaskTree/qttasktreeglobal.h>
 
@@ -868,4 +868,4 @@ using QTimeoutTask = QCustomTask<std::chrono::milliseconds, QTimeoutTaskAdapter>
 
 QT_END_NAMESPACE
 
-#endif // QTASKTREE_H
+#endif // QTASKTREE_QTASKTREE_H

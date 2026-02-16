@@ -4,8 +4,8 @@
 // Qt-Security score:significant reason:default
 
 
-#ifndef QTASKTREERUNNER_H
-#define QTASKTREERUNNER_H
+#ifndef QTASKTREE_QTASKTREERUNNER_H
+#define QTASKTREE_QTASKTREERUNNER_H
 
 #include <QtTaskTree/qttasktreeglobal.h>
 
@@ -253,4 +253,4 @@ private:
 
 QT_END_NAMESPACE
 
-#endif // QTASKTREERUNNER_H
+#endif // QTASKTREE_QTASKTREERUNNER_H
