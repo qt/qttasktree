@@ -815,31 +815,31 @@ using namespace Qt::StringLiterals;
     \row
         \li QSingleTaskTreeRunner
         \li Manages single task tree execution.
-            The \l QSingleTaskTreeRunner::start() method unconditionally starts
-            the passed recipe, resetting any task tree that might be
-            running. Only one task tree can be executing at a time.
+            The \l {QtTaskTree::} {QSingleTaskTreeRunner::start} method
+            unconditionally starts the passed recipe, resetting any task tree
+            that might be running. Only one task tree can be executing at a time.
     \row
         \li QSequentialTaskTreeRunner
         \li Manages sequential task tree executions.
-            The \l QSequentialTaskTreeRunner::enqueue() method starts
-            the passed recipe if the task tree runner is idle.
+            The \l {QtTaskTree::} {QSequentialTaskTreeRunner::enqueue} method
+            starts the passed recipe if the task tree runner is idle.
             Otherwise, the recipe is enqueued. When the current
             task finishes, the runner executes the dequeued recipe
             sequentially. Only one task tree can be executing at a time.
     \row
         \li QParallelTaskTreeRunner
         \li Manages parallel task tree executions.
-            The \l QParallelTaskTreeRunner::start() method unconditionally starts
-            the passed recipe and keeps any possibly
+            The \l {QtTaskTree::} {QParallelTaskTreeRunner::start} method
+            unconditionally starts the passed recipe and keeps any possibly
             running task trees in parallel.
     \row
         \li QMappedTaskTreeRunner
         \li Manages mapped task tree executions.
-            The \l QMappedTaskTreeRunner::start() method unconditionally starts
-            the specified recipe for a given key. If you already have
-            a different task tree with the same key running, it will be reset.
-            Task trees with different keys are unaffected and continue
-            their execution.
+            The \l {QtTaskTree::} {QMappedTaskTreeRunner::start} method
+            unconditionally starts the specified recipe for a given key.
+            If you already have a different task tree with the same key running,
+            it will be reset. Task trees with different keys are unaffected
+            and continue their execution.
     \endtable
 */
 
