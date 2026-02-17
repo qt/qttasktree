@@ -2694,6 +2694,33 @@ GroupItem::TaskHandler GroupItem::taskHandler() const
 }
 
 /*!
+    \struct QtTaskTree::ObjectSignal
+    \inheaderfile qtasktree.h
+    \inmodule QtTaskTree
+    \brief Structure describing QObject subclass and its signal.
+    \reentrant
+
+    Used as a return value from the \c ObjectSignalGetter function
+    passed to the \l ExecutableItem::withCancel() or
+    \l ExecutableItem::withAccept(). Use \l makeObjectSignal() to create
+    the ObjectSignal inside the definition of the \c ObjectSignalGetter.
+
+    \sa makeObjectSignal(), ExecutableItem::withCancel(), ExecutableItem::withAccept()
+*/
+
+/*!
+    \fn template <typename Signal> ObjectSignal<std::decay_t<Signal>> makeObjectSignal(typename QtPrivate::FunctionPointer<Signal>::Object *object, Signal &&signal)
+
+    A conventient function to create \l ObjectSignal inside the
+    \c ObjectSignalGetter function passed to the
+    \l ExecutableItem::withCancel() or \l ExecutableItem::withAccept().
+    Pass an \a object and its \a signal to create an instance of
+    ObjectSignal struct.
+
+    \sa ObjectSignal, ExecutableItem::withCancel(), ExecutableItem::withAccept()
+*/
+
+/*!
     \class QtTaskTree::ExecutableItem
     \inheaderfile qtasktree.h
     \inmodule QtTaskTree
@@ -2918,9 +2945,10 @@ Group operator||(const ExecutableItem &item, DoneResult result)
 
     Makes a copy of \c this ExecutableItem cancelable.
     The passed \a getter is a function returning a
-    \c std::pair<QObject *, PointerToMemberFunction> that describes
-    the emitter and its cancellation signal. When the cancellation signal
-    is emitted, \c this ExecutableItem is canceled, an optionally provided
+    \l ObjectSignal that describes the emitter and its cancellation signal.
+    Use \l makeObjectSignal() inside the \a getter to create an
+    \l ObjectSignal object. When the cancellation signal is emitted,
+    \c this ExecutableItem is canceled, an optionally provided
     \a postCancelRecipe is executed, and returned Group finishes with an error.
 
     When \c this ExecutableItem finishes before the cancellation signal
@@ -2969,8 +2997,9 @@ Group ExecutableItem::withCancelImpl(
 
     Returns a copy of \c this ExecutableItem coupled with a signal awaiter.
     The passed \a getter is a function returning a
-    \c std::pair<QObject *, PointerToMemberFunction>
-    that describes the emitter and its awaiting signal.
+    \l ObjectSignal that describes the emitter and its awaiting signal.
+    Use \l makeObjectSignal() inside the \a getter to create an
+    \l ObjectSignal object.
 
     When \c this ExecutableItem finishes with an error, the returned
     \l {QtTaskTree::} {Group} finishes immediately with an error,
