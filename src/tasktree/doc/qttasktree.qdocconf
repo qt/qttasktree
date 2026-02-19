@@ -32,6 +32,7 @@ depends += qmake \
            qtcore \
            qtdoc \
            qtgui \
+           qtnetwork \
            qtscxml \
            qtstatemachine
 
