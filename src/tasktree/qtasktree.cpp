@@ -54,9 +54,11 @@ using namespace Qt::StringLiterals;
     within QTaskTree to execute them.
 
     The recipes are declarative descriptions on what task types
-    are to be created and executed, e.g.: QProcess, QNetworkReplyWrapper,
-    or QThreadFunction<ReturnType>, or whether they should run in sequence
-    or in parallel. Inside recipes you may define different continuation
+    are to be created and executed, e.g.: \l QProcess,
+    \l {QtTaskTree::} {QNetworkReplyWrapper},
+    or \l {QtTaskTree::} {QThreadFunction}<\c {ReturnType}>,
+    or whether they should run in sequence or in parallel.
+    Inside recipes you may define different continuation
     paths depending on whether the previous task finished with success
     or an error. It's also possible to nest tasks in
     \l {QtTaskTree::} {Group} elements, and each
@@ -76,9 +78,10 @@ using namespace Qt::StringLiterals;
     \list
         \li QTimer::singleShot()
         \li QProcess
-        \li QNetworkAccessManager + QNetworkReply = QNetworkReplyWrapper
-        \li QtConcurrent::run() + QFutureWatcher<Result>
-            = QThreadFunction<Result>
+        \li \l QNetworkAccessManager + \l QNetworkReply
+            = \l {QtTaskTree::} {QNetworkReplyWrapper}
+        \li \l QtConcurrent::run() + \l {QFutureWatcher}<\c {Result}>
+            = \l {QtTaskTree::} {QThreadFunction}<\c {Result}>
     \endlist
 
     \section1 Recipe & Task Tree
@@ -127,9 +130,11 @@ using namespace Qt::StringLiterals;
     inside a recipe. Instead, we need a declarative way to tell the task tree
     to create and start these tasks for us at later point in time. For example,
     if we want the task tree to create and start QProcess, we describe it
-    by placing QProcessTask element inside a recipe. The QProcessTask is an
-    alias to the QCustomTask<QProcess>. Each task Type should provide
-    its corresponding QCustomTask<Type> so that it may be used inside recipes.
+    by placing \l {QtTaskTree::} {QProcessTask} element inside a recipe.
+    The \l {QtTaskTree::} {QProcessTask} is an alias to the
+    \l {QtTaskTree::} {QCustomTask}<QProcess>. Each task Type should provide
+    its corresponding \l {QtTaskTree::} {QCustomTask}<\c {Type}>
+    so that it may be used inside recipes.
 
     The following table shows some build-in custom tasks ready to be placed
     inside recipes:
@@ -140,35 +145,38 @@ using namespace Qt::StringLiterals;
         \li Task Class (created by the running task tree)
         \li Brief Description
     \row
-        \li QProcessTask
-        \li QProcess
+        \li \l {QtTaskTree::} {QProcessTask}
+        \li \l QProcess
         \li Starts process.
     \row
-        \li QThreadFunctionTask<ReturnType>
-        \li QThreadFunction<ReturnType>
+        \li \l {QtTaskTree::} {QThreadFunctionTask}<\c {ReturnType}>
+        \li \l {QtTaskTree::} {QThreadFunction}<\c {ReturnType}>
         \li Starts asynchronous task, runs in separate thread.
     \row
-        \li QTaskTreeTask
-        \li QTaskTree
+        \li \l {QtTaskTree::} {QTaskTreeTask}
+        \li \l {QtTaskTree::} {QTaskTree}
         \li Starts nested task tree.
     \row
-        \li QNetworkReplyWrapperTask
-        \li QNetworkReplyWrapper
+        \li \l {QtTaskTree::} {QNetworkReplyWrapperTask}
+        \li \l {QtTaskTree::} {QNetworkReplyWrapper}
         \li Starts network download.
     \row
-        \li QTcpSocketWrapperTask
-        \li QTcpSocketWrapper
+        \li \l {QtTaskTree::} {QTcpSocketWrapperTask}
+        \li \l {QtTaskTree::} {QTcpSocketWrapper}
         \li Starts a TCP connection.
     \endtable
 
-    See QTaskInterface and \l {Task Adapters} for more information on
-    how to adapt particular task to be used inside recipes.
+    See \l {QtTaskTree::} {QTaskInterface} and \l {Task Adapters} for more
+    information on how to adapt particular task to be used inside recipes.
 
     \section1 Example Recipe
 
-    The QTaskTree has a top level Group element, a.k.a recipe, which may
-    contain any number of tasks of various types, such as QProcessTask,
-    QNetworkReplyWrapperTask, or QThreadFunctionTask<ReturnType>:
+    The \l {QtTaskTree::} {QTaskTree} has a top level
+    \l {QtTaskTree::} {Group} element, a.k.a recipe, which may
+    contain any number of tasks of various types, such as
+    \l {QtTaskTree::} {QProcessTask},
+    \l {QtTaskTree::} {QNetworkReplyWrapperTask}, or
+    \l {QtTaskTree::} {QThreadFunctionTask}<\c {ReturnType}>:
 
     \code
         const Group recipe {
@@ -182,21 +190,27 @@ using namespace Qt::StringLiterals;
         taskTree->start();
     \endcode
 
-    The recipe above consist of a top level element of the Group type that
-    contains tasks of the QProcessTask, QNetworkReplyWrapperTask,
-    and QThreadFunctionTask<int> type. After taskTree->start() is called,
-    the tasks are created and run in a chain, starting with QProcess.
-    When the QProcess finishes successfully, the QNetworkReplyWrapper
-    task is started. Finally, when the network task finishes successfully,
-    the QThreadFunction<int> task is started.
+    The recipe above consist of a top level element of the
+    \l {QtTaskTree::} {Group} type that contains tasks of the
+    \l {QtTaskTree::} {QProcessTask},
+    \l {QtTaskTree::} {QNetworkReplyWrapperTask},
+    and \l {QtTaskTree::} {QThreadFunctionTask}<\c {int}> type.
+    After \c taskTree->start() is called,
+    the tasks are created and run in a chain, starting with \l QProcess.
+    When the \l QProcess finishes successfully,
+    the \l {QtTaskTree::} {QNetworkReplyWrapper} task is started.
+    Finally, when the network task finishes successfully,
+    the \l {QtTaskTree::} {QThreadFunction}<\c {int}> task is started.
 
     When the last running task finishes with success, the task tree is
-    considered to have run successfully and the QTaskTree::done() signal
+    considered to have run successfully and the
+    \l {QtTaskTree::QTaskTree::done} {QTaskTree::done()} signal
     is emitted with \l {QtTaskTree::} {DoneWith::Success}.
     When a task finishes with an error, the execution of the task tree
     is stopped and the remaining tasks are skipped. The task tree finishes
-    with an error and sends the QTaskTree::done() signal with
-    \l {QtTaskTree::} {DoneWith::Error}.
+    with an error and sends the
+    \l {QtTaskTree::QTaskTree::done} {QTaskTree::done()}
+    signal with \l {QtTaskTree::} {DoneWith::Error}.
 
     \section1 Groups
 
@@ -217,22 +231,26 @@ using namespace Qt::StringLiterals;
     \endcode
 
     The example above differs from the first example in that the top level
-    element has a subgroup that contains the QProcessTask and
-    QThreadFunctionTask<int>. The subgroup is a sibling element of the
-    QNetworkReplyWrapperTask in the root. The subgroup contains an
-    additional \e parallel element that instructs its Group to execute
-    its tasks in parallel.
+    element has a subgroup that contains the \l {QtTaskTree::} {QProcessTask}
+    and \l {QtTaskTree::} {QThreadFunctionTask}<\c {int}>. The subgroup is
+    a sibling element of the \l {QtTaskTree::} {QNetworkReplyWrapperTask}
+    in the root. The subgroup contains an additional
+    \l {QtTaskTree::} {parallel} element that instructs its
+    \l {QtTaskTree::} {Group} to execute its tasks in parallel.
 
-    So, when the QTaskTree starts the recipe above, the QProcess and
-    QThreadFunction<int> start immediately and run in parallel.
-    Since the root group doesn't contain a \e parallel element,
+    So, when the \l {QtTaskTree::} {QTaskTree} starts the recipe above,
+    the \l QProcess and \l {QtTaskTree::} {QThreadFunction}<\c {int}>
+    start immediately and run in parallel. Since the root group doesn't
+    contain a \l {QtTaskTree::} {parallel} element,
     its direct child tasks are run in sequence. Thus, the
-    QNetworkReplyWrapper starts when the whole subgroup finishes. The group is
+    \l {QtTaskTree::} {QNetworkReplyWrapper} starts when the whole
+    subgroup finishes. The group is
     considered as finished when all its tasks have finished.
     The order in which the tasks finish is not relevant.
 
     So, depending on which task lasts longer
-    (QProcess or QThreadFunction<int>), the following scenarios can take place:
+    (\l QProcess or \l {QtTaskTree::} {QThreadFunction}<\c {int}>),
+    the following scenarios can take place:
 
     \table
     \header
@@ -287,13 +305,15 @@ using namespace Qt::StringLiterals;
     The presented scenarios assume that all tasks run successfully. If a task
     fails during execution, the task tree finishes with an error.
     In particular, when QProcess finishes with an error while
-    QThreadFunction<int> is still being executed, the QThreadFunction<int>
+    \l {QtTaskTree::} {QThreadFunction}<\c {int}> is still being executed,
+    the \l {QtTaskTree::} {QThreadFunction}<\c {int}>
     is automatically canceled, the subgroup finishes with an error,
-    the QNetworkReplyWrapper is skipped, and the tree finishes with an error.
+    the \l {QtTaskTree::} {QNetworkReplyWrapper} is skipped,
+    and the tree finishes with an error.
 
     \section1 Task Handlers
 
-    Use Task handlers to set up a task for execution and to enable reading
+    Use \c Task handlers to set up a task for execution and to enable reading
     the output data from the task when it finishes with success or an error.
 
     \section2 Task's Start Handler
@@ -313,7 +333,7 @@ using namespace Qt::StringLiterals;
         };
     \endcode
 
-    You can modify the passed QProcess in the setup handler, so that the task
+    You can modify the passed \l QProcess in the setup handler, so that the task
     tree can start the process according to your configuration.
     You should not call \c {process.start();} in the setup handler,
     as the task tree calls it when needed. The setup handler is optional.
@@ -333,7 +353,7 @@ using namespace Qt::StringLiterals;
         \li The task will be started normally. This is the default behavior
             when the setup handler doesn't return
             \l {QtTaskTree::} {SetupResult}
-            (that is, its return type is void).
+            (that is, its return type is \c void).
     \row
         \li \l {QtTaskTree::SetupResult::} {StopWithSuccess}
         \li The task won't be started and it will report success to its parent.
@@ -371,7 +391,7 @@ using namespace Qt::StringLiterals;
         };
     \endcode
 
-    The done handler may collect output data from QProcess, and store it
+    The done handler may collect output data from \l QProcess, and store it
     for further processing or perform additional actions.
 
     \note If the task setup handler returns
@@ -523,8 +543,8 @@ using namespace Qt::StringLiterals;
     \section1 Other Group Elements
 
     A group can contain other elements that describe the processing flow,
-    such as the execution mode or workflow policy. It can also contain
-    storage elements that are responsible for collecting and sharing
+    such as the \l {execution mode} or \l {workflow policy}. It can also
+    contain storage elements that are responsible for collecting and sharing
     custom common data gathered during group execution.
 
     \section2 Execution Mode
@@ -612,7 +632,7 @@ using namespace Qt::StringLiterals;
         tasktree.start();
     \endcode
 
-    In the example above, the inter-task data consists of a QByteArray content
+    In the example above, the inter-task data consists of a \l QByteArray content
     variable [2] enclosed in a \c CopyStorage custom struct [1]. If the loader
     finishes successfully, it stores the data in a \c CopyStorage::content
     variable [5]. The saver then uses the variable to configure the
@@ -666,25 +686,28 @@ using namespace Qt::StringLiterals;
 
     \section1 QTaskTree class
 
-    QTaskTree executes the tree structure of asynchronous tasks according
-    to the recipe described by the \l {QtTaskTree::} {Group}
+    \l {QtTaskTree::} {QTaskTree} executes the tree structure of asynchronous
+     tasks according to the recipe described by the \l {QtTaskTree::} {Group}
     root element.
 
-    As QTaskTree is also an asynchronous task, it can be a part of another
-    QTaskTree. To place a nested QTaskTree inside another QTaskTree,
-    insert the QTaskTreeTask element into another
-    \l {QtTaskTree::} {Group} element.
+    As \l {QtTaskTree::} {QTaskTree} is also an asynchronous task,
+    it can be a part of another \l {QtTaskTree::} {QTaskTree}.
+    To place a nested \l {QtTaskTree::} {QTaskTree} inside another
+    \l {QtTaskTree::} {QTaskTree}, insert the \l {QtTaskTree::} {QTaskTreeTask}
+    element into another \l {QtTaskTree::} {Group} element.
 
-    QTaskTree reports progress of completed tasks when running.
-    The progress value is increased when a task finishes or is skipped
-    or canceled. When QTaskTree is finished and the QTaskTree::done()
+    \l {QtTaskTree::} {QTaskTree} reports progress of completed tasks when
+    running. The progress value is increased when a task finishes or is
+    skipped or canceled. When \l {QtTaskTree::} {QTaskTree} is finished
+    and the \l {QtTaskTree::QTaskTree::done} {QTaskTree::done()}
     signal is emitted, the current value of the progress equals the
     maximum progress value. Maximum progress equals the total number
-    of asynchronous tasks in a tree. A nested QTaskTree is counted
+    of asynchronous tasks in a tree. A nested
+    \l {QtTaskTree::} {QTaskTree} is counted
     as a single task, and its child tasks are not counted in the
     top level tree. Groups themselves are not counted as tasks,
-    but their tasks are counted. \l QtTaskTree::QSyncTask tasks are not asynchronous,
-    so they are not counted as tasks.
+    but their tasks are counted. \l {QtTaskTree::} {QSyncTask} tasks
+    are not asynchronous, so they are not counted as tasks.
 
     To set additional initial data for the running tree, modify the storage
     instances in a tree when it creates them by installing a storage setup
@@ -704,7 +727,7 @@ using namespace Qt::StringLiterals;
     When the running task tree creates a \c CopyStorage instance,
     and before any handler inside a tree is called, the task tree calls
     the \c initStorage handler, to enable setting up initial data
-    of the storage, unique to this particular run of taskTree.
+    of the storage, unique to this particular run of \c taskTree.
 
     Similarly, to collect some additional result data from the running tree,
     read it from storage instances in the tree when they are about to be
@@ -723,13 +746,14 @@ using namespace Qt::StringLiterals;
 
     When the running task tree is about to destroy a \c CopyStorage instance,
     the task tree calls the collectStorage handler, to enable reading
-    the final data from the storage, unique to this particular run of taskTree.
+    the final data from the storage, unique to this particular run of \c taskTree.
 
     \section1 Task Adapters
 
     Allowing new Task types to be a part of recipes is quite easy.
-    It's enough to define a new task alias to the QCustomTask template,
-    passing your Task type as a first template argument, like:
+    It's enough to define a new task alias to the
+    \l {QtTaskTree::} {QCustomTask} template,
+    passing your \c Task type as a first template argument, like:
 
     \code
         class Worker : public QObject
@@ -756,8 +780,8 @@ using namespace Qt::StringLiterals;
     If your task doesn't meet these conditions, you may still adapt your
     task to work with the TaskTree framework, by providing a second
     template argument with the custom adapter.
-    Let's say, we want to adapt QTimer to work with TaskTree.
-    The Adapter could look like:
+    Let's say, we want to adapt \l QTimer to work with TaskTree.
+    The \c Adapter could look like:
 
     \code
         class TimerAdapter
@@ -775,7 +799,7 @@ using namespace Qt::StringLiterals;
         using TimerTask = QCustomTask<QTimer, TimerAdapter>;
     \endcode
 
-    Now you may start using the TimerTask in your recipes, like:
+    Now you may start using the \c TimerTask in your recipes, like:
 
     \code
         const auto onSetup = [](QTimer &task) {
@@ -798,12 +822,13 @@ using namespace Qt::StringLiterals;
     (that is, safe non-blocking destructor of a running task).
     To achieve a non-blocking destruction of a task that has
     a blocking destructor, consider using the optional \c Deleter
-    template parameter of the QCustomTask (the third template argument).
+    template parameter of the \l {QtTaskTree::} {QCustomTask}
+    (the third template argument).
 
     \section1 Task Tree Runners
 
-    The task tree runner manages the lifetime
-    of the underlying QTaskTree used to execute the given recipe.
+    The task tree runner manages the lifetime of the underlying
+    \l {QtTaskTree::} {QTaskTree} used to execute the given recipe.
 
     The following table summarizes the differences between various
     task tree runners:
@@ -813,29 +838,33 @@ using namespace Qt::StringLiterals;
         \li Class name
         \li Description
     \row
-        \li QSingleTaskTreeRunner
+        \li \l {QtTaskTree::} {QSingleTaskTreeRunner}
         \li Manages single task tree execution.
-            The \l {QtTaskTree::} {QSingleTaskTreeRunner::start} method
+            The \l {QtTaskTree::QSingleTaskTreeRunner::start}
+            {QSingleTaskTreeRunner::start()} method
             unconditionally starts the passed recipe, resetting any task tree
             that might be running. Only one task tree can be executing at a time.
     \row
-        \li QSequentialTaskTreeRunner
+        \li \l {QtTaskTree::} {QSequentialTaskTreeRunner}
         \li Manages sequential task tree executions.
-            The \l {QtTaskTree::} {QSequentialTaskTreeRunner::enqueue} method
+            The \l {QtTaskTree::QSequentialTaskTreeRunner::enqueue}
+            {QSequentialTaskTreeRunner::enqueue()} method
             starts the passed recipe if the task tree runner is idle.
             Otherwise, the recipe is enqueued. When the current
             task finishes, the runner executes the dequeued recipe
             sequentially. Only one task tree can be executing at a time.
     \row
-        \li QParallelTaskTreeRunner
+        \li \l {QtTaskTree::} {QParallelTaskTreeRunner}
         \li Manages parallel task tree executions.
-            The \l {QtTaskTree::} {QParallelTaskTreeRunner::start} method
+            The \l {QtTaskTree::QParallelTaskTreeRunner::start}
+            {QParallelTaskTreeRunner::start()} method
             unconditionally starts the passed recipe and keeps any possibly
             running task trees in parallel.
     \row
-        \li QMappedTaskTreeRunner
+        \li \l {QtTaskTree::} {QMappedTaskTreeRunner}
         \li Manages mapped task tree executions.
-            The \l {QtTaskTree::} {QMappedTaskTreeRunner::start} method
+            The \l {QtTaskTree::QMappedTaskTreeRunner::start}
+            {QMappedTaskTreeRunner::start()} method
             unconditionally starts the specified recipe for a given key.
             If you already have a different task tree with the same key running,
             it will be reset. Task trees with different keys are unaffected
@@ -910,11 +939,12 @@ namespace QtTaskTree {
 
     Group is a container for other group items. It encloses child tasks
     into one unit, which is seen by the group's parent as a single,
-    asynchronous task. Since Group is of the GroupItem type,
+    asynchronous task. Since Group is of the \l GroupItem type,
     it may also be a child of Group.
 
     Insert child tasks into the group by using aliased custom task names,
-    such as, QThreadFunctionTask<ResultType> or QNetworkReplyWrapperTask:
+    such as, \l {QThreadFunctionTask}<\c {ResultType}>
+    or \l QNetworkReplyWrapperTask:
 
     \code
         const Group group {
