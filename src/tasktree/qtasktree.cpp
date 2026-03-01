@@ -77,12 +77,11 @@ using namespace Qt::StringLiterals;
 
     Examples of asynchronous Tasks:
     \list
-        \li QTimer::singleShot()
-        \li QProcess
-        \li \l QNetworkAccessManager + \l QNetworkReply
-            = \l {QtTaskTree::} {QNetworkReplyWrapper}
-        \li \l QtConcurrent::run() + \l {QFutureWatcher}<\c {Result}>
-            = \l {QtTaskTree::} {QThreadFunction}<\c {Result}>
+        \li \l{QTimer::singleShot()}
+        \li \l QProcess
+        \li \l QNetworkAccessManager + \l QNetworkReply = \l{QtTaskTree::}{QNetworkReplyWrapper}
+        \li \l{QtConcurrent::run()} + \l{QFutureWatcher}<Result>
+            = \l{QtTaskTree::}{QThreadFunction}<Result>
     \endlist
 
     \section1 Recipe & Task Tree
