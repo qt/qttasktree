@@ -18,7 +18,7 @@
     TaskTree executes the various work items making up the task.
 
     \image tasktree-demo-example.png
-    "Screenshot of the TaskTree demo application showing task hierarchy"
+           {Nested task groups with color-coded states showing progress at 78 percent}
 
     The demo application uses a single QWidget to display and manage a TaskTree
     hierarchy. Here's what you'll find in the interface:
