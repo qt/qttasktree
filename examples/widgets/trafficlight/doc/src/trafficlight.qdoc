@@ -15,7 +15,8 @@
     \l {SCXML Traffic Light (Static, Widgets)} {Qt SCXML} and
     \l {Traffic Light} {Qt State Machine}.
 
-    \image tasktree-trafficlight-example.png "Traffic light simulation aplication."
+    \image tasktree-trafficlight-example.png
+           {Traffic light with green light illuminated and pause button}
 
     The application consists of three main components:
 
@@ -103,7 +104,7 @@
 
     The \c switchLightsTask implementation:
 
-    \list 0
+    \list
         \li Updates light states through \c GlueInterface::setLights().
         \li Creates a timed delay using \l {QtTaskTree::}{timeoutTask}.
         \li Maintains state for the specified duration \c timeout.

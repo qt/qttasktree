@@ -7,7 +7,7 @@
     \examplecategory {Task Tree}
     \title TaskTree Image Scaling
     \ingroup tasktree_examples
-    \brief Demonstrates how to execute For loop's iterations in parallel
+    \brief Demonstrates how to run For loop iterations in parallel
            to asynchronously download and scale images using TaskTree.
 
     This example shows how to use Qt TaskTree classes to download a collection
@@ -19,7 +19,8 @@
     This example provides an alternative implementation for the image scaling
     example in \l {Image Scaling}{Qt Concurrent}.
 
-    \image tasktree-imagescaling-example.png "Image downloading and scaling."
+    \image tasktree-imagescaling-example.png
+           {Grid of downloaded images with Finished status}
 
     \section1 Application workflow
 
@@ -69,13 +70,13 @@
         \li Describes the body of each iteration.
     \row
         \li \l {QtTaskTree::} {finishAllAndSuccess}
-        \li Instructs the running tree to continue execution
-            even on errors, and to report success afterward.
+        \li Instructs the task tree to continue running
+            despite errors and report success when finished.
     \row
         \li \l {QtTaskTree::} {parallel}
-        \li Causes that all \l {QtTaskTree::} {Do}'s body direct
-            children will execute in parallel, including all
-            iterations of the top level \l {QtTaskTree::} {For} element.
+        \li Causes all direct children of the \l{QtTaskTree::}{Do} body
+            to run in parallel, including all iterations of the
+            top-level \l{QtTaskTree::}{For} element.
 
             This means that all iterations will start simultaneously.
     \row
@@ -91,14 +92,14 @@
             By default, all its children execute in sequence.
     \row
         \li \c storage
-        \li Instructs the running task tree to instantiate the underlaying
-            QByteArray instance when the subgroup is entered.
+        \li Instructs the running task tree to instantiate the underlying
+            QByteArray instance when entering the subgroup.
 
             This means the running task tree instantiates
             a separate QByteArray copy for each iteration.
     \row
         \li QNetworkReplyWrapperTask
-        \li The first asynchronous task executed in sequence for each iteration.
+        \li The first asynchronous task that runs in sequence for each iteration.
 
             Starts downloading the QByteArray data for a given \c url.
             When the download is about to start, the \c onDownloadSetup
