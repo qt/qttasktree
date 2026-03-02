@@ -67,7 +67,8 @@ public:
     bool isDone() const { return m_watcher.isFinished(); }
     bool isResultAvailable() const { return future().resultCount(); }
 
-    QFutureWatcher<ResultType> *futureWatcher() const { return &m_watcher; }
+    QFutureWatcher<ResultType> *futureWatcher() { return &m_watcher; }
+    const QFutureWatcher<ResultType> *futureWatcher() const { return &m_watcher; }
     QFuture<ResultType> future() const { return m_watcher.future(); }
     ResultType result() const { return m_watcher.result(); }
     ResultType takeResult() const { return future().takeResult(); }

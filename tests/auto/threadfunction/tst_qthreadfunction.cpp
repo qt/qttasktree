@@ -34,6 +34,7 @@ class tst_QThreadFunction : public QObject
 private Q_SLOTS:
     void taskTree_data();
     void taskTree();
+    void futureWatcher();
 
 private:
     QThreadPool m_threadPool;
@@ -206,6 +207,13 @@ void tst_QThreadFunction::taskTree()
     QCOMPARE(taskTree.isRunning(), false);
     QCOMPARE(result, DoneWith::Success);
     QVERIFY(actualResult);
+}
+
+void tst_QThreadFunction::futureWatcher()
+{
+    QThreadFunction<int> task;
+    QObject::connect(task.futureWatcher(), &QFutureWatcherBase::progressValueChanged,
+                     qApp, [](int progress) { qDebug() << "progress" << progress; });
 }
 
 QTEST_GUILESS_MAIN(tst_QThreadFunction)
