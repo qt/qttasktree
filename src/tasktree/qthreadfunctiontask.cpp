@@ -290,7 +290,7 @@ bool QThreadFunctionBase::isSyncSkipped() const { return d_func()->m_isSyncSkipp
 */
 
 /*!
-    \fn template <typename ResultType> QFutureWatcher<ResultType> *QThreadFunction<ResultType>::futureWatcher() const
+    \fn template <typename ResultType> QFutureWatcher<ResultType> *QThreadFunction<ResultType>::futureWatcher()
 
     Returns the pointer to the \c {QFutureWatcher<ResultType>} associated
     with the function executed in a separate thread. The lifetime of the
@@ -300,6 +300,13 @@ bool QThreadFunctionBase::isSyncSkipped() const { return d_func()->m_isSyncSkipp
     for example, to connect to the progress signals of the returned watcher.
 */
 
+/*!
+    \fn template <typename ResultType> const QFutureWatcher<ResultType> *QThreadFunction<ResultType>::futureWatcher() const
+    \overload
+
+    Returns the \c const pointer to the \c {QFutureWatcher<ResultType>} associated
+    with the function executed in a separate thread.
+*/
 
 /*!
     \fn template <typename ResultType> QFuture<ResultType> QThreadFunction<ResultType>::future() const
