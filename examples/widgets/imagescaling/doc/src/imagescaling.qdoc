@@ -3,7 +3,7 @@
 
 /*!
     \example widgets/imagescaling
-    \meta tags {TaskTree}
+    \meta tags {widgets, threads, network}
     \examplecategory {Task Tree}
     \title TaskTree Image Scaling
     \ingroup tasktree_examples
