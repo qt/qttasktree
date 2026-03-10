@@ -2062,6 +2062,11 @@ Forever::Forever(std::initializer_list<GroupItem> children)
     addChildren({ For (ForeverIterator()) >> Do { children } } );
 }
 
+Forever::operator Group() const
+{
+    return Group { *this };
+}
+
 /*!
     Creates QTimeoutTask with \a timeout duration, after which the task
     finishes with \a result.

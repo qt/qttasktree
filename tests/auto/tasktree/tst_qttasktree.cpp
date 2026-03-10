@@ -217,6 +217,22 @@ void tst_TaskTree::validConstructs()
         }.withTimeout(1s)
     };
 
+    const Group group6 = Forever {
+        TestTask()
+    };
+
+    const Group group7 = Forever {
+        TestTask()
+    }.withTimeout(1s);
+
+    using GroupGetter = std::function<Group()>;
+
+    const GroupGetter getter = [] {
+        return Forever {
+            TestTask()
+        };
+    };
+
     // When turning each of below blocks on, you should see the specific compiler error message.
 
     // Sync handler needs to take no arguments and has to return void or bool.

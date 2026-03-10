@@ -547,6 +547,8 @@ class Forever final : public ExecutableItem
 public:
     Q_TASKTREE_EXPORT explicit Forever(const GroupItems &children);
     Q_TASKTREE_EXPORT explicit Forever(std::initializer_list<GroupItem> children);
+
+    Q_TASKTREE_EXPORT operator Group() const;
 };
 
 Q_TASKTREE_EXPORT ExecutableItem timeoutTask(const std::chrono::milliseconds &timeout,
