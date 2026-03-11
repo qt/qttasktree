@@ -3,8 +3,6 @@
 
 qt_examples_build_begin(EXTERNAL_BUILD)
 
-if(TARGET Qt::Widgets)
-    add_subdirectory(widgets)
-endif()
+add_subdirectory(tasktree)
 
 qt_examples_build_end()

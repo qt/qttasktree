@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GFDL-1.3-no-invariants-only
 
 /*!
-    \example widgets/imagescaling
+    \example tasktree/imagescaling
     \meta tags {widgets, threads, network}
     \examplecategory {Task Tree}
     \title TaskTree Image Scaling
@@ -27,7 +27,7 @@
     When the user presses the \uicontrol {Add URLs} button, the following method
     runs:
 
-    \snippet widgets/imagescaling/imagescaling.cpp 0
+    \snippet tasktree/imagescaling/imagescaling.cpp 0
 
     The method runs \c DownloadDialog. When the user accepts the dialog, the
     method gets the list of selected URLs, clears the displayed images, and
@@ -50,11 +50,11 @@
     \l {QtTaskTree::}{Storage}<QByteArray> type, which is used to
     pass the data to the scale function.
 
-    \snippet widgets/imagescaling/imagescaling.cpp 1
+    \snippet tasktree/imagescaling/imagescaling.cpp 1
 
     The \c recipe that describes the workflow looks like this:
 
-    \snippet widgets/imagescaling/imagescaling.cpp 2
+    \snippet tasktree/imagescaling/imagescaling.cpp 2
 
     Here is a summary of all elements used in the recipe:
 
@@ -125,7 +125,7 @@
 
     The following shows how all handlers are implemented:
 
-    \snippet widgets/imagescaling/imagescaling.cpp 3
+    \snippet tasktree/imagescaling/imagescaling.cpp 3
 
     When the first iteration starts, the \c onRootSetup handler updates the
     status bar message and enables the \uicontrol Cancel button. When the last
@@ -139,7 +139,7 @@
     \l {QtTaskTree::} {QNetworkReplyWrapperTask}.
     Here is how its setup and done handlers are implemented:
 
-    \snippet widgets/imagescaling/imagescaling.cpp 4
+    \snippet tasktree/imagescaling/imagescaling.cpp 4
 
     The \c onDownloadSetup handler runs when
     \l {QtTaskTree::} {QNetworkReplyWrapper} is about to
@@ -161,7 +161,7 @@
     \l {QtTaskTree::} {QThreadFunctionTask}<QImage>. Its
     setup and done handlers are as follows:
 
-    \snippet widgets/imagescaling/imagescaling.cpp 5
+    \snippet tasktree/imagescaling/imagescaling.cpp 5
 
     Inside \c onScaleSetup, the handler schedules a call to the
     \c scale function, passing the \l QByteArray data received from the first
@@ -175,7 +175,7 @@
 
     The following shows how the \c scale function is implemented:
 
-    \snippet widgets/imagescaling/imagescaling.cpp 6
+    \snippet tasktree/imagescaling/imagescaling.cpp 6
 
     The function takes a \l QPromise to the result type as an argument. The
     \c promise is used to return the final result or to issue an error by
