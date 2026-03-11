@@ -42,8 +42,6 @@ sourcedirs  += ..
 
 exampledirs += ../../../examples
 
-examplesinstallpath = tasktree
-
 # Path to the root of qttasktree (for automatic linking to source code)
 url.sources.rootdir     = ../../..
 
