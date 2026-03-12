@@ -4,7 +4,7 @@
 /*!
     \example tasktree/trafficlight
     \meta tags {widgets}
-    \examplecategory {Task Tree}
+    \examplecategory {Data Processing & I/O}
     \title TaskTree Traffic Light
     \ingroup tasktree_examples
     \brief Demonstrates how to implement state machine behavior using TaskTree

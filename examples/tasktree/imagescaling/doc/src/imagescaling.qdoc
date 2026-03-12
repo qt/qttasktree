@@ -4,7 +4,8 @@
 /*!
     \example tasktree/imagescaling
     \meta tags {widgets, threads, network}
-    \examplecategory {Task Tree}
+    \examplecategory {Data Processing & I/O}
+    \examplecategory {Networking}
     \title TaskTree Image Scaling
     \ingroup tasktree_examples
     \brief Demonstrates how to run For loop iterations in parallel
