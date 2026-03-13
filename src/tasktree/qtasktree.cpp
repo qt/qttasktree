@@ -2031,7 +2031,7 @@ Group operator>>(const For &forItem, const Do &doItem)
     The following construction:
 
     \code
-        const Group recipe = Forever {
+        const ExecutableItem task = Forever {
             task1,
             task2
         };
@@ -2040,7 +2040,7 @@ Group operator>>(const For &forItem, const Do &doItem)
     is an equivalent to:
 
     \code
-        const Group recipe = For (ForeverIterator()) >> Do {
+        const ExecutableItem task = For (ForeverIterator()) >> Do {
             task1,
             task2
         };
