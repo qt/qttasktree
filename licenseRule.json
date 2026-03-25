@@ -36,10 +36,10 @@
         }
     },
     {
-        "comment": "Files with the following endings are Documentation licensed.",
-        "file_pattern_ending": [".qdoc", ".qdocinc" , ".qdocconf", "README", "qt_attribution.json",
-                                 "README.md", "README.txt", "config_help.txt",
-                                 "READ-THIS-BEFORE-MANUALLY-ADDING-FILES-TO-PACKAGE.txt"],
+        "comment": "Files with the following endings are documentation licensed.",
+        "file_pattern_ending": [".qdoc", ".qdocinc" , ".qdocconf",
+                                "README.md", "CONTRIBUTING.md",
+                                "qt_attribution.json"],
         "location":{
             "": {
                 "comment": "",
