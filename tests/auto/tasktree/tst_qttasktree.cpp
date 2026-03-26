@@ -79,7 +79,7 @@ enum class Execution
 
 using namespace PrintableEnums;
 
-using Log = QList<QPair<int, Handler>>;
+using Log = QList<std::pair<int, Handler>>;
 
 struct Message
 {
@@ -391,7 +391,7 @@ void tst_TaskTree::runtimeCheck()
 
 struct RunnerData
 {
-    QList<QPair<QString, Group>> recipes;
+    QList<std::pair<QString, Group>> recipes;
     Log singleLog;
     Log sequentialLog;
     Log parallelLog;
@@ -411,7 +411,7 @@ static Handler resultToGroupHandler(DoneWith doneWith)
 static int doneCount(const Log &log)
 {
     int count = 0;
-    for (const QPair<int, Handler> &result : log) {
+    for (const std::pair<int, Handler> &result : log) {
         if (result.second == Handler::GroupSuccess ||
             result.second == Handler::GroupError ||
             result.second == Handler::GroupCanceled) {
@@ -565,7 +565,7 @@ void tst_TaskTree::taskTreeRunner()
         doneCounter = 0;
         const Log expectedLog = runnerData.singleLog;
         QSingleTaskTreeRunner taskTreeRunner;
-        for (const QPair<QString, Group> &recipe : runnerData.recipes)
+        for (const std::pair<QString, Group> &recipe : runnerData.recipes)
             taskTreeRunner.start(recipe.second, {}, onDone);
 
         QTRY_VERIFY_WITH_TIMEOUT(!taskTreeRunner.isRunning(), 1s);
@@ -580,7 +580,7 @@ void tst_TaskTree::taskTreeRunner()
         doneCounter = 0;
         const Log expectedLog = runnerData.sequentialLog;
         QSequentialTaskTreeRunner taskTreeRunner;
-        for (const QPair<QString, Group> &recipe : runnerData.recipes)
+        for (const std::pair<QString, Group> &recipe : runnerData.recipes)
             taskTreeRunner.enqueue(recipe.second, {}, onDone);
 
         QTRY_VERIFY_WITH_TIMEOUT(!taskTreeRunner.isRunning(), 1s);
@@ -595,7 +595,7 @@ void tst_TaskTree::taskTreeRunner()
         doneCounter = 0;
         const Log expectedLog = runnerData.parallelLog;
         QParallelTaskTreeRunner taskTreeRunner;
-        for (const QPair<QString, Group> &recipe : runnerData.recipes)
+        for (const std::pair<QString, Group> &recipe : runnerData.recipes)
             taskTreeRunner.start(recipe.second, {}, onDone);
 
         QTRY_VERIFY_WITH_TIMEOUT(!taskTreeRunner.isRunning(), 1s);
@@ -610,7 +610,7 @@ void tst_TaskTree::taskTreeRunner()
         doneCounter = 0;
         const Log expectedLog = runnerData.mappedLog;
         QMappedTaskTreeRunner<QString> taskTreeRunner;
-        for (const QPair<QString, Group> &recipe : runnerData.recipes)
+        for (const std::pair<QString, Group> &recipe : runnerData.recipes)
             taskTreeRunner.start(recipe.first, recipe.second, {}, onDone);
 
         QTRY_VERIFY_WITH_TIMEOUT(!taskTreeRunner.isRunning(), 1s);
