@@ -2519,14 +2519,14 @@ public:
     {
         QT_TASKTREE_ASSERT(m_activeStorageStack.size(),
                   qWarning().noquote() << s_activeStorageWarning; return nullptr);
-        const QPair<StoragePtr, QTaskTree *> &top = m_activeStorageStack.last();
+        const auto &top = m_activeStorageStack.last();
         QT_TASKTREE_ASSERT(top.second == activeTaskTree(),
                   qWarning().noquote() << s_activeStorageWarning; return nullptr);
         return top.first;
     }
 
 private:
-    QList<QPair<StoragePtr, QTaskTree *>> m_activeStorageStack;
+    QList<std::pair<StoragePtr, QTaskTree *>> m_activeStorageStack;
 };
 
 class StorageBasePrivate : public QSharedData
