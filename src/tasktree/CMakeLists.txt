@@ -6,6 +6,7 @@
 #####################################################################
 
 qt_internal_add_module(TaskTree
+    NO_PRIVATE_MODULE
     SOURCES
         qbarriertask.cpp
         qbarriertask.h
