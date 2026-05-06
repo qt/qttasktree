@@ -2876,6 +2876,8 @@ Group operator!(const ExecutableItem &item)
     };
 }
 
+// AXIVION DISABLE Style Qt-Generic-NoOverloadedOperators: Works in short-circuiting fashion when the recipe is executed
+
 /*!
     \fn Group ExecutableItem::operator&&(const ExecutableItem &first, const ExecutableItem &second)
 
@@ -2975,6 +2977,8 @@ Group operator||(const ExecutableItem &item, DoneResult result)
 {
     return { result == DoneResult::Error ? stopOnError : finishAllAndSuccess, item };
 }
+
+// AXIVION ENABLE Style Qt-Generic-NoOverloadedOperators
 
 /*!
     \fn template <typename ObjectSignalGetter> Group ExecutableItem::withCancel(ObjectSignalGetter &&getter, std::initializer_list<GroupItem> postCancelRecipe = {}) const
