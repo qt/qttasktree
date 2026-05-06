@@ -356,12 +356,14 @@ protected:
 
 private:
     Q_TASKTREE_EXPORT friend Group operator!(const ExecutableItem &item);
+    // AXIVION DISABLE Style Qt-Generic-NoOverloadedOperators: Works in short-circuiting fashion when the recipe is executed
     Q_TASKTREE_EXPORT friend Group operator&&(const ExecutableItem &first,
                                               const ExecutableItem &second);
     Q_TASKTREE_EXPORT friend Group operator||(const ExecutableItem &first,
                                               const ExecutableItem &second);
     Q_TASKTREE_EXPORT friend Group operator&&(const ExecutableItem &item, DoneResult result);
     Q_TASKTREE_EXPORT friend Group operator||(const ExecutableItem &item, DoneResult result);
+    // AXIVION ENABLE Style Qt-Generic-NoOverloadedOperators
 
     using ConnectWrapper = std::function<void(QObject *, const std::function<void()> &)>;
 
