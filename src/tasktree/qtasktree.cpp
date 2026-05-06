@@ -2698,7 +2698,7 @@ void GroupItem::addChildren(const GroupItems &children)
             break;
         case Type::Storage:
             // Check for duplicates, as can't have the same storage twice on the same level.
-            for (const StorageBase &storage : child.d->m_storageList) {
+            for (const StorageBase &storage : std::as_const(child.d->m_storageList)) {
                 if (d->m_storageList.contains(storage)) {
                     QT_TASKTREE_ASSERT(false, qWarning("Can't add the same storage into one Group twice, "
                                               "skipping..."));
