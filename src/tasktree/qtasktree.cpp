@@ -4397,6 +4397,7 @@ DoneWith QTaskTree::runBlocking()
 {
     DoneWith doneWith = DoneWith::Cancel;
     QEventLoop loop;
+    // AXIVION Next Line Qt-LambdaInConnect: It's guaranteed &doneWith is still alive when the context object &loop is alive
     connect(this, &QTaskTree::done, &loop, [&loop, &doneWith](DoneWith result) {
         doneWith = result;
         // Otherwise, the tasks from inside the running tree that were deleteLater()
@@ -4424,6 +4425,7 @@ DoneWith QTaskTree::runBlocking(const QFuture<void> &future)
 
     DoneWith doneWith = DoneWith::Cancel;
     QEventLoop loop;
+    // AXIVION Next Line Qt-LambdaInConnect: It's guaranteed &doneWith is still alive when the context object &loop is alive
     connect(this, &QTaskTree::done, &loop, [&loop, &doneWith](DoneWith result) {
         doneWith = result;
         // Otherwise, the tasks from inside the running tree that were deleteLater()
