@@ -1876,6 +1876,19 @@ public:
 */
 For::For(const Iterator &iterator) : d(new ForPrivate{iterator}) {}
 
+/*!
+    \overload
+    Constructs the For loop element, repeating \a count times.
+
+    This is equivalent to:
+    \code
+        For (RepeatIterator(count))
+    \endcode
+
+    \sa RepeatIterator
+*/
+For::For(qsizetype count) : For(RepeatIterator(count)) {}
+
 Iterator For::iterator() const
 {
     return d->m_iterator;

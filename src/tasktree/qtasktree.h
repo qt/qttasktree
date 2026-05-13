@@ -516,6 +516,7 @@ class For final
 {
 public:
     Q_TASKTREE_EXPORT explicit For(const Iterator &loop);
+    Q_TASKTREE_EXPORT explicit For(qsizetype count);
 
     QT_TASKTREE_DECLARE_SMFS(For, Q_TASKTREE_EXPORT)
 

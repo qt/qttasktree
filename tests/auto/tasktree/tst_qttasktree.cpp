@@ -3062,6 +3062,10 @@ void tst_TaskTree::testTree_data()
             sequential,
             successItems
         };
+        const Group rootSequentialSuccess2 = For (2) >> Do {
+            sequential,
+            successItems
+        };
         const Log logSequentialSuccess {
             {1, Handler::Setup},
             {1, Handler::Success},
@@ -3077,6 +3081,10 @@ void tst_TaskTree::testTree_data()
             parallel,
             successItems
         };
+        const Group rootParallelSuccess2 = For (2) >> Do {
+            parallel,
+            successItems
+        };
         const Log logParallelSuccess {
             {1, Handler::Setup},
             {2, Handler::Setup},
@@ -3089,6 +3097,10 @@ void tst_TaskTree::testTree_data()
         };
 
         const Group rootParallelLimitSuccess = For (RepeatIterator(2)) >> Do  {
+            ParallelLimit(2),
+            successItems
+        };
+        const Group rootParallelLimitSuccess2 = For (2) >> Do  {
             ParallelLimit(2),
             successItems
         };
@@ -3113,6 +3125,10 @@ void tst_TaskTree::testTree_data()
             sequential,
             errorItems
         };
+        const Group rootSequentialError2 = For (2) >> Do {
+            sequential,
+            errorItems
+        };
         const Log logSequentialError {
             {1, Handler::Setup},
             {1, Handler::Success},
@@ -3121,6 +3137,10 @@ void tst_TaskTree::testTree_data()
         };
 
         const Group rootParallelError = For (RepeatIterator(2)) >> Do {
+            parallel,
+            errorItems
+        };
+        const Group rootParallelError2 = For (2) >> Do {
             parallel,
             errorItems
         };
@@ -3136,6 +3156,10 @@ void tst_TaskTree::testTree_data()
         };
 
         const Group rootParallelLimitError = For (RepeatIterator(2)) >> Do {
+            ParallelLimit(2),
+            errorItems
+        };
+        const Group rootParallelLimitError2 = For (2) >> Do {
             ParallelLimit(2),
             errorItems
         };
@@ -3160,6 +3184,19 @@ void tst_TaskTree::testTree_data()
             << TestData{storage, rootParallelError, logParallelError, 4, DoneWith::Error, 2};
         QTest::newRow("RepeatParallelLimitError")
             << TestData{storage, rootParallelLimitError, logParallelLimitError, 4, DoneWith::Error, 2};
+
+        QTest::newRow("NumberSequentialSuccess")
+            << TestData{storage, rootSequentialSuccess2, logSequentialSuccess, 4, DoneWith::Success, 4};
+        QTest::newRow("NumberParallelSuccess")
+            << TestData{storage, rootParallelSuccess2, logParallelSuccess, 4, DoneWith::Success, 4};
+        QTest::newRow("NumberParallelLimitSuccess")
+            << TestData{storage, rootParallelLimitSuccess2, logParallelLimitSuccess, 4, DoneWith::Success, 4};
+        QTest::newRow("NumberSequentialError")
+            << TestData{storage, rootSequentialError2, logSequentialError, 4, DoneWith::Error, 2};
+        QTest::newRow("NumberParallelError")
+            << TestData{storage, rootParallelError2, logParallelError, 4, DoneWith::Error, 2};
+        QTest::newRow("NumberParallelLimitError")
+            << TestData{storage, rootParallelLimitError2, logParallelLimitError, 4, DoneWith::Error, 2};
     }
 
     {
