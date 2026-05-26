@@ -1249,7 +1249,7 @@ namespace QtTaskTree {
     The limit is equal to the ideal number of threads excluding the
     calling thread.
 
-    This is a shortcut to:
+    This is equivalent to:
     \code
         ParallelLimit(qMax(QThread::idealThreadCount() - 1, 1))
     \endcode
