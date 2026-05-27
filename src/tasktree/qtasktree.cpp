@@ -2143,27 +2143,36 @@ class IteratorThreadData
 
 public:
     IteratorThreadData() = default;
-    void pushIteration(qsizetype index)
+    void push(qsizetype index, void *list)
     {
-        m_activeIteratorStack.push_back(index);
+        m_activeStack.push_back({index, list});
     }
-    void popIteration()
+    void pop()
     {
-        QT_TASKTREE_ASSERT(m_activeIteratorStack.size(), return);
-        m_activeIteratorStack.pop_back();
+        QT_TASKTREE_ASSERT(m_activeStack.size(), return);
+        m_activeStack.pop_back();
     }
     qsizetype iteration() const
     {
-        QT_TASKTREE_ASSERT(m_activeIteratorStack.size(), qWarning(
+        QT_TASKTREE_ASSERT(m_activeStack.size(), qWarning(
             "The referenced iterator is not reachable in the running tree. "
             "A -1 will be returned which might lead to a crash in the calling code. "
             "It is possible that no iterator was added to the tree, "
             "or the iterator is not reachable from where it is referenced."); return -1);
-        return m_activeIteratorStack.last();
+        return m_activeStack.last().iterationIndex;
+    }
+    void *activeList() const
+    {
+        QT_TASKTREE_ASSERT(m_activeStack.size(), return nullptr);
+        return m_activeStack.last().list;
     }
 
 private:
-    QList<qsizetype> m_activeIteratorStack;
+    struct Entry {
+        qsizetype iterationIndex;
+        void *list;
+    };
+    QList<Entry> m_activeStack;
 };
 
 class IteratorPrivate : public QSharedData
@@ -2177,12 +2186,16 @@ public:
     explicit IteratorPrivate(const Iterator::Condition &condition)
         : m_condition(condition)
     {}
+    explicit IteratorPrivate(Iterator::LazyList &&lazyList)
+        : m_lazyList(std::move(lazyList))
+    {}
 
     IteratorThreadData &threadData() { return m_threadData.data(); }
 
     const std::optional<qsizetype> m_loopCount = std::nullopt;
     const Iterator::ValueGetter m_valueGetter = {};
     const Iterator::Condition m_condition = {};
+    const std::optional<Iterator::LazyList> m_lazyList = std::nullopt;
     LocalThreadStorage<IteratorThreadData> m_threadData = {};
 };
 
@@ -2206,6 +2219,10 @@ Iterator::Iterator(qsizetype count, const ValueGetter &valueGetter)
 
 Iterator::Iterator(const Condition &condition)
     : d(new IteratorPrivate{condition})
+{}
+
+Iterator::Iterator(LazyList &&lazyList)
+    : d(new IteratorPrivate{std::move(lazyList)})
 {}
 
 /*!
@@ -2279,6 +2296,8 @@ qsizetype Iterator::iteration() const
 
 const void *Iterator::valuePtr() const
 {
+    if (d->m_lazyList)
+        return d->m_lazyList->m_valueGetter(d->threadData().activeList(), iteration());
     return d->m_valueGetter(iteration());
 }
 
@@ -2487,10 +2506,42 @@ UntilIterator::UntilIterator(const Condition &condition) : Iterator(condition) {
     \fn template <typename T> ListIterator<T>::ListIterator<T>(const QList<T> &list)
 
     Constructs the list iterator for the
-    For (ListIterator(list)) >> Do {} construct.
+    \c {For (ListIterator(list)) >> Do {}} construct.
     The iterator will iterate over each element from the passed \a list.
 
-    \sa Iterator::iteration()
+    \sa Iterator::iteration(), operator*(), operator->()
+*/
+
+/*!
+    \fn template <typename T> template <typename ListGetter, ListIterator<T>::if_list_getter<ListGetter> = true> ListIterator<T>::ListIterator<T>(ListGetter &&listGetter)
+
+    Constructs the list iterator for the
+    \c {For (ListIterator(listGetter)) >> Do {}} construct.
+    The \a listGetter is a callable with no arguments returning QList<T>.
+    It is called once when the Group containing this iterator is entered
+    with all relevant storages and parent iterations activated.
+    The call might be skipped if the possible Group's onSetupHandler()
+    returned a value other than SetupResult::Continue.
+    The iterator will iterate over each element of the returned list.
+
+    This is a convenient pattern for iterating over nested loops:
+
+    \code
+        const ListIterator outer(QStringList{"12", "34"});
+        const ListIterator inner([outer] {
+            return QList(outer->cbegin(), outer->cend());
+        });
+
+        const Group recipe {
+            For (outer) >> Do {
+                For (inner) >> Do {
+                    QSyncTask([inner] { qDebug() << *inner; })
+                }
+            }
+        };
+    \endcode
+
+    \sa Iterator::iteration(), operator*(), operator->()
 */
 
 /*!
@@ -3154,7 +3205,7 @@ public:
         for (int i = m_activeStorages.size() - 1; i >= 0; --i) // iterate in reverse order
             m_activeStorages[i].d->threadData().popStorage();
         for (int i = m_activeIterators.size() - 1; i >= 0; --i) // iterate in reverse order
-            m_activeIterators[i].d->threadData().popIteration();
+            m_activeIterators[i].d->threadData().pop();
         QT_TASKTREE_ASSERT(s_activeTaskTrees.size(), return);
         s_activeTaskTrees.pop_back();
     }
@@ -3373,6 +3424,7 @@ public:
     int m_nextToStart = 0;
     int m_runningChildren = 0;
     bool m_shouldIterate = true;
+    std::shared_ptr<void> m_lazyList;
     std::vector<std::unique_ptr<RuntimeIteration>> m_iterations; // Owning.
 };
 
@@ -3432,7 +3484,8 @@ void ExecutionContextActivator::activateContext(RuntimeIteration *iteration)
 {
     const std::optional<Iterator> it = iteration->iterator();
     if (it) {
-        it->d->threadData().pushIteration(iteration->m_iterationIndex);
+        it->d->threadData().push(iteration->m_iterationIndex,
+                                 iteration->m_container->m_lazyList.get());
         m_activeIterators.append(*it);
     }
     activateContext(iteration->m_container);
@@ -3748,6 +3801,10 @@ bool QTaskTreePrivate::invokeIteratorHandler(RuntimeContainer *container)
         const IteratorPrivate *p = container->m_containerNode.m_iterator->d.get();
         if (p->m_loopCount) {
             container->m_shouldIterate = container->m_iterationCount < p->m_loopCount;
+        } else if (p->m_lazyList) {
+            QT_TASKTREE_CHECK(container->m_lazyList);
+            const qsizetype size = p->m_lazyList->m_listSizer(container->m_lazyList.get());
+            container->m_shouldIterate = container->m_iterationCount < size;
         } else if (p->m_condition) {
             container->m_shouldIterate = invokeHandler(container, p->m_condition,
                                                        container->m_iterationCount);
@@ -3769,6 +3826,13 @@ void QTaskTreePrivate::startTask(const std::shared_ptr<RuntimeTask> &node)
                     advanceProgress(containerNode.m_taskCount);
                 // Non-Continue SetupResult takes precedence over the workflow policy.
                 container->m_successBit = container->m_parentTask->m_setupResult == SetupResult::StopWithSuccess;
+            }
+        }
+        if (container->m_parentTask->m_setupResult == SetupResult::Continue) {
+            if (containerNode.m_iterator) {
+                const IteratorPrivate *iterData = containerNode.m_iterator->d.get();
+                if (iterData->m_lazyList)
+                    container->m_lazyList = invokeHandler(container, iterData->m_lazyList->m_listGetter);
             }
         }
         continueContainer(container);

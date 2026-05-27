@@ -140,16 +140,25 @@ public:
     Q_TASKTREE_EXPORT qsizetype iteration() const;
 
 private:
+    struct LazyList {
+        std::function<std::shared_ptr<void>()> m_listGetter;
+        const void *(*m_valueGetter)(const void *, qsizetype);
+        qsizetype (*m_listSizer)(const void *);
+    };
+
     Q_TASKTREE_EXPORT Iterator(); // ForeverIterator
-    Q_TASKTREE_EXPORT Iterator(qsizetype count, const ValueGetter &valueGetter = {}); // RepeatIterator, ListIterator
+    Q_TASKTREE_EXPORT Iterator(qsizetype count, const ValueGetter &valueGetter = {}); // RepeatIterator, ListIterator (direct list)
     Q_TASKTREE_EXPORT Iterator(const Condition &condition); // UntilIterator
+    Q_TASKTREE_EXPORT Iterator(LazyList &&lazyList); // ListIterator (LazyList)
 
     Q_TASKTREE_EXPORT const void *valuePtr() const;
 
     friend class ExecutionContextActivator;
-    friend class QTaskTreePrivate;
     friend class ForeverIterator;
+    friend class IteratorPrivate;
+    friend class QTaskTreePrivate;
     friend class RepeatIterator;
+    friend class RuntimeContainer;
     friend class UntilIterator;
     template <typename T> friend class ListIterator;
     QExplicitlySharedDataPointer<IteratorPrivate> d;
@@ -176,12 +185,33 @@ public:
 template <typename T>
 class ListIterator final : public Iterator
 {
+    template <typename ListGetter>
+    using if_list_getter = std::enable_if_t<QtTaskTree::isInvocable<QList<T>, ListGetter>(), bool>;
+
 public:
     explicit ListIterator(const QList<T> &list)
         : Iterator(list.size(), [list](qsizetype i) { return std::addressof(list.at(i)); }) {}
+    template <typename ListGetter,
+              if_list_getter<ListGetter> = true>
+    explicit ListIterator(ListGetter &&listGetter)
+        : Iterator({
+            [listGetter = std::forward<ListGetter>(listGetter)] {
+                  return std::make_shared<QList<T>>(listGetter());
+            },
+            [](const void *list, qsizetype i) -> const void * {
+                return std::addressof(static_cast<const QList<T> *>(list)->at(i));
+            },
+            [](const void *list) -> qsizetype {
+                return static_cast<const QList<T> *>(list)->size();
+            },
+        }) {}
     const T *operator->() const { return static_cast<const T *>(valuePtr()); }
     const T &operator*() const { return *static_cast<const T *>(valuePtr()); }
 };
+
+// C++17 deduction guide: deduces T from QList<T>::value_type of the callable's return type.
+template <typename ListGetter>
+ListIterator(ListGetter &&) -> ListIterator<typename std::invoke_result_t<ListGetter>::value_type>;
 
 class StorageBase
 {
