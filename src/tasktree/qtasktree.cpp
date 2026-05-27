@@ -2513,24 +2513,26 @@ UntilIterator::UntilIterator(const Condition &condition) : Iterator(condition) {
 */
 
 /*!
-    \fn template <typename T> template <typename ListGetter, ListIterator<T>::if_list_getter<ListGetter> = true> ListIterator<T>::ListIterator<T>(ListGetter &&listGetter)
+    \fn template <typename T> template <typename RangeGetter, ListIterator<T>::if_compatible_range<RangeGetter> = true, typename RangeType> ListIterator<T>::ListIterator<T>(RangeGetter &&rangeGetter)
 
     Constructs the list iterator for the
-    \c {For (ListIterator(listGetter)) >> Do {}} construct.
-    The \a listGetter is a callable with no arguments returning QList<T>.
-    It is called once when the Group containing this iterator is entered
+    \c {For (ListIterator(rangeGetter)) >> Do {}} construct.
+    The \a rangeGetter is a callable with no arguments returning a contiguous
+    range whose \c value_type is \c T. The returned range does not need to be
+    a QList<T>. Any contiguous range type supporting \c std::data() is accepted
+    — for example, a getter returning QString is valid for
+    \c ListIterator<QChar>.
+    The getter called once when the \l Group containing this iterator is entered,
     with all relevant storages and parent iterations activated.
     The call might be skipped if the possible Group's onSetupHandler()
     returned a value other than SetupResult::Continue.
-    The iterator will iterate over each element of the returned list.
+    The iterator will iterate over each element of the returned range.
 
     This is a convenient pattern for iterating over nested loops:
 
     \code
         const ListIterator outer(QStringList{"12", "34"});
-        const ListIterator inner([outer] {
-            return QList(outer->cbegin(), outer->cend());
-        });
+        const ListIterator inner([outer] { return *outer; });
 
         const Group recipe {
             For (outer) >> Do {

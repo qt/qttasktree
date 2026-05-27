@@ -185,33 +185,45 @@ public:
 template <typename T>
 class ListIterator final : public Iterator
 {
-    template <typename ListGetter>
-    using if_list_getter = std::enable_if_t<QtTaskTree::isInvocable<QList<T>, ListGetter>(), bool>;
+    // std::void_t makes the specialisation a SFINAE failure (rather than a hard error) when
+    // G is not invocable, its return type has no value_type matching T, or it is not a
+    // contiguous range (std::data() not supported).
+    template <typename, typename = void>
+    struct is_compatible_range_getter : std::false_type {};
+    template <typename G>
+    struct is_compatible_range_getter<G, std::void_t<
+        std::enable_if_t<std::is_same_v<typename std::invoke_result_t<G>::value_type, T>>,
+        decltype(std::data(std::declval<const std::invoke_result_t<G>>()))
+    >> : std::true_type {};
+
+    template <typename RangeGetter>
+    using if_compatible_range = std::enable_if_t<is_compatible_range_getter<std::decay_t<RangeGetter>>::value, bool>;
 
 public:
     explicit ListIterator(const QList<T> &list)
         : Iterator(list.size(), [list](qsizetype i) { return std::addressof(list.at(i)); }) {}
-    template <typename ListGetter,
-              if_list_getter<ListGetter> = true>
-    explicit ListIterator(ListGetter &&listGetter)
+    template <typename RangeGetter,
+              if_compatible_range<RangeGetter> = true,
+              typename RangeType = std::invoke_result_t<std::decay_t<RangeGetter>>>
+    explicit ListIterator(RangeGetter &&rangeGetter)
         : Iterator({
-            [listGetter = std::forward<ListGetter>(listGetter)] {
-                  return std::make_shared<QList<T>>(listGetter());
+            [rangeGetter = std::forward<RangeGetter>(rangeGetter)] {
+                return std::make_shared<RangeType>(rangeGetter());
             },
             [](const void *list, qsizetype i) -> const void * {
-                return std::addressof(static_cast<const QList<T> *>(list)->at(i));
+                return std::data(*static_cast<const RangeType *>(list)) + i;
             },
             [](const void *list) -> qsizetype {
-                return static_cast<const QList<T> *>(list)->size();
+                return static_cast<const RangeType *>(list)->size();
             },
         }) {}
     const T *operator->() const { return static_cast<const T *>(valuePtr()); }
     const T &operator*() const { return *static_cast<const T *>(valuePtr()); }
 };
 
-// C++17 deduction guide: deduces T from QList<T>::value_type of the callable's return type.
-template <typename ListGetter>
-ListIterator(ListGetter &&) -> ListIterator<typename std::invoke_result_t<ListGetter>::value_type>;
+// C++17 deduction guide: deduces T from RangeGetter's return type value_type.
+template <typename RangeGetter>
+ListIterator(RangeGetter &&) -> ListIterator<typename std::invoke_result_t<RangeGetter>::value_type>;
 
 class StorageBase
 {

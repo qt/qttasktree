@@ -3728,12 +3728,51 @@ void tst_TaskTree::testTree_data()
     }
 
     {
+        // Check if ListIterator work with std::vector.
+        const auto recipe = [storage](SetupResult result) {
+            const ListIterator iterator([storage] {
+                storage->m_log.append({0, Handler::IteratorRangeGetter});
+                return std::vector{1, 2, 3};
+            });
+
+            return Group {
+                storage,
+                For (iterator) >> Do {
+                    onGroupSetup([result] { return result; }),
+                    QSyncTask([storage, iterator] {
+                        storage->m_log.append({*iterator, Handler::Sync});
+                    })
+                }
+            };
+        };
+
+        const Log log {
+            {0, Handler::IteratorRangeGetter},
+            {1, Handler::Sync},
+            {2, Handler::Sync},
+            {3, Handler::Sync}
+        };
+
+        // Check if ListIterator's getter is called once when the group is entered,
+        // with storage accessible, and the returned list is used for iteration.
+        QTest::newRow("LazyVectorGetterExecutedOnceOnContinue")
+            << TestData{storage, recipe(SetupResult::Continue), log, 0, DoneWith::Success, 0};
+
+        // Check if ListIterator's getter is skipped when the group's setup handler
+        // returns a value other than SetupResult::Continue.
+        QTest::newRow("LazyVectorGetterSkippedOnStopWithSuccess")
+            << TestData{storage, recipe(SetupResult::StopWithSuccess), Log(), 0,
+                        DoneWith::Success, 0};
+        QTest::newRow("LazyVectorGetterSkippedOnStopWithError")
+            << TestData{storage, recipe(SetupResult::StopWithError), Log(), 0,
+                        DoneWith::Error, 0};
+    }
+
+    {
         // Check if nested ListIterators work: the outer iterates over strings, the inner
         // uses the callable overload to iterate over QChars of the current outer string.
         const ListIterator outer(QStringList{"12", "34"});
-        const ListIterator inner([outer] {
-            return QList(outer->cbegin(), outer->cend());
-        });
+        const ListIterator inner([outer] { return *outer; });
 
         const Group root {
             storage,
