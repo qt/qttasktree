@@ -3316,7 +3316,7 @@ void tst_TaskTree::testTree_data()
     }
 
     {
-        // Check if UntilIterator is executed with empty loop body.
+        // Check if UntilIterator's condition is executed with empty loop body.
         const UntilIterator iterator([storage](int iteration) {
             storage->m_log.append({iteration, Handler::Iteration});
             return iteration < 3;
@@ -3333,6 +3333,35 @@ void tst_TaskTree::testTree_data()
 
         QTest::newRow("EmptyLoopUntil")
             << TestData{storage, root, log, 0, DoneWith::Success, 0};
+
+        // Check if UntilIterator's condition isn't executed beetween tasks in the body.
+        const Group root2 = For(iterator) >> Do {
+            storage,
+            createSuccessTask(5),
+            createSuccessTask(6),
+        };
+
+        const Log log2 {
+            {0, Handler::Iteration},
+            {5, Handler::Setup},
+            {5, Handler::Success},
+            {6, Handler::Setup},
+            {6, Handler::Success},
+            {1, Handler::Iteration},
+            {5, Handler::Setup},
+            {5, Handler::Success},
+            {6, Handler::Setup},
+            {6, Handler::Success},
+            {2, Handler::Iteration},
+            {5, Handler::Setup},
+            {5, Handler::Success},
+            {6, Handler::Setup},
+            {6, Handler::Success},
+            {3, Handler::Iteration} // The last iteration returns false
+        };
+
+        QTest::newRow("NonEmptyLoopUntil")
+            << TestData{storage, root2, log2, 2, DoneWith::Success, 6};
     }
 
     {
