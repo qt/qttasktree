@@ -140,9 +140,9 @@ public:
     Q_TASKTREE_EXPORT qsizetype iteration() const;
 
 private:
-    Q_TASKTREE_EXPORT Iterator(); // LoopForever
-    Q_TASKTREE_EXPORT Iterator(qsizetype count, const ValueGetter &valueGetter = {}); // LoopRepeat, LoopList
-    Q_TASKTREE_EXPORT Iterator(const Condition &condition); // LoopUntil
+    Q_TASKTREE_EXPORT Iterator(); // ForeverIterator
+    Q_TASKTREE_EXPORT Iterator(qsizetype count, const ValueGetter &valueGetter = {}); // RepeatIterator, ListIterator
+    Q_TASKTREE_EXPORT Iterator(const Condition &condition); // UntilIterator
 
     Q_TASKTREE_EXPORT const void *valuePtr() const;
 

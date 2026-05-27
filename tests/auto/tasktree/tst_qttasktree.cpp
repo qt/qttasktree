@@ -3200,28 +3200,28 @@ void tst_TaskTree::testTree_data()
     }
 
     {
-        const UntilIterator loop([](int index) { return index < 3; });
+        const UntilIterator iterator([](int index) { return index < 3; });
 
-        const auto onSetupContinue = [storage, loop](int taskId) {
-            return [storage, loop, taskId](TaskObject &) {
-                storage->m_log.append({loop.iteration() * 10 + taskId, Handler::Setup});
+        const auto onSetupContinue = [storage, iterator](int taskId) {
+            return [storage, iterator, taskId](TaskObject &) {
+                storage->m_log.append({iterator.iteration() * 10 + taskId, Handler::Setup});
             };
         };
 
-        const auto onSetupStop = [storage, loop](int taskId) {
-            return [storage, loop, taskId](TaskObject &) {
-                storage->m_log.append({loop.iteration() * 10 + taskId, Handler::Setup});
-                if (loop.iteration() == 2)
+        const auto onSetupStop = [storage, iterator](int taskId) {
+            return [storage, iterator, taskId](TaskObject &) {
+                storage->m_log.append({iterator.iteration() * 10 + taskId, Handler::Setup});
+                if (iterator.iteration() == 2)
                     return SetupResult::StopWithSuccess;
                 return SetupResult::Continue;
             };
         };
 
-        const auto onDone = [storage, loop](int taskId) {
-            return [storage, loop, taskId](DoneWith doneWith) {
+        const auto onDone = [storage, iterator](int taskId) {
+            return [storage, iterator, taskId](DoneWith doneWith) {
                 const Handler handler = doneWith == DoneWith::Cancel ? Handler::Canceled
                     : doneWith == DoneWith::Success ? Handler::Success : Handler::Error;
-                storage->m_log.append({loop.iteration() * 10 + taskId, handler});
+                storage->m_log.append({iterator.iteration() * 10 + taskId, handler});
             };
         };
 
@@ -3231,7 +3231,7 @@ void tst_TaskTree::testTree_data()
             TestTask(onSetupStop(2), onDone(2))
         };
 
-        const Group rootSequential = For(loop) >> Do {
+        const Group rootSequential = For(iterator) >> Do {
             sequential,
             items
         };
@@ -3249,7 +3249,7 @@ void tst_TaskTree::testTree_data()
             {22, Handler::Setup}
         };
 
-        const Group rootParallel = For(loop) >> Do {
+        const Group rootParallel = For(iterator) >> Do {
             parallel,
             items
         };
@@ -3267,7 +3267,7 @@ void tst_TaskTree::testTree_data()
             {21, Handler::Success}
         };
 
-        const Group rootParallelLimit = For(loop) >> Do {
+        const Group rootParallelLimit = For(iterator) >> Do {
             ParallelLimit(2),
             items
         };
@@ -3285,11 +3285,11 @@ void tst_TaskTree::testTree_data()
             {21, Handler::Success}
         };
 
-        QTest::newRow("LoopSequential")
+        QTest::newRow("UntilIteratorSequential")
             << TestData{storage, rootSequential, logSequential, 2, DoneWith::Success, 5};
-        QTest::newRow("LoopParallel")
+        QTest::newRow("UntilIteratorParallel")
             << TestData{storage, rootParallel, logParallel, 2, DoneWith::Success, 5};
-        QTest::newRow("LoopParallelLimit")
+        QTest::newRow("UntilIteratorParallelLimit")
             << TestData{storage, rootParallelLimit, logParallelLimit, 2, DoneWith::Success, 5};
     }
 
@@ -3299,7 +3299,7 @@ void tst_TaskTree::testTree_data()
             storage,
             createSuccessTask(1)
         };
-        QTest::newRow("ProgressWithLoopUntilFalse")
+        QTest::newRow("ProgressWithUntilIteratorFalse")
             << TestData{storage, root, {}, 1, DoneWith::Success, 0};
     }
 
@@ -3311,7 +3311,7 @@ void tst_TaskTree::testTree_data()
                 createSuccessTask(1)
             }
         };
-        QTest::newRow("ProgressWithNestedLoopUntilFalse")
+        QTest::newRow("ProgressWithNestedUntilIteratorFalse")
             << TestData{storage, root, {}, 1, DoneWith::Success, 0};
     }
 
@@ -3331,7 +3331,7 @@ void tst_TaskTree::testTree_data()
             {3, Handler::Iteration} // The last iteration returns false
         };
 
-        QTest::newRow("EmptyLoopUntil")
+        QTest::newRow("EmptyUntilIterator")
             << TestData{storage, root, log, 0, DoneWith::Success, 0};
 
         // Check if UntilIterator's condition isn't executed beetween tasks in the body.
@@ -3360,7 +3360,7 @@ void tst_TaskTree::testTree_data()
             {3, Handler::Iteration} // The last iteration returns false
         };
 
-        QTest::newRow("NonEmptyLoopUntil")
+        QTest::newRow("NonEmptyUntilIterator")
             << TestData{storage, root2, log2, 2, DoneWith::Success, 6};
     }
 
