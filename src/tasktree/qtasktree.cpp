@@ -2513,7 +2513,7 @@ UntilIterator::UntilIterator(const Condition &condition) : Iterator(condition) {
     Make sure that ListIterator is passed to the For element.
 */
 
-using StoragePtr = void *;
+using StoragePtr = std::shared_ptr<void>;
 
 static constexpr QLatin1StringView s_activeStorageWarning =
     "The referenced storage is not reachable in the running tree. "
@@ -2553,25 +2553,22 @@ private:
 class StorageBasePrivate : public QSharedData
 {
 public:
-    StorageBasePrivate(const StorageBase::StorageConstructor &ctor,
-                       const StorageBase::StorageDestructor &dtor)
-        : m_constructor(ctor)
-        , m_destructor(dtor)
+    StorageBasePrivate(const StorageBase::StorageCreator &creator)
+        : m_creator(creator)
     {}
     StorageThreadData &threadData() { return m_threadData.data(); }
 
-    const StorageBase::StorageConstructor m_constructor = {};
-    const StorageBase::StorageDestructor m_destructor = {};
+    const StorageBase::StorageCreator m_creator = {};
     LocalThreadStorage<StorageThreadData> m_threadData = {};
 };
 
-StorageBase::StorageBase(const StorageConstructor &ctor, const StorageDestructor &dtor)
-    : d(new StorageBasePrivate{ctor, dtor})
+StorageBase::StorageBase(const StorageBase::StorageCreator &creator)
+    : d(new StorageBasePrivate{creator})
 {}
 
-StoragePtr StorageBase::activeStorageVoid() const
+void *StorageBase::activeStorageVoid() const
 {
-    return d->threadData().activeStorage();
+    return d->threadData().activeStorage().get();
 }
 
 class GroupItemPrivate : public QSharedData
@@ -3240,7 +3237,7 @@ public:
         const StorageHandler storageHandler = *it;
         if (storageHandler.*ptr) {
             GuardLocker locker(m_guard);
-            (storageHandler.*ptr)(storagePtr);
+            (storageHandler.*ptr)(storagePtr.get());
         }
     }
 
@@ -3344,12 +3341,13 @@ public:
 
     ~RuntimeContainer()
     {
+        if (!m_callStorageDoneHandlersOnDestruction)
+            return;
+
         for (int i = m_containerNode.m_storageList.size() - 1; i >= 0; --i) { // iterate in reverse order
             const StorageBase storage = m_containerNode.m_storageList[i];
             StoragePtr storagePtr = m_storages.value(i);
-            if (m_callStorageDoneHandlersOnDestruction)
-                m_containerNode.m_taskTreePrivate->callDoneHandler(storage, storagePtr);
-            storage.d->m_destructor(storagePtr);
+            m_containerNode.m_taskTreePrivate->callDoneHandler(storage, storagePtr);
         }
     }
 
@@ -3568,7 +3566,7 @@ QList<StoragePtr> RuntimeContainer::createStorages(const ContainerNode &containe
 {
     QList<StoragePtr> storages;
     for (const StorageBase &storage : container.m_storageList) {
-        StoragePtr storagePtr = storage.d->m_constructor();
+        StoragePtr storagePtr = storage.d->m_creator();
         storages.append(storagePtr);
         container.m_taskTreePrivate->callSetupHandler(storage, storagePtr);
     }

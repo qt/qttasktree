@@ -189,11 +189,10 @@ public:
     QT_TASKTREE_DECLARE_SMFS(StorageBase, Q_TASKTREE_EXPORT)
 
 private:
-    using StorageConstructor = std::function<void *(void)>;
-    using StorageDestructor = std::function<void(void *)>;
+    using StorageCreator = std::function<std::shared_ptr<void>()>;
     using StorageHandler = std::function<void(void *)>;
 
-    Q_TASKTREE_EXPORT StorageBase(const StorageConstructor &ctor, const StorageDestructor &dtor);
+    Q_TASKTREE_EXPORT StorageBase(const StorageCreator &creator);
 
     Q_TASKTREE_EXPORT void *activeStorageVoid() const;
 
@@ -220,22 +219,16 @@ template <typename StorageStruct>
 class Storage final : public StorageBase
 {
 public:
-    Storage() : StorageBase(Storage::ctor(), Storage::dtor()) {}
+    Storage() : StorageBase([] { return std::make_shared<StorageStruct>(); }) {}
     template <typename FirstArg, typename ...Args,
              std::enable_if_t<!std::is_same_v<q20::remove_cvref_t<FirstArg>, Storage<StorageStruct>>, bool> = true>
     explicit Storage(const FirstArg &firstArg, const Args &...args)
-        : StorageBase([=] { return new StorageStruct{firstArg, args...}; }, Storage::dtor()) {}
+        : StorageBase([=] { return std::make_shared<StorageStruct>(firstArg, args...); }) {}
 
     StorageStruct &operator*() const noexcept { return *activeStorage(); }
     StorageStruct *operator->() const noexcept { return activeStorage(); }
     StorageStruct *activeStorage() const {
         return static_cast<StorageStruct *>(activeStorageVoid());
-    }
-
-private:
-    static StorageConstructor ctor() { return [] { return new StorageStruct(); }; }
-    static StorageDestructor dtor() {
-        return [](void *storage) { delete static_cast<StorageStruct *>(storage); };
     }
 };
 
