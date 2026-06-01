@@ -103,6 +103,54 @@ private:
 
 std::atomic_int CustomStorage::s_count = 0;
 
+// Compile-time CTAD tests for ListIterator.
+// Verifies that the deduction guide's forwarding-reference overload does not steal
+// QList arguments from the const QList<T> & constructor (the underconstrained-guide hazard).
+namespace {
+[[maybe_unused]] void testListIteratorCTAD()
+{
+    // --- QList constructor overload ---
+
+    // const lvalue: baseline case.
+    const QList<int> constList{1, 2, 3};
+    auto a = ListIterator(constList);
+    static_assert(std::is_same_v<decltype(a), ListIterator<int>>);
+
+    // non-const lvalue: without the enable_if constraint on the deduction guide,
+    // ListGetter&& would be a perfect match and beat const QList<T> &.
+    QList<int> mutableList{1, 2, 3};
+    auto b = ListIterator(mutableList);
+    static_assert(std::is_same_v<decltype(b), ListIterator<int>>);
+
+    // rvalue: same hazard as non-const lvalue.
+    auto c = ListIterator(QList<int>{1, 2, 3});
+    static_assert(std::is_same_v<decltype(c), ListIterator<int>>);
+
+    // Different value types.
+    auto d = ListIterator(QList<QString>{"a", "b"});
+    static_assert(std::is_same_v<decltype(d), ListIterator<QString>>);
+
+    auto e = ListIterator(QList<double>{1.0, 2.0});
+    static_assert(std::is_same_v<decltype(e), ListIterator<double>>);
+
+    // --- Deduction guide (callable) overload ---
+
+    // Lvalue lambda: T deduced from the return type's value_type.
+    auto getter = [] { return QList<int>{1, 2, 3}; };
+    auto f = ListIterator(getter);
+    static_assert(std::is_same_v<decltype(f), ListIterator<int>>);
+
+    // Rvalue (inline) lambda.
+    auto g = ListIterator([] { return QList<QString>{"a"}; });
+    static_assert(std::is_same_v<decltype(g), ListIterator<QString>>);
+
+    // std::function.
+    std::function<QList<double>()> fn = [] { return QList<double>{1.0}; };
+    auto h = ListIterator(fn);
+    static_assert(std::is_same_v<decltype(h), ListIterator<double>>);
+}
+} // unnamed namespace
+
 struct TestData
 {
     Storage<CustomStorage> storage;
