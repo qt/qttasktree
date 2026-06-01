@@ -254,9 +254,7 @@ protected:
 
     using TaskAdapterPtr = void *;
     // Internal, provided by QCustomTask
-    using TaskAdapterConstructor = std::function<TaskAdapterPtr(void)>;
-    // Internal, provided by QCustomTask
-    using TaskAdapterDestructor = std::function<void(TaskAdapterPtr)>;
+    using TaskAdapterCreator = std::function<std::shared_ptr<void>(void)>;
     //
     using TaskAdapterStarter = std::function<void(TaskAdapterPtr, QTaskInterface *)>;
     // Called prior to task start, just after createHandler
@@ -265,8 +263,7 @@ protected:
     using TaskAdapterDoneHandler = std::function<DoneResult(TaskAdapterPtr, DoneWith)>;
 
     struct TaskHandler { // TODO: Make it a pimpled value type?
-        TaskAdapterConstructor m_taskAdapterConstructor;
-        TaskAdapterDestructor m_taskAdapterDestructor;
+        TaskAdapterCreator m_taskAdapterCreator;
         TaskAdapterStarter m_taskAdapterStarter;
         TaskAdapterSetupHandler m_taskAdapterSetupHandler = {};
         TaskAdapterDoneHandler m_taskAdapterDoneHandler = {};
@@ -652,7 +649,7 @@ public:
     explicit QCustomTask(SetupHandler &&setup = TaskSetupHandler(),
                          DoneHandler &&done = TaskDoneHandler(),
                          CallDone callDone = CallDoneFlag::Always)
-        : ExecutableItem(TaskHandler{&taskAdapterConstructor, &taskAdapterDestructor, &taskAdapterStarter,
+        : ExecutableItem(TaskHandler{&taskAdapterCreator, &taskAdapterStarter,
                           wrapSetup(std::forward<SetupHandler>(setup)),
                           wrapDone(std::forward<DoneHandler>(done)), callDone})
     {}
@@ -677,11 +674,7 @@ private:
         Adapter adapter;
     };
 
-    static TaskAdapter *taskAdapterConstructor() { return new TaskAdapter; }
-
-    static void taskAdapterDestructor(TaskAdapterPtr voidAdapter) {
-        delete static_cast<TaskAdapter *>(voidAdapter);
-    }
+    static std::shared_ptr<void> taskAdapterCreator() { return std::make_shared<TaskAdapter>(); }
 
     static void taskAdapterStarter(TaskAdapterPtr voidAdapter, QTaskInterface *iface) {
         TaskAdapter *taskAdapter = static_cast<TaskAdapter *>(voidAdapter);
