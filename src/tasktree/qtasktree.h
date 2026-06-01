@@ -407,8 +407,8 @@ private:
     {
         return [handler = std::forward<Handler>(handler)] {
             // R, V stands for: Setup[R]esult, [V]oid
-            constexpr bool isR = isInvocable<SetupResult, Handler>();
-            constexpr bool isV = isInvocable<void, Handler>();
+            constexpr bool isR = QtTaskTree::isInvocable<SetupResult, Handler>();
+            constexpr bool isV = QtTaskTree::isInvocable<void, Handler>();
             static_assert(isR || isV,
                           "Group setup handler needs to take no arguments and has to return void or SetupResult. "
                           "The passed handler doesn't fulfill these requirements.");
@@ -424,12 +424,12 @@ private:
         return [handler = std::forward<Handler>(handler)](DoneWith result) {
             constexpr bool isDoneResultType = std::is_same_v<std::decay_t<Handler>, DoneResult>;
             // R, B, V, D stands for: Done[R]esult, [B]ool, [V]oid, [D]oneWith
-            constexpr bool isRD = isInvocable<DoneResult, Handler, DoneWith>();
-            constexpr bool isR = isInvocable<DoneResult, Handler>();
-            constexpr bool isBD = isInvocable<bool, Handler, DoneWith>();
-            constexpr bool isB = isInvocable<bool, Handler>();
-            constexpr bool isVD = isInvocable<void, Handler, DoneWith>();
-            constexpr bool isV = isInvocable<void, Handler>();
+            constexpr bool isRD = QtTaskTree::isInvocable<DoneResult, Handler, DoneWith>();
+            constexpr bool isR = QtTaskTree::isInvocable<DoneResult, Handler>();
+            constexpr bool isBD = QtTaskTree::isInvocable<bool, Handler, DoneWith>();
+            constexpr bool isB = QtTaskTree::isInvocable<bool, Handler>();
+            constexpr bool isVD = QtTaskTree::isInvocable<void, Handler, DoneWith>();
+            constexpr bool isV = QtTaskTree::isInvocable<void, Handler>();
             static_assert(isDoneResultType || isRD || isR || isBD || isB || isVD || isV,
                           "Group done handler should be a function taking (DoneWith) or (void) as an argument "
                           "and returning void, bool or DoneResult. "
@@ -570,9 +570,9 @@ private:
     template <typename Handler>
     static auto wrapHandler(Handler &&handler) {
         // R, B, V stands for: Done[R]esult, [B]ool, [V]oid
-        constexpr bool isR = isInvocable<DoneResult, Handler>();
-        constexpr bool isB = isInvocable<bool, Handler>();
-        constexpr bool isV = isInvocable<void, Handler>();
+        constexpr bool isR = QtTaskTree::isInvocable<DoneResult, Handler>();
+        constexpr bool isB = QtTaskTree::isInvocable<bool, Handler>();
+        constexpr bool isV = QtTaskTree::isInvocable<void, Handler>();
         static_assert(isR || isB || isV,
             "QSyncTask handler needs to take no arguments and has to return void, bool or DoneResult. "
             "The passed handler doesn't fulfill these requirements.");
@@ -703,8 +703,8 @@ private:
         }
         return [handler = std::forward<Handler>(handler)](TaskAdapterPtr voidAdapter) {
             // R, V stands for: Setup[R]esult, [V]oid
-            constexpr bool isR = isInvocable<SetupResult, Handler, Task &>();
-            constexpr bool isV = isInvocable<void, Handler, Task &>();
+            constexpr bool isR = QtTaskTree::isInvocable<SetupResult, Handler, Task &>();
+            constexpr bool isV = QtTaskTree::isInvocable<void, Handler, Task &>();
             static_assert(isR || isV,
                           "Task setup handler needs to take (Task &) as an argument and has to return void or "
                           "SetupResult. The passed handler doesn't fulfill these requirements.");
@@ -726,18 +726,18 @@ private:
                                                           DoneWith result) {
             constexpr bool isDoneResultType = std::is_same_v<std::decay_t<Handler>, DoneResult>;
             // R, B, V, T, D stands for: Done[R]esult, [B]ool, [V]oid, [T]ask, [D]oneWith
-            constexpr bool isRTD = isInvocable<DoneResult, Handler, const Task &, DoneWith>();
-            constexpr bool isRT = isInvocable<DoneResult, Handler, const Task &>();
-            constexpr bool isRD = isInvocable<DoneResult, Handler, DoneWith>();
-            constexpr bool isR = isInvocable<DoneResult, Handler>();
-            constexpr bool isBTD = isInvocable<bool, Handler, const Task &, DoneWith>();
-            constexpr bool isBT = isInvocable<bool, Handler, const Task &>();
-            constexpr bool isBD = isInvocable<bool, Handler, DoneWith>();
-            constexpr bool isB = isInvocable<bool, Handler>();
-            constexpr bool isVTD = isInvocable<void, Handler, const Task &, DoneWith>();
-            constexpr bool isVT = isInvocable<void, Handler, const Task &>();
-            constexpr bool isVD = isInvocable<void, Handler, DoneWith>();
-            constexpr bool isV = isInvocable<void, Handler>();
+            constexpr bool isRTD = QtTaskTree::isInvocable<DoneResult, Handler, const Task &, DoneWith>();
+            constexpr bool isRT = QtTaskTree::isInvocable<DoneResult, Handler, const Task &>();
+            constexpr bool isRD = QtTaskTree::isInvocable<DoneResult, Handler, DoneWith>();
+            constexpr bool isR = QtTaskTree::isInvocable<DoneResult, Handler>();
+            constexpr bool isBTD = QtTaskTree::isInvocable<bool, Handler, const Task &, DoneWith>();
+            constexpr bool isBT = QtTaskTree::isInvocable<bool, Handler, const Task &>();
+            constexpr bool isBD = QtTaskTree::isInvocable<bool, Handler, DoneWith>();
+            constexpr bool isB = QtTaskTree::isInvocable<bool, Handler>();
+            constexpr bool isVTD = QtTaskTree::isInvocable<void, Handler, const Task &, DoneWith>();
+            constexpr bool isVT = QtTaskTree::isInvocable<void, Handler, const Task &>();
+            constexpr bool isVD = QtTaskTree::isInvocable<void, Handler, DoneWith>();
+            constexpr bool isV = QtTaskTree::isInvocable<void, Handler>();
             static_assert(isDoneResultType || isRTD || isRT || isRD || isR
                               || isBTD || isBT || isBD || isB
                               || isVTD || isVT || isVD || isV,
