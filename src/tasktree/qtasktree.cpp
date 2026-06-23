@@ -4248,6 +4248,15 @@ void QTaskInterface::reportDone(DoneResult result)
     Q_EMIT done(result, QPrivateSignal());
 }
 
+/*!
+    \fn void QTaskInterface::done(QtTaskTree::DoneResult result)
+
+    This signal is emitted when reportDone() is called, passing the \a result
+    of the task execution.
+
+    \sa reportDone()
+*/
+
 /*! \reimp */
 bool QTaskInterface::event(QEvent *event)
 {
