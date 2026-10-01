@@ -2139,13 +2139,17 @@ public:
         // 1. Fast path: lock-free
         {
             std::shared_lock locker(m_threadDataLock);
-            auto it = m_threadDataMap.find(currentThread);
-            if (it != m_threadDataMap.end())
-                return it->second; // Lock-free read.
+            if (m_threadDataMap) {
+                auto it = m_threadDataMap->find(currentThread);
+                if (it != m_threadDataMap->end())
+                    return it->second; // Lock-free read.
+            }
         }
         // 2. Slow path: synchronized
         std::unique_lock locker(m_threadDataLock);
-        return m_threadDataMap.try_emplace(currentThread).first->second;
+        if (!m_threadDataMap)
+            m_threadDataMap.emplace();
+        return m_threadDataMap->try_emplace(currentThread).first->second;
     }
 private:
     // The hot data goes first (offset zero), and the rest starts on a new cache line
@@ -2155,7 +2159,7 @@ private:
     // Use std::map on purpose, so that it doesn't invalidate references on modifications.
     // Don't optimize it by using std::unordered_map.
     // The main thread is excluded and kept on m_mainThreadData.
-    std::map<QThread *, T> m_threadDataMap = {};
+    std::optional<std::map<QThread *, T>> m_threadDataMap = std::nullopt;
 };
 
 class IteratorThreadData
