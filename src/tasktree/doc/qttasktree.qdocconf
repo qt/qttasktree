@@ -17,7 +17,7 @@ qhp.QtTaskTree.subprojects = examples classes
 
 qhp.QtTaskTree.subprojects.classes.title = C++ Classes
 qhp.QtTaskTree.subprojects.classes.indexTitle = Qt TaskTree C++ Classes
-qhp.QtTaskTree.subprojects.classes.selectors = class fake:headerfile
+qhp.QtTaskTree.subprojects.classes.selectors = class namespace headerfile
 qhp.QtTaskTree.subprojects.classes.sortPages = true
 
 qhp.QtTaskTree.subprojects.examples.title              = Examples
