@@ -2147,10 +2147,15 @@ public:
             }
         }
         // 2. Slow path: synchronized
+        // Allocate the node outside of the lock, only insert it under the lock.
+        std::unordered_map<QThread *, T> tmp;
+        const auto it = tmp.try_emplace(currentThread).first;
         std::unique_lock locker(m_threadDataLock);
-        if (!m_threadDataMap)
-            m_threadDataMap.emplace();
-        return m_threadDataMap->try_emplace(currentThread).first->second;
+        if (!m_threadDataMap) {
+            m_threadDataMap.emplace(std::move(tmp));
+            return m_threadDataMap->begin()->second; // The only element.
+        }
+        return m_threadDataMap->insert(tmp.extract(it)).position->second;
     }
 private:
     // The hot data goes first (offset zero), and the rest starts on a new cache line
