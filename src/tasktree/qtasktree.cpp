@@ -27,6 +27,7 @@
 
 #include <mutex>
 #include <shared_mutex>
+#include <unordered_map>
 
 using namespace std::chrono;
 
@@ -2156,10 +2157,8 @@ private:
     // (64 bytes assumed) to avoid false sharing with the main thread's accesses.
     std::optional<T> m_mainThreadData = std::nullopt;
     alignas(64) std::shared_mutex m_threadDataLock;
-    // Use std::map on purpose, so that it doesn't invalidate references on modifications.
-    // Don't optimize it by using std::unordered_map.
     // The main thread is excluded and kept on m_mainThreadData.
-    std::optional<std::map<QThread *, T>> m_threadDataMap = std::nullopt;
+    std::optional<std::unordered_map<QThread *, T>> m_threadDataMap = std::nullopt;
 };
 
 class IteratorThreadData
