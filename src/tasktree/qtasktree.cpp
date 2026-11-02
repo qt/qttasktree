@@ -2172,7 +2172,7 @@ class IteratorThreadData
 
 public:
     IteratorThreadData() = default;
-    void push(qsizetype index, void *list)
+    void push(qsizetype index, const void *list)
     {
         m_activeStack.push_back({index, list});
     }
@@ -2190,7 +2190,7 @@ public:
             "or the iterator is not reachable from where it is referenced."); return -1);
         return m_activeStack.last().iterationIndex;
     }
-    void *activeList() const
+    const void *activeList() const
     {
         QT_TASKTREE_ASSERT(m_activeStack.size(), return nullptr);
         return m_activeStack.last().list;
@@ -2199,7 +2199,7 @@ public:
 private:
     struct Entry {
         qsizetype iterationIndex;
-        void *list;
+        const void *list;
     };
     QList<Entry> m_activeStack;
 };
