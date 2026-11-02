@@ -1025,6 +1025,13 @@ namespace QtTaskTree {
     group's child task finishes its execution. It's also used when the
     running Group is canceled.
 
+    When a group stops because of the \c StopOnError, \c StopOnSuccess or
+    \c StopOnSuccessOrError policy, the child tasks that are still running are
+    canceled in the order they were started. If the group is nested in
+    another group and the result also stops that parent group, the nested
+    group's running tasks are canceled first, followed by the parent group's
+    other running tasks.
+
     \value StopOnError
         Default. Corresponds to the stopOnError global element.
         If any child task finishes with an error, the group stops and
