@@ -4258,6 +4258,9 @@ QTaskInterface::QTaskInterface(QObject *parent) : QObject(parent) {}
     This method should be called when the task adapted via custom adapter
     is finished, passing the \a result of the task execution.
 
+    This method must be called from the thread of the \l QTaskTree that runs
+    the task. The task tree reacts to it directly, in the calling thread.
+
     Assuming the Worker emits a finished(bool) signal,
     the adapter may look like:
 
